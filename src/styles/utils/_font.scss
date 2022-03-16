@@ -1,0 +1,56 @@
+$font-sizes: (
+  "xxs": 11px,
+  "xs": 12px,
+  "sm": 14px,
+  "md": 16px,
+  "lg": 18px,
+  "xl": 20px,
+  "2xl": 24px,
+  "3xl": 28px,
+  "4xl": 32px,
+  "5xl": 36px,
+  "6xl": 42px,
+);
+
+$font-weights: (
+  "hairline": 100,
+  "thin": 200,
+  "light": 300,
+  "normal": 400,
+  "medium": 500,
+  "semibold": 600,
+  "bold": 700,
+  "heavy": 800,
+  "black": 900,
+);
+
+$line-heights: (
+  "none": 1,
+  "tight": 1.25,
+  "snug": 1.375,
+  "normal": 1.5,
+  "relaxed": 1.625,
+  "loose": 2,
+);
+
+@each $size, $value in $font-sizes {
+  .text-#{$size} {
+    font-size: $value;
+  }
+
+  .text-#{$size}\! {
+    font-size: $value !important;
+  }
+}
+
+@each $weight, $value in $font-weights {
+  .font-#{$weight} {
+    font-weight: $value;
+  }
+}
+
+@each $height, $value in $line-heights {
+  .leading-#{$height} {
+    line-height: $value;
+  }
+}

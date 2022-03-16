@@ -1,0 +1,16 @@
+@use "utils/_space";
+@use "utils/font";
+@use "utils/display";
+
+ion-toolbar:not(ion-menu *) ion-avatar {
+  width: 28px;
+  height: 28px;
+}
+
+ion-tab-button ion-icon {
+  font-size: 24px;
+}
+
+ion-menu ion-header * {
+  --background: --ion-color-dark-contrast;
+}
