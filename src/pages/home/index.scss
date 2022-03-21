@@ -1,8 +1,17 @@
-#intro-header {
-  max-width: 30ch;
-}
-
 ion-thumbnail {
   --size: 40px;
-  --border-radius: 4px;
+  --border-radius: 9999px;
+}
+
+.blue {
+  color: blue;
+}
+
+ion-card ion-list ion-item {
+  --padding-start: 0;
+}
+
+ion-list.table ion-item {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }

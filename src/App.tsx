@@ -22,18 +22,19 @@ import { Route } from "react-router-dom";
 import "./App.css";
 import SideMenu from "./components/SideMenu";
 import Tabs from "./components/Tabs";
-import "./styles/global.scss";
 /* Theme variables */
 import "./theme/variables.css";
+import "./styles/global.scss";
+import profilePic from "./assets/images/profile-sqr.jpg";
 
 setupIonicReact({
   mode: "ios",
 });
 
-const user = {
-  firstName: "John",
-  lastName: "Doe",
-  avatar: "https://randomuser.me/api/portraits/men/86.jpg",
+export const User = {
+  firstName: "Elvis",
+  lastName: "Duru",
+  avatar: profilePic,
 };
 
 const App: React.FC = () => {
@@ -41,7 +42,7 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonSplitPane contentId="main">
-          <SideMenu user={user} contentId="main" />
+          <SideMenu user={User} contentId="main" />
           <IonRouterOutlet id="main">
             <Route path="/" component={Tabs} />
           </IonRouterOutlet>

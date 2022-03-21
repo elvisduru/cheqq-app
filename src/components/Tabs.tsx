@@ -10,6 +10,8 @@ import {
   useIonViewWillLeave,
 } from "@ionic/react";
 import {
+  addCircle,
+  addOutline,
   bagHandle,
   bagHandleOutline,
   chatbubble,
@@ -20,8 +22,9 @@ import {
   homeOutline,
   notifications,
   notificationsOutline,
+  pulse,
 } from "ionicons/icons";
-import { Redirect, Route, useLocation } from "react-router";
+import { Redirect, Route, useLocation } from "react-router-dom";
 import Home from "../pages/home";
 import Messenger from "../pages/messenger";
 import Notifications from "../pages/notifications";
@@ -72,23 +75,19 @@ export default function Tabs() {
           <Redirect to="/home" />
         </Route>
       </IonRouterOutlet>
-      <IonTabBar slot="bottom">
+      <IonTabBar slot="bottom" translucent>
         <IonTabButton tab="home" href="/home">
           <IonIcon icon={isSelected("home") ? home : homeOutline} />
         </IonTabButton>
         <IonTabButton tab="orders" href="/orders">
           <IonIcon icon={isSelected("orders") ? checkbox : checkboxOutline} />
         </IonTabButton>
+        <IonTabButton className="centerTab" tab="products">
+          <IonIcon color="primary" icon={addCircle} />
+        </IonTabButton>
         <IonTabButton tab="products" href="/products">
           <IonIcon
             icon={isSelected("products") ? bagHandle : bagHandleOutline}
-          />
-        </IonTabButton>
-        <IonTabButton tab="notifications" href="/notifications">
-          <IonIcon
-            icon={
-              isSelected("notifications") ? notifications : notificationsOutline
-            }
           />
         </IonTabButton>
         <IonTabButton tab="messenger" href="/messenger">

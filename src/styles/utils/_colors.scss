@@ -1,0 +1,25 @@
+$colors: (
+  "primary": var(--ion-color-primary),
+  "secondary": var(--ion-color-secondary),
+  "success": var(--ion-color-success),
+  "warning": var(--ion-color-warning),
+  "danger": var(--ion-color-danger),
+  "light": var(--ion-color-light),
+  "dark": var(--ion-color-dark),
+  "white": #fff,
+  "black": #000,
+  "transparent": transparent,
+  "current": currentColor,
+  "mute": #fafafa8e,
+  "card": var(--ion-card-background),
+);
+
+@each $property, $value in $colors {
+  .text-#{$property} {
+    color: $value;
+  }
+
+  .bg-#{$property} {
+    background-color: $value;
+  }
+}

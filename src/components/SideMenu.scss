@@ -1,15 +1,37 @@
-// #menu {
-//   * {
-//     --background: transparent;
-//   }
+ion-menu {
+  --background: transparent;
+  --ion-background-color: transparent;
+  --ion-color-base: transparent !important;
 
-//   ion-toolbar {
-//     h5 {
-//       margin-bottom: 0;
-//     }
-//   }
+  &::part(container) {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(8, 11, 15, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
 
-//   ion-list {
-//     background: transparent;
-//   }
-// }
+  ion-toolbar {
+    --background: transparent;
+  }
+
+  ion-item {
+    --background: transparent;
+  }
+
+  ion-list {
+    background-color: transparent !important;
+
+    &:not(:last-child) {
+      border-width: 0 0 0.55px;
+      border-style: solid;
+      border-color: var(
+        --ion-toolbar-border-color,
+        var(--ion-border-color, var(--ion-color-step-150, rgba(0, 0, 0, 0.2)))
+      );
+    }
+  }
+
+  ion-note {
+    color: var(--ion-color-step-500);
+  }
+}

@@ -1,0 +1,23 @@
+$directions: ("row" "row-reverse" "column" "column-reverse");
+
+@each $val in $directions {
+  .flex-#{$val} {
+    flex-direction: #{$val};
+  }
+}
+
+.shrink {
+  flex-shrink: 1;
+}
+
+.shrink-0 {
+  flex-shrink: 0;
+}
+
+.grow {
+  flex-grow: 1;
+}
+
+.grow-0 {
+  flex-grow: 0;
+}

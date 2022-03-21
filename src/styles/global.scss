@@ -1,16 +1,84 @@
-@use "utils/_space";
+@use "utils/space";
 @use "utils/font";
 @use "utils/display";
+@use "utils/colors";
+@use "utils/flex";
+@use "utils/border";
 
-ion-toolbar:not(ion-menu *) ion-avatar {
-  width: 28px;
-  height: 28px;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ion-card-title,
+ion-list-header {
+  font-family: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+ion-header ion-toolbar:not(ion-menu *) {
+  --padding-start: 16px;
+
+  ion-menu-button {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+
+  ion-avatar,
+  ion-thumbnail {
+    width: 32px;
+    height: 32px;
+  }
 }
 
 ion-tab-button ion-icon {
-  font-size: 24px;
+  font-size: 22px;
+}
+ion-card {
+  border-radius: 16px;
+  ion-card-header ion-button {
+    --padding-start: 0;
+    --padding-end: 0;
+    margin-right: -8px;
+  }
 }
 
-ion-menu ion-header * {
-  --background: --ion-color-dark-contrast;
+.bubble {
+  background-color: var(--ion-card-background);
+  padding: 16px;
+  border-radius: 32px 32px 32px 0;
+  position: relative;
+
+  ion-note {
+    color: var(--ion-color-step-800);
+  }
+
+  ::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 100%;
+    border-width: 4px;
+    border-style: solid;
+    border-color: var(--ion-card-background) transparent transparent
+      var(--ion-card-background);
+    border-bottom-left-radius: 2px;
+  }
+}
+
+ion-popover {
+  ion-list {
+    background-color: transparent !important;
+    ion-item {
+      --background: transparent;
+    }
+  }
+}
+
+ion-popover::part(content) {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(8, 11, 15, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.04);
 }
