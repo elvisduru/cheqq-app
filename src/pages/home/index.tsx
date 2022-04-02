@@ -5,7 +5,6 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
-  IonImg,
   IonItem,
   IonLabel,
   IonList,
@@ -14,21 +13,15 @@ import {
   IonNote,
   IonPage,
   IonThumbnail,
-  IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { format } from "date-fns";
+import { notifications } from "ionicons/icons";
 import { Link } from "react-router-dom";
+import { User } from "../../App";
 import ChartCard from "../../components/ChartCard";
 import { getCurrentDayPeriod } from "../../utils";
 import "./index.scss";
-import { format } from "date-fns";
-import { User } from "../../App";
-import Logo from "../../assets/images/logo.svg";
-import {
-  ellipsisHorizontal,
-  ellipsisVertical,
-  notifications,
-} from "ionicons/icons";
 
 const Home: React.FC = () => {
   const orders = [
@@ -89,7 +82,7 @@ const Home: React.FC = () => {
       createdAt: "2022-02-19T10:00:00.000Z",
     },
     {
-      orderId: "#774312",
+      orderId: "#774316",
       customer: {
         firstName: "John",
         lastName: "Doe",
@@ -111,7 +104,7 @@ const Home: React.FC = () => {
       createdAt: "2022-02-18T10:00:00.000Z",
     },
     {
-      orderId: "#774312",
+      orderId: "#774313",
       customer: {
         firstName: "John",
         lastName: "Doe",

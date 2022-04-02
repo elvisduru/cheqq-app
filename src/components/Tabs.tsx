@@ -11,7 +11,6 @@ import {
 } from "@ionic/react";
 import {
   addCircle,
-  addOutline,
   bagHandle,
   bagHandleOutline,
   chatbubble,
@@ -20,18 +19,16 @@ import {
   checkboxOutline,
   home,
   homeOutline,
-  notifications,
-  notificationsOutline,
-  pulse,
 } from "ionicons/icons";
 import { Redirect, Route, useLocation } from "react-router-dom";
+import NotFoundPage from "../pages/404";
 import Home from "../pages/home";
 import Messenger from "../pages/messenger";
 import Notifications from "../pages/notifications";
 import Orders from "../pages/orders";
 import Products from "../pages/products";
-import "./Tabs.scss";
 import Product from "../pages/products/product";
+import "./Tabs.scss";
 
 export default function Tabs() {
   const location = useLocation();
@@ -61,19 +58,14 @@ export default function Tabs() {
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route path="/:tab(home)" component={Home} exact={true} />
-        <Route path="/:tab(orders)" component={Orders} exact={true} />
-        <Route path="/:tab(products)" component={Products} exact={true} />
-        <Route path="/:tab(products)/:id" component={Product} exact={true} />
-        <Route
-          path="/:tab(notifications)"
-          component={Notifications}
-          exact={true}
-        />
-        <Route path="/:tab(messenger)" component={Messenger} exact={true} />
-        <Route exact path="/">
-          <Redirect to="/home" />
-        </Route>
+        <Route path="/:tab(home)" render={() => <Home />} />
+        <Route path="/:tab(orders)" render={() => <Orders />} />
+        <Route path="/:tab(products)" render={() => <Products />} exact />
+        <Route path="/:tab(products)/:id" render={() => <Product />} />
+        <Route path="/:tab(notifications)" render={() => <Notifications />} />
+        <Route path="/:tab(messenger)" render={() => <Messenger />} />
+        <Route path="/" render={() => <Redirect to="/home" />} exact />
+        {/* <Route render={() => <NotFoundPage />} /> */}
       </IonRouterOutlet>
       <IonTabBar slot="bottom" translucent>
         <IonTabButton tab="home" href="/home">

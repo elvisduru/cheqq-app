@@ -1,1 +1,6 @@
-{}
+{
+	"appId": "co.cheqq.cheqq",
+	"appName": "cheqq-app",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}

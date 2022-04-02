@@ -2,12 +2,9 @@ import {
   IonButton,
   IonCard,
   IonCardHeader,
-  IonContent,
   IonIcon,
   IonItem,
-  IonLabel,
   IonList,
-  IonListHeader,
   IonNote,
   IonPopover,
 } from "@ionic/react";

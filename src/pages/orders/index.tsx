@@ -4,7 +4,6 @@ import {
   IonContent,
   IonGrid,
   IonHeader,
-  IonIcon,
   IonMenuButton,
   IonPage,
   IonRow,
@@ -25,7 +24,7 @@ const Orders: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user.avatar} />
+                <img src={user.avatar} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

@@ -17,6 +17,10 @@ ion-list-header {
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+ion-back-button {
+  --color: var(--ion-color-dark-shade);
+}
+
 ion-header ion-toolbar:not(ion-menu *) {
   --padding-start: 16px;
 
@@ -81,4 +85,28 @@ ion-popover::part(content) {
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   background-color: rgba(8, 11, 15, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.custom-card {
+  padding: 32px 16px;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(8, 11, 15, 0.87);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+
+  ion-button {
+    margin-top: 16px;
+    ion-label {
+      margin-left: -16px;
+    }
+  }
+}
+
+ion-item.input {
+  --background: var(--ion-color-base, #e8f2ef);
+  --color: #000000;
+  &::part(native) {
+    border-radius: 10px;
+  }
 }

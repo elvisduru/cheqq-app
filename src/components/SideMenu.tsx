@@ -9,7 +9,6 @@ import {
   IonList,
   IonMenu,
   IonNote,
-  IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import {
@@ -20,10 +19,7 @@ import {
   bulbOutline,
   cashOutline,
   cogOutline,
-  happyOutline,
   help,
-  libraryOutline,
-  manOutline,
   peopleOutline,
   personOutline,
   readerOutline,

@@ -18,14 +18,19 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import "./App.css";
+import profilePic from "./assets/images/profile-sqr.jpg";
+import ProtectedRoute from "./components/ProtectedRoute";
 import SideMenu from "./components/SideMenu";
 import Tabs from "./components/Tabs";
+import Confirm from "./pages/auth/confirm";
+import Login from "./pages/auth/login";
+import New from "./pages/auth/new";
+import SignUp from "./pages/auth/signup";
+import "./styles/global.scss";
 /* Theme variables */
 import "./theme/variables.css";
-import "./styles/global.scss";
-import profilePic from "./assets/images/profile-sqr.jpg";
 
 setupIonicReact({
   mode: "ios",
@@ -38,13 +43,27 @@ export const User = {
 };
 
 const App: React.FC = () => {
+  const isLoggedIn = false;
   return (
     <IonApp>
       <IonReactRouter>
-        <IonSplitPane contentId="main">
+        <IonSplitPane disabled={!isLoggedIn} contentId="main">
           <SideMenu user={User} contentId="main" />
           <IonRouterOutlet id="main">
-            <Route path="/" component={Tabs} />
+            <Route
+              path="/"
+              exact={!isLoggedIn}
+              render={() => (
+                <ProtectedRoute redirectPath="/signup" isAllowed={isLoggedIn}>
+                  <Tabs />
+                </ProtectedRoute>
+              )}
+            />
+            <Route path="/signup" component={SignUp} />
+            <Route path="/login" component={Login} />
+            <Route path="/confirm" component={Confirm} />
+            <Route path="/new" component={New} />
+            <Route render={() => <Redirect to="/signup" />} />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>
