@@ -5,6 +5,7 @@ import {
   IonContent,
   IonHeader,
   IonPage,
+  IonRouterLink,
   IonTitle,
   IonToolbar,
   useIonRouter,
@@ -13,7 +14,7 @@ import {
   useIonViewWillLeave,
 } from "@ionic/react";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useCountdown from "../../hooks/useCountdown";
 import useQuery from "../../hooks/useQuery";
 import appwrite from "../../lib/appwrite";
@@ -55,26 +56,39 @@ export default function Confirm() {
           secret
         );
         if (res) {
-          const user = await appwrite.account.get();
-          if (!user.name) {
-            router.push("/new");
-          }
+          present({
+            duration: 1500,
+            message: "Signed in successfully!",
+            color: "dark",
+            onWillDismiss: async () => {
+              const user = await appwrite.account.get();
+              if (!user.name) {
+                router.push("/new");
+              } else {
+                // TODO: set user in state
+              }
+            },
+          });
         }
       }
     } catch (error) {
       console.log(error);
       present({
-        message: "Something went wrong. Please try again.",
+        message: "We couldn't confirm your email. Please try again.",
         buttons: [
           {
             text: "Retry",
             handler: async () => {
-              await appwrite.account.createMagicURLSession(
-                "unique()",
-                email!,
-                `${process.env.REACT_APP_BASE_URL}/confirm`
-              );
-              dismiss();
+              if (email) {
+                await appwrite.account.createMagicURLSession(
+                  "unique()",
+                  email!,
+                  `${process.env.REACT_APP_BASE_URL}/confirm`
+                );
+                dismiss();
+              } else {
+                router.push("/login", "back");
+              }
             },
           },
         ],
@@ -96,10 +110,12 @@ export default function Confirm() {
         <div className="flex flex-column h-full ion-padding">
           <h2>Check your Email</h2>
           <div className="text-mute leading-normal mt-0">
-            <p>We've sent an email to {email}.</p>
+            {email && <p>We've sent an email to {email}.</p>}
             <p>
-              Didn't get the email? Check your spam or{" "}
-              <Link to="/login">try another address.</Link>
+              Didn't get an email? Check your spam or{" "}
+              <IonRouterLink routerLink="/login" routerDirection="back">
+                try another address.
+              </IonRouterLink>
             </p>
           </div>
 
@@ -110,11 +126,15 @@ export default function Confirm() {
             onClick={async () => {
               reset();
               start();
-              await appwrite.account.createMagicURLSession(
-                "unique()",
-                email!,
-                `${process.env.REACT_APP_BASE_URL}/confirm`
-              );
+              if (email) {
+                await appwrite.account.createMagicURLSession(
+                  "unique()",
+                  email,
+                  `${process.env.REACT_APP_BASE_URL}/confirm`
+                );
+              } else {
+                router.push("/login", "back");
+              }
             }}
           >
             {count > 0 ? `Resend email in ${count}s` : "Resend email"}

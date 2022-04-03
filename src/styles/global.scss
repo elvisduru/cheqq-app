@@ -4,6 +4,8 @@
 @use "utils/colors";
 @use "utils/flex";
 @use "utils/border";
+@use "utils/position";
+@use "utils/shadow";
 
 h1,
 h2,
@@ -104,8 +106,6 @@ ion-popover::part(content) {
 }
 
 ion-item.input {
-  --background: var(--ion-color-base, #e8f2ef);
-  --color: #000000;
   &::part(native) {
     border-radius: 10px;
   }

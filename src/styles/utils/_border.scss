@@ -90,3 +90,7 @@ $radii: (
     border-bottom-right-radius: $val;
   }
 }
+
+.border {
+  border: 1px solid var(--ion-color-dark);
+}

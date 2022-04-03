@@ -39,6 +39,22 @@ $spaceAmounts: (0, 1, 2, 3, 4, 5, 6, 7, 8, auto, full);
     .mb-#{$space} {
       margin-bottom: #{$space};
     }
+
+    .top-#{$space} {
+      top: #{$space};
+    }
+
+    .right-#{$space} {
+      right: #{$space};
+    }
+
+    .bottom-#{$space} {
+      bottom: #{$space};
+    }
+
+    .left-#{$space} {
+      left: #{$space};
+    }
   } @else {
     .m-#{$space} {
       margin: #{$space}rem;
@@ -110,6 +126,22 @@ $spaceAmounts: (0, 1, 2, 3, 4, 5, 6, 7, 8, auto, full);
 
     .min-h-#{$space} {
       min-height: #{$space}rem;
+    }
+
+    .top-#{$space} {
+      top: #{$space}rem;
+    }
+
+    .right-#{$space} {
+      right: #{$space}rem;
+    }
+
+    .bottom-#{$space} {
+      bottom: #{$space}rem;
+    }
+
+    .left-#{$space} {
+      left: #{$space}rem;
     }
   }
 }

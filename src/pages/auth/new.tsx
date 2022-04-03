@@ -4,14 +4,27 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonPage,
+  IonThumbnail,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import {
+  addCircle,
+  imageOutline,
+  person,
+  personAddOutline,
+  personCircle,
+  personCircleOutline,
+  personCircleSharp,
+  personOutline,
+  personSharp,
+} from "ionicons/icons";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import AvatarUpload from "../../components/AvatarUpload";
 
 export default function New() {
   const [name, setName] = useState<string>("");
@@ -35,6 +48,7 @@ export default function New() {
               to introduce yourself.
             </p>
           </div>
+          <AvatarUpload />
           <IonItem className="input" fill="outline" mode="md">
             <IonInput
               required
@@ -43,7 +57,13 @@ export default function New() {
               placeholder="Full name"
             />
           </IonItem>
-          <IonButton className="mt-1" expand="block">
+          <IonButton
+            className="mt-1"
+            expand="block"
+            onClick={() => {
+              // TODO: Send welcome email
+            }}
+          >
             Done
           </IonButton>
         </div>

@@ -1,0 +1,7 @@
+$position: (static, absolute, relative, fixed, sticky);
+
+@each $val in $position {
+  .#{$val} {
+    position: $val;
+  }
+}

@@ -50,5 +50,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>To take photos</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>To save photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To access photos</string>
 </dict>
 </plist>

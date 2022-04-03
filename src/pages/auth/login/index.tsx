@@ -8,6 +8,7 @@ import {
   IonItem,
   IonLabel,
   IonPage,
+  IonRouterLink,
   IonTitle,
   IonToolbar,
   useIonRouter,
@@ -77,9 +78,9 @@ export default function Login() {
               onIonChange={(e) => setEmail(e.detail.value!)}
               type="email"
               placeholder="Email (personal or work)"
+              value={email}
             />
           </IonItem>
-
           <IonButton
             disabled={!email}
             className="mt-1"
@@ -88,6 +89,12 @@ export default function Login() {
           >
             Send Magic Link
           </IonButton>
+          {
+            // HACK: This is a hack to get to the /new route
+            <IonRouterLink className="mt-4 ion-text-center" routerLink="/new">
+              Skip to New page
+            </IonRouterLink>
+          }
         </div>
       </IonContent>
     </IonPage>
