@@ -14,10 +14,10 @@ import {
   useIonViewWillLeave,
 } from "@ionic/react";
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
 import useCountdown from "../../hooks/useCountdown";
 import useQuery from "../../hooks/useQuery";
 import appwrite from "../../lib/appwrite";
+import { Storage } from "@capacitor/storage";
 
 export default function Confirm() {
   const query = useQuery();
@@ -62,10 +62,14 @@ export default function Confirm() {
             color: "dark",
             onWillDismiss: async () => {
               const user = await appwrite.account.get();
+              await Storage.set({
+                key: "user",
+                value: JSON.stringify(user),
+              });
               if (!user.name) {
                 router.push("/new");
               } else {
-                // TODO: set user in state
+                router.push("/");
               }
             },
           });

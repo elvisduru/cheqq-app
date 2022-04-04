@@ -21,7 +21,6 @@ import {
   homeOutline,
 } from "ionicons/icons";
 import { Redirect, Route, useLocation } from "react-router-dom";
-import NotFoundPage from "../pages/404";
 import Home from "../pages/home";
 import Messenger from "../pages/messenger";
 import Notifications from "../pages/notifications";

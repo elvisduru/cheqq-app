@@ -5,6 +5,7 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import { Storage } from "@capacitor/storage";
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/display.css";
@@ -31,6 +32,8 @@ import SignUp from "./pages/auth/signup";
 import "./styles/global.scss";
 /* Theme variables */
 import "./theme/variables.css";
+import { useStorageItem } from "@capacitor-community/storage-react";
+import { useEffect } from "react";
 
 setupIonicReact({
   mode: "ios",
@@ -43,18 +46,18 @@ export const User = {
 };
 
 const App: React.FC = () => {
-  const isLoggedIn = false;
+  const [user] = useStorageItem("user");
   return (
     <IonApp>
       <IonReactRouter>
-        <IonSplitPane disabled={!isLoggedIn} contentId="main">
+        <IonSplitPane disabled={!user} contentId="main">
           <SideMenu user={User} contentId="main" />
           <IonRouterOutlet id="main">
             <Route
               path="/"
-              exact={!isLoggedIn}
+              exact={!user}
               render={() => (
-                <ProtectedRoute redirectPath="/signup" isAllowed={isLoggedIn}>
+                <ProtectedRoute redirectPath="/signup" isAllowed={!!user}>
                   <Tabs />
                 </ProtectedRoute>
               )}
