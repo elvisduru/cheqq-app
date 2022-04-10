@@ -2,5 +2,10 @@
 	"appId": "co.cheqq.cheqq",
 	"appName": "cheqq-app",
 	"webDir": "build",
-	"bundledWebRuntime": false
+	"bundledWebRuntime": false,
+	"plugins": {
+		"SplashScreen": {
+			"androidScaleType": "CENTER_CROP"
+		}
+	}
 }

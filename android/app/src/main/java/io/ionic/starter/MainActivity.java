@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package co.cheqq.cheqq;
 
 import com.getcapacitor.BridgeActivity;
 

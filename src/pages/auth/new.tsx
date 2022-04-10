@@ -1,4 +1,3 @@
-import { useStorageItem } from "@capacitor-community/storage-react";
 import {
   IonBackButton,
   IonButton,
@@ -11,12 +10,11 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useState } from "react";
-import AvatarUpload from "../../components/AvatarUpload";
 import { useForm } from "react-hook-form";
+import AvatarUpload from "../../components/AvatarUpload";
 
 export default function New() {
-  const [user] = useStorageItem("user");
+  const user = null;
 
   const { register, setValue, handleSubmit, watch } = useForm();
 
@@ -24,7 +22,7 @@ export default function New() {
   console.log("avatar", watch("avatar"));
 
   return (
-    <IonPage id="login">
+    <IonPage id="new">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">

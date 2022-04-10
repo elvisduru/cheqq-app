@@ -3,6 +3,11 @@
 	"appName": "cheqq-app",
 	"webDir": "build",
 	"bundledWebRuntime": false,
+	"plugins": {
+		"SplashScreen": {
+			"androidScaleType": "CENTER_CROP"
+		}
+	},
 	"server": {
 		"url": "http://192.168.0.145:8100"
 	}

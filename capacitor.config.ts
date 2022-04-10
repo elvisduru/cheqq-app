@@ -5,6 +5,11 @@ const config: CapacitorConfig = {
   appName: "cheqq-app",
   webDir: "build",
   bundledWebRuntime: false,
+  plugins: {
+    SplashScreen: {
+      androidScaleType: "CENTER_CROP",
+    },
+  },
 };
 
 export default config;

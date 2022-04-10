@@ -32,8 +32,6 @@ import SignUp from "./pages/auth/signup";
 import "./styles/global.scss";
 /* Theme variables */
 import "./theme/variables.css";
-import { useStorageItem } from "@capacitor-community/storage-react";
-import { useEffect } from "react";
 
 setupIonicReact({
   mode: "ios",
@@ -46,7 +44,7 @@ export const User = {
 };
 
 const App: React.FC = () => {
-  const [user] = useStorageItem("user");
+  const user = null;
   return (
     <IonApp>
       <IonReactRouter>
