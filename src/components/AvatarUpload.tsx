@@ -1,11 +1,14 @@
 import { IonIcon, IonThumbnail } from "@ionic/react";
 import { addCircle, person } from "ionicons/icons";
 import { useEffect } from "react";
-import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { UseFormSetValue } from "react-hook-form";
 import usePhotoGallery from "../hooks/usePhotoGallery";
 
 type Props = {
-  setValue: UseFormSetValue<FieldValues>;
+  setValue: UseFormSetValue<{
+    name: string;
+    avatar: File;
+  }>;
 };
 
 export default function AvatarUpload({ setValue }: Props) {
@@ -14,7 +17,7 @@ export default function AvatarUpload({ setValue }: Props) {
     if (file) {
       setValue("avatar", file);
     }
-  }, [file]);
+  }, [file, setValue]);
   return (
     <IonThumbnail
       onClick={takePhoto}

@@ -11,6 +11,7 @@ import {
   IonNote,
   IonToolbar,
 } from "@ionic/react";
+import { Models } from "appwrite";
 import {
   albumsOutline,
   analyticsOutline,
@@ -27,30 +28,27 @@ import {
 } from "ionicons/icons";
 import "./SideMenu.scss";
 
-type User = {
-  firstName: string;
-  lastName: string;
-  avatar: string;
-};
-
 type Props = {
-  user: User;
+  user?: Models.User<Record<string, any>>;
   contentId: string;
 };
 
 export default function SideMenu({ user, contentId }: Props) {
   return (
-    <IonMenu side="start" contentId={contentId}>
+    <IonMenu
+      side="start"
+      contentId={contentId}
+      disabled={!user?.name}
+      draggable={!user?.name}
+    >
       <IonHeader>
         <IonToolbar className="ion-no-padding ion-padding-vertical">
           <IonItem lines="none">
             <div>
               <IonAvatar className="ion-margin-bottom">
-                <img src={user.avatar} alt="" />
+                <img src={user?.prefs.avatar} alt="" />
               </IonAvatar>
-              <IonLabel>
-                {user.firstName} {user.lastName}
-              </IonLabel>
+              <IonLabel>{user?.name}</IonLabel>
               <IonNote>@elvisduru</IonNote>
               <p className="flex ion-justify-content-between w-full">
                 <span>

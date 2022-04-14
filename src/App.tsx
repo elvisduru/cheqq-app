@@ -5,7 +5,6 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { Storage } from "@capacitor/storage";
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/display.css";
@@ -19,12 +18,14 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
-import { Route, Redirect } from "react-router-dom";
+import { Models } from "appwrite";
+import { Redirect, Route } from "react-router-dom";
 import "./App.css";
 import profilePic from "./assets/images/profile-sqr.jpg";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SideMenu from "./components/SideMenu";
 import Tabs from "./components/Tabs";
+import { useStorageItem } from "./hooks/useStorage";
 import Confirm from "./pages/auth/confirm";
 import Login from "./pages/auth/login";
 import New from "./pages/auth/new";
@@ -44,18 +45,18 @@ export const User = {
 };
 
 const App: React.FC = () => {
-  const user = null;
+  const [user] = useStorageItem<Models.User<Record<string, any>>>("user");
   return (
     <IonApp>
       <IonReactRouter>
-        <IonSplitPane disabled={!user} contentId="main">
-          <SideMenu user={User} contentId="main" />
+        <IonSplitPane contentId="main">
+          <SideMenu user={user} contentId="main" />
           <IonRouterOutlet id="main">
             <Route
               path="/"
               exact={!user}
               render={() => (
-                <ProtectedRoute redirectPath="/signup" isAllowed={!!user}>
+                <ProtectedRoute redirectPath="/signup" isAllowed={true}>
                   <Tabs />
                 </ProtectedRoute>
               )}
@@ -64,7 +65,7 @@ const App: React.FC = () => {
             <Route path="/login" component={Login} />
             <Route path="/confirm" component={Confirm} />
             <Route path="/new" component={New} />
-            <Route render={() => <Redirect to="/signup" />} />
+            <Route render={() => <Redirect to="/" />} />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>

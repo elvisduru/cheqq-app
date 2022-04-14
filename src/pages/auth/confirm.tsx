@@ -16,10 +16,11 @@ import {
 import { useEffect } from "react";
 import useCountdown from "../../hooks/useCountdown";
 import useQuery from "../../hooks/useQuery";
+import { useStorage } from "../../hooks/useStorage";
 import appwrite from "../../lib/appwrite";
-import { Storage } from "@capacitor/storage";
 
 export default function Confirm() {
+  const { set } = useStorage();
   const query = useQuery();
   const email = query.get("email");
   const userId = query.get("userId");
@@ -62,10 +63,7 @@ export default function Confirm() {
             color: "dark",
             onWillDismiss: async () => {
               const user = await appwrite.account.get();
-              await Storage.set({
-                key: "user",
-                value: JSON.stringify(user),
-              });
+              await set("user", JSON.stringify(user));
               if (!user.name) {
                 router.push("/new");
               } else {
