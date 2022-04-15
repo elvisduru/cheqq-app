@@ -3,7 +3,7 @@ import { Appwrite } from "appwrite";
 const appwrite = new Appwrite();
 
 appwrite
-  .setEndpoint("https://appwrite.elvisduru.com/v1")
-  .setProject("62485dcf50c2ac8e67ac");
+  .setEndpoint(process.env.REACT_APP_APPWRITE_ENDPOINT!)
+  .setProject(process.env.REACT_APP_APPWRITE_PROJECT_ID!);
 
 export default appwrite;

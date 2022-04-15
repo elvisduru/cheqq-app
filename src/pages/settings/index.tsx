@@ -1,5 +1,6 @@
 import {
   IonBackButton,
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
@@ -8,13 +9,13 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
-import { User } from "../../utils/types";
+import { useStore } from "../../hooks/useStore";
+import appwrite from "../../lib/appwrite";
 
-type Props = {
-  user: User;
-};
+type Props = {};
 
-const Product: React.FC<Props> = ({ user }) => {
+const Settings: React.FC = (props: Props) => {
+  const { setUser } = useStore();
   return (
     <IonPage>
       <IonHeader>
@@ -22,19 +23,28 @@ const Product: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonBackButton />
           </IonButtons>
-          <IonTitle>Product Details</IonTitle>
+          <IonTitle>Settings</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Product Details</IonTitle>
+            <IonTitle size="large">Settings</IonTitle>
           </IonToolbar>
         </IonHeader>
         <div>Product Details</div>
+        <IonButton
+          onClick={async () => {
+            setUser(null);
+            await appwrite.account.deleteSession("current");
+          }}
+          routerLink="/signup"
+        >
+          Logout
+        </IonButton>
       </IonContent>
     </IonPage>
   );
 };
 
-export default Product;
+export default Settings;

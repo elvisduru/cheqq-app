@@ -1,19 +1,24 @@
-import React from "react";
+import { Models } from "appwrite";
 import { Redirect } from "react-router-dom";
+import { User } from "../utils/types";
 
 type Props = {
-  isAllowed: boolean;
+  user: User;
   redirectPath: string;
   children: JSX.Element;
 };
 
 export default function ProtectedRoute({
-  isAllowed,
+  user,
   redirectPath,
   children,
 }: Props) {
-  if (!isAllowed) {
+  if (!user) {
     return <Redirect to={redirectPath} />;
+  }
+
+  if (!user.name) {
+    return <Redirect to="/new" />;
   }
 
   return children;

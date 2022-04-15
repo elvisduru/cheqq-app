@@ -6,9 +6,16 @@ import {
   IonPage,
 } from "@ionic/react";
 import { logoApple, logoFacebook, logoGoogle } from "ionicons/icons";
+import { Redirect } from "react-router";
+import { useStore } from "../../../hooks/useStore";
 import "./index.scss";
 
 export default function SignUp() {
+  const { user } = useStore();
+  if (user) {
+    return <Redirect to="/" />;
+  }
+
   return (
     <IonPage id="signup">
       <IonContent fullscreen>

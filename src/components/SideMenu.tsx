@@ -26,27 +26,35 @@ import {
   readerOutline,
   searchOutline,
 } from "ionicons/icons";
+import { useRef } from "react";
+import { User } from "../utils/types";
 import "./SideMenu.scss";
 
 type Props = {
-  user?: Models.User<Record<string, any>>;
+  user: User;
   contentId: string;
 };
 
 export default function SideMenu({ user, contentId }: Props) {
+  const menuRef = useRef<HTMLIonMenuElement>(null);
+
   return (
     <IonMenu
       side="start"
       contentId={contentId}
       disabled={!user?.name}
       draggable={!user?.name}
+      ref={menuRef}
     >
       <IonHeader>
         <IonToolbar className="ion-no-padding ion-padding-vertical">
           <IonItem lines="none">
             <div>
               <IonAvatar className="ion-margin-bottom">
-                <img src={user?.prefs.avatar} alt="" />
+                <img
+                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${process.env.REACT_APP_APPWRITE_BUCKET_CHEQQ}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
+                  alt="avatar"
+                />
               </IonAvatar>
               <IonLabel>{user?.name}</IonLabel>
               <IonNote>@elvisduru</IonNote>
@@ -63,7 +71,7 @@ export default function SideMenu({ user, contentId }: Props) {
           </IonItem>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent fullscreen onClick={() => menuRef.current?.close()}>
         <IonList lines="none" className="ion-padding-vertical">
           <IonItem button>
             <IonIcon icon={personOutline} slot="start" />
@@ -105,7 +113,7 @@ export default function SideMenu({ user, contentId }: Props) {
           </IonItem>
         </IonList>
         <IonList lines="none" className="ion-padding-vertical">
-          <IonItem button>
+          <IonItem button routerLink="/settings">
             <IonIcon icon={cogOutline} slot="start" />
             <IonLabel>Settings</IonLabel>
           </IonItem>

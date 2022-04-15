@@ -18,12 +18,16 @@ import {
 import { format } from "date-fns";
 import { notifications } from "ionicons/icons";
 import { Link } from "react-router-dom";
-import { User } from "../../App";
 import ChartCard from "../../components/ChartCard";
 import { getCurrentDayPeriod } from "../../utils";
+import { User } from "../../utils/types";
 import "./index.scss";
 
-const Home: React.FC = () => {
+type Props = {
+  user: User;
+};
+
+const Home: React.FC<Props> = ({ user }) => {
   const orders = [
     {
       orderId: "#774312",
@@ -144,7 +148,6 @@ const Home: React.FC = () => {
     }[];
     createdAt: string;
   };
-
   return (
     <IonPage id="home">
       <IonHeader collapse="fade" translucent>
@@ -152,7 +155,10 @@ const Home: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={User.avatar} alt="avatar" />
+                <img
+                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${process.env.REACT_APP_APPWRITE_BUCKET_CHEQQ}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
+                  alt="avatar"
+                />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>
@@ -165,7 +171,7 @@ const Home: React.FC = () => {
         <div className="ion-padding">
           <h3>
             Good {getCurrentDayPeriod()},{" "}
-            <span className="font-light">{User.firstName}</span>
+            <span className="font-light">{user?.name.split(" ")[0]}</span>
           </h3>
           <div className="bubble">
             <IonNote>

@@ -13,18 +13,21 @@ import {
   useIonViewDidEnter,
   useIonViewWillLeave,
 } from "@ionic/react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Redirect } from "react-router";
 import useCountdown from "../../hooks/useCountdown";
 import useQuery from "../../hooks/useQuery";
-import { useStorage } from "../../hooks/useStorage";
+import { useStore } from "../../hooks/useStore";
 import appwrite from "../../lib/appwrite";
 
 export default function Confirm() {
-  const { set } = useStorage();
+  const { user, setUser } = useStore();
+  const [fresh, setFresh] = useState(false);
   const query = useQuery();
   const email = query.get("email");
   const userId = query.get("userId");
   const secret = query.get("secret");
+
   const router = useIonRouter();
 
   const [present, dismiss] = useIonToast();
@@ -49,8 +52,10 @@ export default function Confirm() {
     reset();
   });
 
-  const confirmMagicLink = async () => {
+  const confirmMagicLink = useCallback(async () => {
     try {
+      if (user) return;
+      console.log("confirming magic link...");
       if (userId && secret) {
         const res = await appwrite.account.updateMagicURLSession(
           userId,
@@ -63,11 +68,10 @@ export default function Confirm() {
             color: "dark",
             onWillDismiss: async () => {
               const user = await appwrite.account.get();
-              await set("user", JSON.stringify(user));
               if (!user.name) {
-                router.push("/new");
+                setFresh(true);
               } else {
-                router.push("/");
+                setUser(user);
               }
             },
           });
@@ -85,7 +89,9 @@ export default function Confirm() {
                 await appwrite.account.createMagicURLSession(
                   "unique()",
                   email!,
-                  `${process.env.REACT_APP_BASE_URL}/confirm`
+                  `${
+                    "https://cheqq.me" || process.env.REACT_APP_BASE_URL
+                  }/confirm`
                 );
                 dismiss();
               } else {
@@ -96,7 +102,20 @@ export default function Confirm() {
         ],
       });
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email, secret, userId]);
+
+  useEffect(() => {
+    confirmMagicLink();
+  }, [userId, secret, confirmMagicLink]);
+
+  if (user) {
+    return <Redirect to="/" />;
+  }
+
+  if (fresh) {
+    return <Redirect to="/new" />;
+  }
 
   return (
     <IonPage id="confirm">

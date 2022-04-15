@@ -1,14 +1,11 @@
 import {
-  BackButtonEvent,
   IonIcon,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
   IonTabs,
-  useIonRouter,
-  useIonViewDidEnter,
-  useIonViewWillLeave,
 } from "@ionic/react";
+import { Models } from "appwrite";
 import {
   addCircle,
   bagHandle,
@@ -27,44 +24,46 @@ import Notifications from "../pages/notifications";
 import Orders from "../pages/orders";
 import Products from "../pages/products";
 import Product from "../pages/products/product";
+import Settings from "../pages/settings";
+import { User } from "../utils/types";
 import "./Tabs.scss";
 
-export default function Tabs() {
+type Props = {
+  user: User;
+};
+
+export default function Tabs({ user }: Props) {
   const location = useLocation();
   const isSelected = (tab: string) => {
     if (tab === "home" && location.pathname === "/") return true;
     return tab === location.pathname.split("/")[1];
   };
 
-  const ionRouter = useIonRouter();
-
-  const handleBackButton = (ev: Event) => {
-    (ev as BackButtonEvent).detail.register(0, () => {
-      if (ionRouter.routeInfo.pathname === "/home") {
-        alert("You're home");
-      }
-    });
-  };
-
-  useIonViewDidEnter(() => {
-    document.addEventListener("ionBackButton", handleBackButton);
-  });
-
-  useIonViewWillLeave(() => {
-    document.removeEventListener("ionBackButton", handleBackButton);
-  });
-
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route path="/:tab(home)" render={() => <Home />} />
-        <Route path="/:tab(orders)" render={() => <Orders />} />
-        <Route path="/:tab(products)" render={() => <Products />} exact />
-        <Route path="/:tab(products)/:id" render={() => <Product />} />
-        <Route path="/:tab(notifications)" render={() => <Notifications />} />
-        <Route path="/:tab(messenger)" render={() => <Messenger />} />
-        <Route path="/" render={() => <Redirect to="/home" />} exact />
-        {/* <Route render={() => <NotFoundPage />} /> */}
+        {/* <Redirect exact path="/" to="/home" /> */}
+        <Route path="/:tab(home)" render={() => <Home user={user} />} />
+        <Route path="/:tab(orders)" render={() => <Orders user={user} />} />
+        <Route
+          path="/:tab(products)"
+          render={() => <Products user={user} />}
+          exact
+        />
+        <Route
+          path="/:tab(products)/:id"
+          render={() => <Product user={user} />}
+        />
+        <Route
+          path="/:tab(notifications)"
+          render={() => <Notifications user={user} />}
+        />
+        <Route
+          path="/:tab(messenger)"
+          render={() => <Messenger user={user} />}
+        />
+        <Route path="/settings" component={Settings} />
+        <Route render={() => <Redirect to="/home" />} />
       </IonRouterOutlet>
       <IonTabBar slot="bottom" translucent>
         <IonTabButton tab="home" href="/home">

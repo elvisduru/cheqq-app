@@ -10,13 +10,13 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { User } from "../../utils/types";
 
-const Orders: React.FC = () => {
-  const user = {
-    firstName: "John",
-    lastName: "Doe",
-    avatar: "https://randomuser.me/api/portraits/men/86.jpg",
-  };
+type Props = {
+  user: User;
+};
+
+const Orders: React.FC<Props> = ({ user }) => {
   return (
     <IonPage id="orders">
       <IonHeader collapse="fade" translucent>
@@ -24,7 +24,10 @@ const Orders: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user.avatar} alt="avatar" />
+                <img
+                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${process.env.REACT_APP_APPWRITE_BUCKET_CHEQQ}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
+                  alt="avatar"
+                />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

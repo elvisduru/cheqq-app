@@ -10,18 +10,18 @@ import {
   IonSpinner,
   IonTitle,
   IonToolbar,
-  useIonRouter,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Redirect } from "react-router-dom";
 import AvatarUpload from "../../components/AvatarUpload";
 import useBoolean from "../../hooks/useBoolean";
-import { useStorage } from "../../hooks/useStorage";
+import { useStore } from "../../hooks/useStore";
 import appwrite from "../../lib/appwrite";
 
 export default function New() {
-  const { set } = useStorage();
-  const router = useIonRouter();
+  const { user, setUser } = useStore();
+  const [name, setName] = useState("");
   type FormValues = {
     name: string;
     avatar: File;
@@ -54,13 +54,18 @@ export default function New() {
     await appwrite.account.updateName(data.name);
     await appwrite.account.updatePrefs({ avatar: response.$id });
     const updatedUser = await appwrite.account.get();
-    await set("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
     toggle();
-    router.push("/");
+    setName(data.name);
   };
   const onError = (error: any) => {
     console.log(error);
   };
+
+  if (user?.name || name) {
+    return <Redirect to="/" />;
+  }
+
   return (
     <IonPage id="new">
       <IonHeader>
