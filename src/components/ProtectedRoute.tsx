@@ -6,12 +6,14 @@ type Props = {
   user: User;
   redirectPath: string;
   children: JSX.Element;
+  disableExtraRedirect?: boolean;
 };
 
 export default function ProtectedRoute({
   user,
   redirectPath,
   children,
+  disableExtraRedirect = false,
 }: Props) {
   if (!user) {
     return <Redirect to={redirectPath} />;
@@ -19,6 +21,10 @@ export default function ProtectedRoute({
 
   if (!user.name) {
     return <Redirect to="/new" />;
+  }
+
+  if (!disableExtraRedirect && !user.prefs.store) {
+    return <Redirect to="/store/new" />;
   }
 
   return children;

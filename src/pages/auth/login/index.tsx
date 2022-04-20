@@ -64,7 +64,7 @@ export default function Login() {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton text="" />
+            <IonBackButton />
           </IonButtons>
           <IonTitle>Log in</IonTitle>
         </IonToolbar>
@@ -72,7 +72,7 @@ export default function Login() {
       <IonContent fullscreen>
         <div className="flex flex-column h-full ion-padding">
           <h2>Welcome to Cheqq</h2>
-          <div className="text-mute leading-normal mt-0">
+          <div className="text-gray leading-normal mt-0">
             <p>Cheqq is the home for all your business needs.</p>
             <p>To sign up or log in, enter your email.</p>
           </div>

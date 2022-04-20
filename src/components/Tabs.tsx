@@ -25,6 +25,7 @@ import Orders from "../pages/orders";
 import Products from "../pages/products";
 import Product from "../pages/products/product";
 import Settings from "../pages/settings";
+import NewStore from "../pages/store/new";
 import { User } from "../utils/types";
 import "./Tabs.scss";
 
@@ -63,6 +64,7 @@ export default function Tabs({ user }: Props) {
           render={() => <Messenger user={user} />}
         />
         <Route path="/settings" component={Settings} />
+
         <Route render={() => <Redirect to="/home" />} />
       </IonRouterOutlet>
       <IonTabBar slot="bottom" translucent>

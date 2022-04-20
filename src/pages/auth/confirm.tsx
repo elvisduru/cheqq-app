@@ -122,7 +122,7 @@ export default function Confirm() {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton text="" />
+            <IonBackButton />
           </IonButtons>
           <IonTitle>Confirm Email</IonTitle>
         </IonToolbar>
@@ -130,7 +130,7 @@ export default function Confirm() {
       <IonContent fullscreen>
         <div className="flex flex-column h-full ion-padding">
           <h2>Check your Email</h2>
-          <div className="text-mute leading-normal mt-0">
+          <div className="text-gray leading-normal mt-0">
             {email && <p>We've sent an email to {email}.</p>}
             <p>
               Didn't get an email? Check your spam or{" "}

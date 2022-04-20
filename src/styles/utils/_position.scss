@@ -1,7 +1,37 @@
 $position: (static, absolute, relative, fixed, sticky);
+$fit: (contain, cover, fill, none, scale-down);
+$objPosition: (top, bottom, left, right, center);
 
 @each $val in $position {
   .#{$val} {
     position: $val;
+  }
+}
+
+@each $var in $fit {
+  .object-#{$var} {
+    object-fit: $var;
+  }
+}
+
+@each $var in $objPosition {
+  .object-#{$var} {
+    object-position: $var;
+  }
+
+  .object-left-top {
+    object-position: left top;
+  }
+
+  .object-left-bottom {
+    object-position: left bottom;
+  }
+
+  .object-right-top {
+    object-position: right top;
+  }
+
+  .object-right-bottom {
+    object-position: right bottom;
   }
 }

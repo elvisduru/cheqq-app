@@ -109,4 +109,35 @@ ion-item.input {
   &::part(native) {
     border-radius: 10px;
   }
+
+  &.with-focus {
+    .native-input {
+      padding-bottom: 0;
+    }
+  }
+
+  &:not(.item-has-focus) {
+    ion-label {
+      color: var(--ion-color-step-700) !important;
+    }
+  }
+}
+
+
+// Circular progress bar
+.CircularProgressbar {
+  height: 45px;
+  
+  .CircularProgressbar-text {
+    font-size: 30px;
+    fill: var(--ion-color-primary);
+  }
+
+  .CircularProgressbar-path {
+    stroke: var(--ion-color-primary);
+  }
+
+  .CircularProgressbar-trail {
+    stroke: var(--ion-color-light);
+  }
 }

@@ -11,7 +11,6 @@ export default function usePhotoGallery() {
   const [file, setFile] = useState<File>();
   const takePhoto = async () => {
     try {
-      console.log("Taking photo");
       const photo = await Camera.getPhoto({
         quality: 90,
         resultType: CameraResultType.Uri,

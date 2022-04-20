@@ -92,5 +92,43 @@ $radii: (
 }
 
 .border {
-  border: 1px solid var(--ion-color-dark);
+  border: 1px solid var(--ion-color-step-500, gray);
+}
+
+.border-light {
+  border: 1px solid var(--ion-color-light);
+}
+
+.border-b {
+  border-bottom: 1px solid var(--ion-color-step-500, gray);
+}
+
+
+
+.border-l {
+  border-left: 1px solid var(--ion-color-step-500, gray);
+}
+
+.border-r {
+  border-right: 1px solid var(--ion-color-step-500, gray);
+}
+
+.border-t {
+  border-top: 1px solid var(--ion-color-step-500, gray);
+}
+
+.border-b-none {
+  border-bottom: 0;
+}
+
+.border-l-none {
+  border-left: 0;
+}
+
+.border-r-none {
+  border-right: 0;
+}
+
+.border-t-none {
+  border-top: 0;
 }

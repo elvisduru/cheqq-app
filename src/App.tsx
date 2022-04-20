@@ -31,6 +31,7 @@ import Confirm from "./pages/auth/confirm";
 import Login from "./pages/auth/login";
 import New from "./pages/auth/new";
 import SignUp from "./pages/auth/signup";
+import NewStore from "./pages/store/new";
 import "./styles/global.scss";
 /* Theme variables */
 import "./theme/variables.css";
@@ -80,6 +81,18 @@ const App: React.FC = () => {
           <Route path="/login" component={Login} />
           <Route path="/confirm" component={Confirm} />
           <Route path="/new" component={New} />
+          <Route
+            path="/store/new"
+            render={() => (
+              <ProtectedRoute
+                redirectPath="/signup"
+                user={user}
+                disableExtraRedirect
+              >
+                <NewStore />
+              </ProtectedRoute>
+            )}
+          />
           <Route render={() => <Redirect to="/home" />} />
         </IonRouterOutlet>
       </IonSplitPane>

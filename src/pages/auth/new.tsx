@@ -46,7 +46,7 @@ export default function New() {
     toggle();
     // Save avatar to cloud storage
     const response = await appwrite.storage.createFile(
-      "624a379de69288705051",
+      process.env.REACT_APP_APPWRITE_BUCKET_CHEQQ!,
       "unique()",
       data.avatar,
       ["role:all"]
@@ -58,6 +58,7 @@ export default function New() {
     toggle();
     setName(data.name);
   };
+
   const onError = (error: any) => {
     console.log(error);
   };
@@ -71,7 +72,7 @@ export default function New() {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton text="" />
+            <IonBackButton />
           </IonButtons>
           <IonTitle>Create profile</IonTitle>
         </IonToolbar>
