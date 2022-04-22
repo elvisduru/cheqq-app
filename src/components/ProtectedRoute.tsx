@@ -23,7 +23,7 @@ export default function ProtectedRoute({
     return <Redirect to="/new" />;
   }
 
-  if (!disableExtraRedirect && !user.prefs.store) {
+  if (!disableExtraRedirect && !user.prefs.stores.length) {
     return <Redirect to="/store/new" />;
   }
 

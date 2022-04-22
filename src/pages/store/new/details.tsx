@@ -11,6 +11,7 @@ import {
   IonLabel,
   IonNote,
   IonPage,
+  IonSpinner,
   IonTextarea,
   IonTitle,
   IonToolbar,
@@ -27,13 +28,15 @@ import usePhotoGallery from "../../../hooks/usePhotoGallery";
 import { useStore } from "../../../hooks/useStore";
 import { ErrorMessage } from "@hookform/error-message";
 import appwrite from "../../../lib/appwrite";
+import useBoolean from "../../../hooks/useBoolean";
+import { Query } from "appwrite";
 
 type Props = {
   progress: number;
 } & RouteComponentProps;
 
 export default function Details({ progress }: Props) {
-  const { user } = useStore();
+  const { user, setUser } = useStore();
   const {
     setValue,
     control,
@@ -65,6 +68,15 @@ export default function Details({ progress }: Props) {
       setValue("bannerUrl", bannerPhoto?.webPath);
     }
   }, [avatarFile, avatarPhoto, bannerFile, bannerPhoto, setValue]);
+
+  const { value: isLoading, toggle } = useBoolean(false);
+
+  const checkTag = async (tag: string) => {
+    const res = await appwrite.database.listDocuments("stores", [
+      Query.equal("tag", tag.substring(1)),
+    ]);
+    return res.total;
+  };
 
   return (
     <IonPage>
@@ -172,6 +184,11 @@ export default function Details({ progress }: Props) {
                   message:
                     "Tag must be between 3 and 30 characters and can only contain letters, numbers, underscores and periods. It cannot start or end with a period.",
                 },
+                validate: async (value) => {
+                  if (await checkTag(value)) {
+                    return "Tag already exists";
+                  }
+                },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <IonInput
@@ -229,56 +246,71 @@ export default function Details({ progress }: Props) {
           />
           <IonButton
             onClick={async () => {
-              const values = getValues();
-              if (!values.category) {
-                present("Please select a category", 2000);
-                return router.push("/store/new", "back");
-              }
-
-              if (!isValid || !isDirty) {
-                if (!isDirty) {
-                  trigger(["name", "tag"]);
-                } else {
-                  const errorList = Object.keys(errors);
-                  trigger(errorList);
+              try {
+                toggle();
+                const values = getValues();
+                if (!values.category) {
+                  present("Please select a category", 2000);
+                  return router.push("/store/new", "back");
                 }
-                return present("Please fill the missing fields", 2000);
+
+                if (!isValid || !isDirty) {
+                  if (!isDirty) {
+                    trigger(["name", "tag"]);
+                  } else {
+                    const errorList = Object.keys(errors);
+                    trigger(errorList);
+                  }
+                  toggle();
+                  return present("Please fill the missing fields", 2000);
+                }
+
+                // prepare data
+                delete values.avatarUrl;
+                delete values.bannerUrl;
+                values.tag = values.tag.substring(1);
+
+                // store files and get ids
+                const avatarRes = await appwrite.storage.createFile(
+                  user?.$id!,
+                  "unique()",
+                  values.avatar,
+                  ["role:all"]
+                );
+                values.avatar = avatarRes.$id;
+
+                const bannerRes = await appwrite.storage.createFile(
+                  user?.$id!,
+                  "unique()",
+                  values.banner,
+                  ["role:all"]
+                );
+                values.banner = bannerRes.$id;
+
+                const res = await appwrite.database.createDocument(
+                  "stores",
+                  "unique()",
+                  { ...values, user: user?.$id }
+                );
+                // save store id to user pref
+                const prefs = await appwrite.account.getPrefs();
+                await appwrite.account.updatePrefs({
+                  ...prefs,
+                  stores: [...user?.prefs.stores, res.$id],
+                });
+                setUser(await appwrite.account.get());
+                router.push("/");
+                toggle();
+              } catch (e) {
+                console.log(e);
+                toggle();
               }
-
-              // prepare data
-              delete values.avatarUrl;
-              delete values.bannerUrl;
-              values.tag = values.tag.substring(1);
-
-              // store files and get ids
-              const avatarRes = await appwrite.storage.createFile(
-                process.env.REACT_APP_APPWRITE_BUCKET_CHEQQ!,
-                "unique()",
-                values.avatar,
-                ["role:all"]
-              );
-              values.avatar = avatarRes.$id;
-
-              const bannerRes = await appwrite.storage.createFile(
-                process.env.REACT_APP_APPWRITE_BUCKET_CHEQQ!,
-                "unique()",
-                values.banner,
-                ["role:all"]
-              );
-              values.banner = bannerRes.$id;
-
-              const res = await appwrite.database.createDocument(
-                "625c424374df35741b0f",
-                "unique()",
-                { ...values, user: user?.$id }
-              );
-              console.log(res);
-              //save store id to user pref
             }}
             expand="block"
             className="mt-2"
           >
-            Complete
+            Complete &nbsp;
+            {isLoading && <IonSpinner name="crescent" />}
           </IonButton>
         </div>
       </IonContent>

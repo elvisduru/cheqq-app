@@ -156,7 +156,7 @@ const Home: React.FC<Props> = ({ user }) => {
             <IonMenuButton>
               <IonAvatar>
                 <img
-                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${process.env.REACT_APP_APPWRITE_BUCKET_CHEQQ}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
+                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${user?.$id}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
                   alt="avatar"
                 />
               </IonAvatar>
@@ -182,7 +182,7 @@ const Home: React.FC<Props> = ({ user }) => {
         </div>
         {/* Todo: Would be a carousel of several stats soon */}
         <IonListHeader>
-          <IonLabel className="font-light text-lg">Statistics</IonLabel>
+          <IonLabel className="font-light text-lg">Stats</IonLabel>
           <IonButton routerLink="/analytics">See all</IonButton>
         </IonListHeader>
         <ChartCard title="Your Sales" />

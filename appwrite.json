@@ -1,4 +1,17 @@
 {
     "projectId": "62485dcf50c2ac8e67ac",
-    "projectName": "Cheqq"
+    "projectName": "Cheqq",
+    "functions": [
+        {
+            "$id": "6261f1ecc820a289a0c1",
+            "name": "new-user",
+            "runtime": "node-16.0",
+            "path": "functions/new-user",
+            "entrypoint": "src/index.js",
+            "execute": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 15
+        }
+    ]
 }
