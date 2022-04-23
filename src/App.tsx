@@ -1,6 +1,7 @@
 import { App as NativeApp } from "@capacitor/app";
 import {
   BackButtonEvent,
+  IonLoading,
   IonRouterOutlet,
   IonSplitPane,
   setupIonicReact,
@@ -26,7 +27,7 @@ import AppUrlListener from "./components/AppUrlListener";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SideMenu from "./components/SideMenu";
 import Tabs from "./components/Tabs";
-import { useHydration, useStore } from "./hooks/useStore";
+import useUser from "./hooks/queries/users/useUser";
 import Confirm from "./pages/auth/confirm";
 import Login from "./pages/auth/login";
 import New from "./pages/auth/new";
@@ -41,15 +42,16 @@ setupIonicReact({
 });
 
 const App: React.FC = () => {
-  const { user } = useStore();
-  const isHydrated = useHydration();
+  const { data: user, isLoading } = useUser();
   const ionRouter = useIonRouter();
 
   useEffect(() => {
     document.addEventListener("ionBackButton", (ev) => {
       (ev as BackButtonEvent).detail.register(0, () => {
-        console.log();
-        if (!ionRouter.canGoBack() || window.location.pathname === "/home") {
+        if (
+          !ionRouter.canGoBack() ||
+          ["/home", "/signup"].includes(window.location.pathname)
+        ) {
           NativeApp.exitApp();
         } else {
           window.history.back();
@@ -59,34 +61,34 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!isHydrated) {
-    return <p>Loading...</p>;
+  if (isLoading) {
+    return <IonLoading isOpen={true} translucent />;
   }
 
   return (
     <>
       <AppUrlListener />
       <IonSplitPane contentId="main">
-        <SideMenu user={user} contentId="main" />
+        <SideMenu user={user!} contentId="main" />
         <IonRouterOutlet id="main">
           <Route
             path="/:tab"
             render={() => (
-              <ProtectedRoute redirectPath="/signup" user={user}>
-                <Tabs user={user} />
+              <ProtectedRoute redirectPath="/signup" user={user!}>
+                <Tabs user={user!} />
               </ProtectedRoute>
             )}
           />
-          <Route path="/signup" component={SignUp} />
-          <Route path="/login" component={Login} />
-          <Route path="/confirm" component={Confirm} />
+          <Route path="/signup" render={() => <SignUp user={user!} />} />
+          <Route path="/login" render={() => <Login user={user!} />} />
+          <Route path="/confirm" render={() => <Confirm user={user!} />} />
           <Route path="/new" component={New} />
           <Route
             path="/store/new"
             render={() => (
               <ProtectedRoute
                 redirectPath="/signup"
-                user={user}
+                user={user!}
                 disableExtraRedirect
               >
                 <NewStore />

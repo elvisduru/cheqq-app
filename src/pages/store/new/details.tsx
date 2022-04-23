@@ -1,3 +1,4 @@
+import { ErrorMessage } from "@hookform/error-message";
 import {
   IonAvatar,
   IonBackButton,
@@ -18,25 +19,26 @@ import {
   useIonRouter,
   useIonToast,
 } from "@ionic/react";
+import { Query } from "appwrite";
 import { imagesOutline } from "ionicons/icons";
 import { useEffect } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { Controller, useFormContext } from "react-hook-form";
 import { RouteComponentProps } from "react-router";
 import PlacesAutocomplete from "../../../components/PlacesAutocomplete";
-import usePhotoGallery from "../../../hooks/usePhotoGallery";
-import { useStore } from "../../../hooks/useStore";
-import { ErrorMessage } from "@hookform/error-message";
-import appwrite from "../../../lib/appwrite";
+import { useUpdateUser } from "../../../hooks/mutations/user/updateUser";
 import useBoolean from "../../../hooks/useBoolean";
-import { Query } from "appwrite";
+import usePhotoGallery from "../../../hooks/usePhotoGallery";
+import appwrite from "../../../lib/appwrite";
+import { User } from "../../../utils/types";
 
 type Props = {
+  user: User;
   progress: number;
 } & RouteComponentProps;
 
-export default function Details({ progress }: Props) {
-  const { user, setUser } = useStore();
+export default function Details({ progress, user }: Props) {
+  const updateUser = useUpdateUser();
   const {
     setValue,
     control,
@@ -287,19 +289,30 @@ export default function Details({ progress }: Props) {
                 );
                 values.banner = bannerRes.$id;
 
-                const res = await appwrite.database.createDocument(
-                  "stores",
-                  "unique()",
-                  { ...values, user: user?.$id }
-                );
-                // save store id to user pref
-                const prefs = await appwrite.account.getPrefs();
-                await appwrite.account.updatePrefs({
-                  ...prefs,
-                  stores: [...user?.prefs.stores, res.$id],
+                await appwrite.database.createDocument("stores", "unique()", {
+                  ...values,
+                  user: user?.$id,
                 });
-                setUser(await appwrite.account.get());
-                router.push("/");
+
+                // Update user
+                if (!user?.prefs?.stores.includes(values.tag)) {
+                  updateUser.mutate(
+                    {
+                      prefs: {
+                        ...user?.prefs,
+                        stores: [...user?.prefs.stores, values.tag],
+                      },
+                    },
+                    {
+                      onSuccess: () => {
+                        router.push("/");
+                      },
+                    }
+                  );
+                } else {
+                  router.push("/");
+                }
+
                 toggle();
               } catch (e) {
                 console.log(e);

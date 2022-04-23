@@ -13,16 +13,14 @@ import {
   useIonViewDidEnter,
   useIonViewWillLeave,
 } from "@ionic/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { Redirect } from "react-router";
 import useCountdown from "../../hooks/useCountdown";
 import useQuery from "../../hooks/useQuery";
-import { useStore } from "../../hooks/useStore";
 import appwrite from "../../lib/appwrite";
+import { User } from "../../utils/types";
 
-export default function Confirm() {
-  const { user, setUser } = useStore();
-  const [fresh, setFresh] = useState(false);
+export default function Confirm({ user }: { user: User }) {
   const query = useQuery();
   const email = query.get("email");
   const userId = query.get("userId");
@@ -66,13 +64,8 @@ export default function Confirm() {
             duration: 1500,
             message: "Signed in successfully!",
             color: "dark",
-            onWillDismiss: async () => {
-              const user = await appwrite.account.get();
-              if (!user.name) {
-                setFresh(true);
-              } else {
-                setUser(user);
-              }
+            onWillDismiss: () => {
+              router.push("/");
             },
           });
         }
@@ -89,9 +82,7 @@ export default function Confirm() {
                 await appwrite.account.createMagicURLSession(
                   "unique()",
                   email!,
-                  `${
-                    "https://cheqq.me" || process.env.REACT_APP_BASE_URL
-                  }/confirm`
+                  "https://cheqq.me/confirm"
                 );
                 dismiss();
               } else {
@@ -111,10 +102,6 @@ export default function Confirm() {
 
   if (user) {
     return <Redirect to="/" />;
-  }
-
-  if (fresh) {
-    return <Redirect to="/new" />;
   }
 
   return (

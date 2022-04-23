@@ -7,11 +7,10 @@ import {
 } from "@ionic/react";
 import { logoApple, logoFacebook, logoGoogle } from "ionicons/icons";
 import { Redirect } from "react-router";
-import { useStore } from "../../../hooks/useStore";
+import { User } from "../../../utils/types";
 import "./index.scss";
 
-export default function SignUp() {
-  const { user } = useStore();
+export default function SignUp({ user }: { user: User }) {
   if (user) {
     return <Redirect to="/" />;
   }

@@ -17,13 +17,14 @@ export default function ProtectedRoute({
 }: Props) {
   if (!user) {
     return <Redirect to={redirectPath} />;
+    // window.location.href = "/signup";
   }
 
-  if (!user.name) {
+  if (!user?.name) {
     return <Redirect to="/new" />;
   }
 
-  if (!disableExtraRedirect && !user.prefs.stores.length) {
+  if (!disableExtraRedirect && !user.prefs?.stores?.length) {
     return <Redirect to="/store/new" />;
   }
 

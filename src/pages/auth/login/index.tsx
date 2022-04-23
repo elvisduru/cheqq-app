@@ -15,13 +15,11 @@ import {
 } from "@ionic/react";
 import { useState } from "react";
 import { Redirect } from "react-router";
-import { useStore } from "../../../hooks/useStore";
 import appwrite from "../../../lib/appwrite";
+import { User } from "../../../utils/types";
 import "./index.scss";
 
-export default function Login() {
-  const { user } = useStore();
-
+export default function Login({ user }: { user: User }) {
   const router = useIonRouter();
   const [email, setEmail] = useState<string>("");
   const [valid, setValid] = useState<boolean>(true);
@@ -44,7 +42,7 @@ export default function Login() {
         await appwrite.account.createMagicURLSession(
           "unique()",
           email,
-          `${"https://cheqq.me" || process.env.REACT_APP_BASE_URL}/confirm`
+          "https://cheqq.me/confirm"
         );
         router.push("/confirm?email=" + email);
       } else {

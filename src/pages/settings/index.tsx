@@ -7,15 +7,17 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonRouter,
 } from "@ionic/react";
 import React from "react";
-import { useStore } from "../../hooks/useStore";
+import { useQueryClient } from "react-query";
 import appwrite from "../../lib/appwrite";
 
 type Props = {};
 
 const Settings: React.FC = (props: Props) => {
-  const { setUser } = useStore();
+  const queryClient = useQueryClient();
+  const router = useIonRouter();
   return (
     <IonPage>
       <IonHeader>
@@ -35,10 +37,15 @@ const Settings: React.FC = (props: Props) => {
         <div>Product Details</div>
         <IonButton
           onClick={async () => {
-            setUser(null);
-            await appwrite.account.deleteSession("current");
+            try {
+              await appwrite.account.deleteSession("current");
+              await queryClient.invalidateQueries("user");
+              window.location.href = "/signup";
+            } catch (e) {
+              console.log(e);
+              window.location.href = "/signup";
+            }
           }}
-          routerLink="/signup"
         >
           Logout
         </IonButton>

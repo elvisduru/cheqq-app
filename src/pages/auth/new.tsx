@@ -6,6 +6,7 @@ import {
   IonHeader,
   IonInput,
   IonItem,
+  IonLoading,
   IonPage,
   IonSpinner,
   IonTitle,
@@ -15,19 +16,21 @@ import {
   useIonViewWillEnter,
   useIonViewWillLeave,
 } from "@ionic/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Subscription } from "react-hook-form/dist/utils/createSubject";
 import { Redirect } from "react-router-dom";
 import AvatarUpload from "../../components/AvatarUpload";
+import { useUpdateUser } from "../../hooks/mutations/user/updateUser";
+import useUser from "../../hooks/queries/users/useUser";
 import useBoolean from "../../hooks/useBoolean";
-import { useStore } from "../../hooks/useStore";
 import appwrite from "../../lib/appwrite";
 
 export default function New() {
   const [present, dismiss] = useIonToast();
-  const { user, setUser } = useStore();
-  const [name, setName] = useState("");
+  const { data: user, isLoading: isUserLoading } = useUser();
+  const updateUser = useUpdateUser();
+
   const [funcId, setFuncId] = useState<string>("");
   type FormValues = {
     name: string;
@@ -85,8 +88,6 @@ export default function New() {
         return present("Error instantiating user. Please try again.", 2000);
       }
 
-      const user = await appwrite.account.get();
-
       // Save avatar to cloud storage
       const response = await appwrite.storage.createFile(
         user?.$id!,
@@ -94,11 +95,14 @@ export default function New() {
         data.avatar,
         ["role:all"]
       );
-      await appwrite.account.updateName(data.name);
-      await appwrite.account.updatePrefs({ avatar: response.$id, stores: [] });
-      setUser(await appwrite.account.get());
+
+      // Update user
+      updateUser.mutate({
+        name: data.name,
+        prefs: { avatar: response.$id, stores: [] },
+      });
+
       toggle();
-      setName(data.name);
     } catch (e: any) {
       console.log(e);
       present(e.message);
@@ -109,7 +113,15 @@ export default function New() {
     console.log(error);
   };
 
-  if (user?.name || name) {
+  if (isUserLoading) {
+    return <IonLoading isOpen={true} translucent />;
+  }
+
+  if (!user) {
+    return <Redirect to="/signup" />;
+  }
+
+  if (user?.name) {
     return <Redirect to="/" />;
   }
 

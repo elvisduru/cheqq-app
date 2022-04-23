@@ -57,7 +57,9 @@ export default function SideMenu({ user, contentId }: Props) {
                 />
               </IonAvatar>
               <IonLabel>{user?.name}</IonLabel>
-              <IonNote>@elvisduru</IonNote>
+              {user?.prefs?.stores && (
+                <IonNote>@{user?.prefs?.stores[0]}</IonNote>
+              )}
               <p className="flex ion-justify-content-between w-full">
                 <span>
                   230 <IonNote>Followers</IonNote>

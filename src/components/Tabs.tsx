@@ -43,7 +43,6 @@ export default function Tabs({ user }: Props) {
   return (
     <IonTabs>
       <IonRouterOutlet>
-        {/* <Redirect exact path="/" to="/home" /> */}
         <Route path="/:tab(home)" render={() => <Home user={user} />} />
         <Route path="/:tab(orders)" render={() => <Orders user={user} />} />
         <Route

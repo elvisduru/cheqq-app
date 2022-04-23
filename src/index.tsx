@@ -6,14 +6,21 @@ import reportWebVitals from "./reportWebVitals";
 import { defineCustomElements } from "@ionic/pwa-elements/loader";
 import { IonApp } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import { QueryClientProvider, QueryClient } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
   <React.StrictMode>
-    <IonApp>
-      <IonReactRouter>
-        <App />
-      </IonReactRouter>
-    </IonApp>
+    <QueryClientProvider client={queryClient}>
+      <IonApp>
+        <IonReactRouter>
+          <App />
+        </IonReactRouter>
+      </IonApp>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
