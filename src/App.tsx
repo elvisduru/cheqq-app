@@ -20,7 +20,7 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Redirect, Route } from "react-router-dom";
 import "./App.css";
 import AppUrlListener from "./components/AppUrlListener";
@@ -44,6 +44,7 @@ setupIonicReact({
 const App: React.FC = () => {
   const { data: user, isLoading } = useUser();
   const ionRouter = useIonRouter();
+  const routerRef = useRef<HTMLIonRouterOutletElement | null>(null);
 
   useEffect(() => {
     document.addEventListener("ionBackButton", (ev) => {
@@ -61,8 +62,6 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(ionRouter.routeInfo.lastPathname);
-
   if (isLoading) {
     return <IonLoading isOpen={true} translucent />;
   }
@@ -72,12 +71,12 @@ const App: React.FC = () => {
       <AppUrlListener />
       <IonSplitPane contentId="main">
         <SideMenu user={user!} contentId="main" />
-        <IonRouterOutlet id="main">
+        <IonRouterOutlet id="main" ref={routerRef}>
           <Route
             path="/:tab"
             render={() => (
               <ProtectedRoute redirectPath="/signup" user={user!}>
-                <Tabs user={user!} />
+                <Tabs user={user!} routerRef={routerRef} />
               </ProtectedRoute>
             )}
           />

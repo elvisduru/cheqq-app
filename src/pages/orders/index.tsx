@@ -1,30 +1,39 @@
 import {
   IonAvatar,
-  IonButton,
   IonButtons,
-  IonCol,
   IonContent,
-  IonGrid,
   IonHeader,
+  IonLoading,
   IonMenuButton,
   IonPage,
-  IonRow,
   IonTitle,
   IonToolbar,
+  useIonModal,
+  useIonViewWillEnter,
 } from "@ionic/react";
-import { User } from "../../utils/types";
-import { useLottie } from "lottie-react";
+import { useRef } from "react";
 import notFoundAnimation from "../../assets/json/no-data-found.json";
+import ChooseProduct from "../../components/ChooseProduct";
+import NoData from "../../components/NoData";
+import useOrders from "../../hooks/queries/orders/useOrders";
+import { User } from "../../utils/types";
 
 type Props = {
   user: User;
+  routerRef: React.MutableRefObject<HTMLIonRouterOutletElement | null>;
 };
 
-const Orders: React.FC<Props> = ({ user }) => {
-  const { View } = useLottie({
-    animationData: notFoundAnimation,
-    loop: true,
+const Orders: React.FC<Props> = ({ user, routerRef }) => {
+  const { data, isLoading, refetch } = useOrders(user?.prefs.stores[0]);
+  const [present, dismiss] = useIonModal(ChooseProduct, {
+    routerEl: routerRef.current,
   });
+
+  useIonViewWillEnter(refetch, []);
+
+  if (isLoading) {
+    return <IonLoading isOpen={true} message={"Fetching orders..."} />;
+  }
 
   return (
     <IonPage id="orders">
@@ -49,20 +58,22 @@ const Orders: React.FC<Props> = ({ user }) => {
             <IonTitle size="large">Orders</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonGrid className="mt-2">
-          <IonRow>
-            <IonCol>{View}</IonCol>
-          </IonRow>
-        </IonGrid>
-        <div className="ion-text-center mt-2 px-2">
-          <h3>No orders</h3>
-          <p>
-            Create your first product and start receiving orders from customers.
-          </p>
-          <IonButton className="mt-3" expand="block">
-            Create a new product
-          </IonButton>
-        </div>
+        {!data?.pages[0].total ? (
+          <NoData
+            title="No Order"
+            description="Create a new product to start receiving orders from customers"
+            buttonText="Create Product"
+            animationData={notFoundAnimation}
+            buttonHandler={() =>
+              present({
+                breakpoints: [0, 0.4],
+                initialBreakpoint: 0.4,
+              })
+            }
+          />
+        ) : (
+          <div>Order list here</div>
+        )}
       </IonContent>
     </IonPage>
   );

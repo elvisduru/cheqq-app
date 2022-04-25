@@ -5,7 +5,6 @@ import {
   IonTabButton,
   IonTabs,
 } from "@ionic/react";
-import { Models } from "appwrite";
 import {
   addCircle,
   bagHandle,
@@ -25,15 +24,15 @@ import Orders from "../pages/orders";
 import Products from "../pages/products";
 import Product from "../pages/products/product";
 import Settings from "../pages/settings";
-import NewStore from "../pages/store/new";
 import { User } from "../utils/types";
 import "./Tabs.scss";
 
 type Props = {
   user: User;
+  routerRef: React.MutableRefObject<HTMLIonRouterOutletElement | null>;
 };
 
-export default function Tabs({ user }: Props) {
+export default function Tabs({ user, routerRef }: Props) {
   const location = useLocation();
   const isSelected = (tab: string) => {
     if (tab === "home" && location.pathname === "/") return true;
@@ -44,7 +43,10 @@ export default function Tabs({ user }: Props) {
     <IonTabs>
       <IonRouterOutlet>
         <Route path="/:tab(home)" render={() => <Home user={user} />} />
-        <Route path="/:tab(orders)" render={() => <Orders user={user} />} />
+        <Route
+          path="/:tab(orders)"
+          render={() => <Orders user={user} routerRef={routerRef} />}
+        />
         <Route
           path="/:tab(products)"
           render={() => <Products user={user} />}

@@ -7,7 +7,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  useIonRouter,
 } from "@ionic/react";
 import React from "react";
 import { useQueryClient } from "react-query";
@@ -17,7 +16,6 @@ type Props = {};
 
 const Settings: React.FC = (props: Props) => {
   const queryClient = useQueryClient();
-  const router = useIonRouter();
   return (
     <IonPage>
       <IonHeader>

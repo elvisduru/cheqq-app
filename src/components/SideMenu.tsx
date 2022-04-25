@@ -11,7 +11,6 @@ import {
   IonNote,
   IonToolbar,
 } from "@ionic/react";
-import { Models } from "appwrite";
 import {
   albumsOutline,
   analyticsOutline,

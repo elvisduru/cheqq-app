@@ -55,6 +55,8 @@ export default function Categories({ progress, setProgress }: Props) {
     return () => {
       sub.unsubscribe();
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const storeCategories = [

@@ -33,6 +33,12 @@ $line-heights: (
   "loose": 2,
 );
 
+$text-styles: (
+  "uppercase": uppercase,
+  "lowercase": lowercase,
+  "capitalize": capitalize,
+);
+
 @each $size, $value in $font-sizes {
   .text-#{$size} {
     font-size: $value;
@@ -52,5 +58,11 @@ $line-heights: (
 @each $height, $value in $line-heights {
   .leading-#{$height} {
     line-height: $value;
+  }
+}
+
+@each $style, $value in $text-styles {
+  .#{$style} {
+    text-transform: $value;
   }
 }

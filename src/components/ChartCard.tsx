@@ -25,7 +25,7 @@ enum TimeFrame {
 }
 
 export default function GraphCard({ title }: Props) {
-  const [selected, setSelected] = useState<string | undefined>(TimeFrame.Week);
+  const [selected] = useState<string | undefined>(TimeFrame.Week);
   return (
     <IonCard>
       <IonCardHeader>

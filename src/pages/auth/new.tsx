@@ -11,6 +11,7 @@ import {
   IonSpinner,
   IonTitle,
   IonToolbar,
+  useIonRouter,
   useIonToast,
   useIonViewDidEnter,
   useIonViewWillEnter,
@@ -27,7 +28,8 @@ import useBoolean from "../../hooks/useBoolean";
 import appwrite from "../../lib/appwrite";
 
 export default function New() {
-  const [present, dismiss] = useIonToast();
+  const router = useIonRouter();
+  const [present] = useIonToast();
   const { data: user, isLoading: isUserLoading } = useUser();
   const updateUser = useUpdateUser();
 
@@ -52,7 +54,6 @@ export default function New() {
   };
 
   useIonViewWillEnter(() => {
-    console.log("ionViewWillEnter");
     executeNewUserFunc();
   }, []);
 
@@ -91,18 +92,24 @@ export default function New() {
       // Save avatar to cloud storage
       const response = await appwrite.storage.createFile(
         user?.$id!,
-        "unique()",
+        "profile_pic",
         data.avatar,
         ["role:all"]
       );
 
       // Update user
-      updateUser.mutate({
-        name: data.name,
-        prefs: { avatar: response.$id, stores: [] },
-      });
-
-      toggle();
+      updateUser.mutate(
+        {
+          name: data.name,
+          prefs: { avatar: response.$id },
+        },
+        {
+          onSuccess: () => {
+            toggle();
+            window.location.href = "/";
+          },
+        }
+      );
     } catch (e: any) {
       console.log(e);
       present(e.message);
@@ -121,9 +128,9 @@ export default function New() {
     return <Redirect to="/signup" />;
   }
 
-  if (user?.name) {
-    return <Redirect to="/" />;
-  }
+  // if (user?.name) {
+  //   return <Redirect to="/" />;
+  // }
 
   return (
     <IonPage id="new">

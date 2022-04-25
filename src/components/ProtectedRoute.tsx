@@ -1,4 +1,3 @@
-import { Models } from "appwrite";
 import { Redirect } from "react-router-dom";
 import { User } from "../utils/types";
 

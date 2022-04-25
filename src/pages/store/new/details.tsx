@@ -58,7 +58,7 @@ export default function Details({ progress, user }: Props) {
     file: avatarFile,
   } = usePhotoGallery();
 
-  const [present, dismiss] = useIonToast();
+  const [present] = useIonToast();
   const router = useIonRouter();
   useEffect(() => {
     if (avatarFile) {
@@ -226,12 +226,17 @@ export default function Details({ progress, user }: Props) {
               name="description"
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
-                <IonTextarea
-                  onIonChange={onChange}
-                  onIonBlur={onBlur}
-                  value={value}
-                  maxlength={200}
-                />
+                <>
+                  <IonTextarea
+                    onIonChange={onChange}
+                    onIonBlur={onBlur}
+                    value={value}
+                    maxlength={200}
+                  />
+                  <IonNote className="ml-auto" style={{ paddingBottom: 4 }}>
+                    {value?.length || 0}/200
+                  </IonNote>
+                </>
               )}
             />
           </IonItem>
@@ -246,6 +251,7 @@ export default function Details({ progress, user }: Props) {
               />
             )}
           />
+          {/* TODO: Add currency (Sell in...) */}
           <IonButton
             onClick={async () => {
               try {
@@ -275,7 +281,7 @@ export default function Details({ progress, user }: Props) {
                 // store files and get ids
                 const avatarRes = await appwrite.storage.createFile(
                   user?.$id!,
-                  "unique()",
+                  "store_avatar",
                   values.avatar,
                   ["role:all"]
                 );
@@ -283,34 +289,40 @@ export default function Details({ progress, user }: Props) {
 
                 const bannerRes = await appwrite.storage.createFile(
                   user?.$id!,
-                  "unique()",
+                  "store_banner",
                   values.banner,
                   ["role:all"]
                 );
                 values.banner = bannerRes.$id;
 
+                // create store
+                let date = Date.now();
                 await appwrite.database.createDocument("stores", "unique()", {
                   ...values,
-                  user: user?.$id,
+                  user_id: user?.$id,
+                  createdAt: date,
+                  updatedAt: date,
                 });
 
                 // Update user
-                if (!user?.prefs?.stores.includes(values.tag)) {
+                if (!user?.prefs?.stores?.includes(values.tag)) {
                   updateUser.mutate(
                     {
                       prefs: {
                         ...user?.prefs,
-                        stores: [...user?.prefs.stores, values.tag],
+                        stores: user?.prefs.stores
+                          ? [...user?.prefs.stores, values.tag]
+                          : [values.tag],
                       },
                     },
                     {
                       onSuccess: () => {
-                        router.push("/");
+                        window.location.href = "/";
                       },
                     }
                   );
                 } else {
-                  router.push("/");
+                  window.location.href = "/";
                 }
 
                 toggle();

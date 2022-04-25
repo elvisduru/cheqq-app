@@ -1,4 +1,3 @@
-import { Models } from "appwrite";
 import { useMutation, useQueryClient } from "react-query";
 import appwrite from "../../../lib/appwrite";
 

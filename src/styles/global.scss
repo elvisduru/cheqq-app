@@ -116,6 +116,8 @@ ion-item.input {
     }
   }
 
+  
+
   &:not(.item-has-focus) {
     ion-label {
       color: var(--ion-color-step-700) !important;
@@ -123,6 +125,16 @@ ion-item.input {
   }
 }
 
+.modal-form ion-item.input {
+  --background: transparent;
+  --ion-item-background: var(--ion-background-color);
+}
+
+ion-list#choose-product {
+  ion-item {
+    --background: transparent;
+  }
+}
 
 // Circular progress bar
 .CircularProgressbar {
@@ -140,4 +152,9 @@ ion-item.input {
   .CircularProgressbar-trail {
     stroke: var(--ion-color-light);
   }
+}
+
+// HACK: Fix Action sheet cancel btn primary color
+.action-sheet-group-cancel .action-sheet-button.sc-ion-action-sheet-ios {
+  color: var(--ion-color-dark, #fff);
 }
