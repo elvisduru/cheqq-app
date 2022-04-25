@@ -61,6 +61,8 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log(ionRouter.routeInfo.lastPathname);
+
   if (isLoading) {
     return <IonLoading isOpen={true} translucent />;
   }
@@ -91,7 +93,7 @@ const App: React.FC = () => {
                 user={user!}
                 disableExtraRedirect
               >
-                <NewStore />
+                <NewStore user={user!} />
               </ProtectedRoute>
             )}
           />

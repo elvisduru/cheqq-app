@@ -1,13 +1,12 @@
-import { IonLoading, IonRouterOutlet } from "@ionic/react";
-import React, { useState } from "react";
+import { IonRouterOutlet } from "@ionic/react";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Route, Redirect } from "react-router-dom";
-import useUser from "../../../hooks/queries/users/useUser";
+import { Redirect, Route } from "react-router-dom";
+import { User } from "../../../utils/types";
 import Categories from "./categories";
 import Details from "./details";
 
-export default function NewStore() {
-  const { data: user, isLoading } = useUser();
+export default function NewStore({ user }: { user: User }) {
   const [progress, setProgress] = useState(1);
   const methods = useForm({
     defaultValues: {
@@ -17,10 +16,6 @@ export default function NewStore() {
     },
     mode: "onBlur",
   });
-
-  if (isLoading) {
-    return <IonLoading isOpen={true} translucent />;
-  }
 
   if (!user) {
     return <Redirect to="/signup" />;
