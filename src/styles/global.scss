@@ -110,7 +110,7 @@ ion-item.input {
     border-radius: 10px;
   }
 
-  &.with-focus {
+  &.with-focus, &.item-has-focus, &.item-has-value {
     .native-input {
       padding-bottom: 0;
     }
@@ -125,12 +125,22 @@ ion-item.input {
   }
 }
 
+// Tag Input classes
+ion-item.tags {
+  &::part(native) {
+    flex-direction: column;
+  }
+  &.item-has-value::part(native), &.item-has-focus::part(native) {
+    padding-bottom: 10px;
+  }
+}
+
 .modal-form ion-item.input {
   --background: transparent;
   --ion-item-background: var(--ion-background-color);
 }
 
-ion-list#choose-product {
+ion-list.bg-transparent {
   ion-item {
     --background: transparent;
   }

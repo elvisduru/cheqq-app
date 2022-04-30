@@ -11,7 +11,6 @@ import {
   useIonModal,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { useRef } from "react";
 import notFoundAnimation from "../../assets/json/no-data-found.json";
 import ChooseProduct from "../../components/ChooseProduct";
 import NoData from "../../components/NoData";
@@ -25,8 +24,12 @@ type Props = {
 
 const Orders: React.FC<Props> = ({ user, routerRef }) => {
   const { data, isLoading, refetch } = useOrders(user?.prefs.stores[0]);
+
   const [present, dismiss] = useIonModal(ChooseProduct, {
     routerEl: routerRef.current,
+    dismiss: () => {
+      dismiss();
+    },
   });
 
   useIonViewWillEnter(refetch, []);
@@ -66,8 +69,8 @@ const Orders: React.FC<Props> = ({ user, routerRef }) => {
             animationData={notFoundAnimation}
             buttonHandler={() =>
               present({
-                breakpoints: [0, 0.4],
-                initialBreakpoint: 0.4,
+                breakpoints: [0, 0.5],
+                initialBreakpoint: 0.5,
               })
             }
           />

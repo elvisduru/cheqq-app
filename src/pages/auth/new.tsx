@@ -11,7 +11,6 @@ import {
   IonSpinner,
   IonTitle,
   IonToolbar,
-  useIonRouter,
   useIonToast,
   useIonViewDidEnter,
   useIonViewWillEnter,
@@ -28,7 +27,6 @@ import useBoolean from "../../hooks/useBoolean";
 import appwrite from "../../lib/appwrite";
 
 export default function New() {
-  const router = useIonRouter();
   const [present] = useIonToast();
   const { data: user, isLoading: isUserLoading } = useUser();
   const updateUser = useUpdateUser();

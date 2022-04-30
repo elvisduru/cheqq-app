@@ -4,6 +4,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
+  useIonModal,
 } from "@ionic/react";
 import {
   addCircle,
@@ -25,6 +26,7 @@ import Products from "../pages/products";
 import Product from "../pages/products/product";
 import Settings from "../pages/settings";
 import { User } from "../utils/types";
+import ChooseProduct from "./ChooseProduct";
 import "./Tabs.scss";
 
 type Props = {
@@ -39,8 +41,25 @@ export default function Tabs({ user, routerRef }: Props) {
     return tab === location.pathname.split("/")[1];
   };
 
+  // present add modal
+  const [present, dismiss] = useIonModal(ChooseProduct, {
+    routerEl: routerRef.current,
+    dismiss: () => {
+      dismiss();
+    },
+  });
+
   return (
-    <IonTabs>
+    <IonTabs
+      onIonTabsWillChange={(e) => {
+        if (e.detail.tab === "create") {
+          present({
+            breakpoints: [0, 0.5],
+            initialBreakpoint: 0.5,
+          });
+        }
+      }}
+    >
       <IonRouterOutlet>
         <Route path="/:tab(home)" render={() => <Home user={user} />} />
         <Route
@@ -75,7 +94,7 @@ export default function Tabs({ user, routerRef }: Props) {
         <IonTabButton tab="orders" href="/orders">
           <IonIcon icon={isSelected("orders") ? checkbox : checkboxOutline} />
         </IonTabButton>
-        <IonTabButton className="centerTab" tab="products">
+        <IonTabButton className="centerTab" tab="create">
           <IonIcon color="primary" icon={addCircle} />
         </IonTabButton>
         <IonTabButton tab="products" href="/products">

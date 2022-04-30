@@ -19,7 +19,7 @@ ReactDOM.render(
           <App />
         </IonReactRouter>
       </IonApp>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById("root")

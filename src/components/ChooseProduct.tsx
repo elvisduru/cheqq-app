@@ -13,34 +13,36 @@ import {
 } from "@ionic/react";
 import {
   bagHandleOutline,
-  checkmarkCircle,
   close,
   downloadOutline,
+  reloadOutline,
 } from "ionicons/icons";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import useCanDismiss from "../hooks/useCanDismiss";
 import NewProduct from "./products/new";
 
 type Props = {
   routerEl: HTMLIonRouterElement;
+  dismiss: () => void;
 };
 
-export default function ChooseProduct({ routerEl }: Props) {
-  const handleDismiss = () => {
-    dismiss();
-  };
-
+export default function ChooseProduct({
+  routerEl,
+  dismiss: dismissModal,
+}: Props) {
   const [productType, setProductType] = useState<string>();
+  const canDismiss = useCanDismiss();
   const [present, dismiss] = useIonModal(NewProduct, {
     productType,
-    handleDismiss,
+    dismiss: () => {
+      dismiss();
+    },
   });
-  const canDismiss = useCanDismiss();
 
   const productTypes = [
     {
       title: "Physical Product",
-      description: "Physical products are delivered to your door.",
+      description: "Sell physical items like books, clothing, etc.",
       handler: () => {
         setProductType("physical");
         present({
@@ -52,7 +54,7 @@ export default function ChooseProduct({ routerEl }: Props) {
     },
     {
       title: "Digital Product",
-      description: "Digital products are delivered to your email.",
+      description: "Sell a course, ebook, album, artwork, etc.",
       handler: () => {
         setProductType("digital");
         present({
@@ -62,6 +64,18 @@ export default function ChooseProduct({ routerEl }: Props) {
       },
       icon: downloadOutline,
     },
+    {
+      title: "Membership",
+      description: "Charge on a recurring basis.",
+      handler: () => {
+        setProductType("membership");
+        present({
+          presentingElement: routerEl,
+          canDismiss,
+        });
+      },
+      icon: reloadOutline,
+    },
   ];
 
   return (
@@ -70,7 +84,12 @@ export default function ChooseProduct({ routerEl }: Props) {
         <IonToolbar>
           <IonTitle>Choose Product Type</IonTitle>
           <IonButtons slot="start">
-            <IonButton color="dark">
+            <IonButton
+              color="dark"
+              onClick={() => {
+                dismissModal();
+              }}
+            >
               <IonIcon slot="icon-only" icon={close} />
             </IonButton>
           </IonButtons>

@@ -15,13 +15,10 @@ import {
   IonThumbnail,
   IonToolbar,
 } from "@ionic/react";
-import { Query } from "appwrite";
 import { format } from "date-fns";
 import { notifications } from "ionicons/icons";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import ChartCard from "../../components/ChartCard";
-import appwrite from "../../lib/appwrite";
 import { getCurrentDayPeriod } from "../../utils";
 import { User } from "../../utils/types";
 import "./index.scss";

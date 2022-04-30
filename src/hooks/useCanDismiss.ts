@@ -1,9 +1,10 @@
 import { useIonActionSheet } from "@ionic/react";
+import { useCallback } from "react";
 
 export default function useCanDismiss() {
-  const [present, dismiss] = useIonActionSheet();
+  const [present] = useIonActionSheet();
 
-  const canDismiss = () => {
+  const canDismiss = useCallback(() => {
     return new Promise(async (resolve: (value: boolean) => void) => {
       await present({
         translucent: true,
@@ -29,7 +30,8 @@ export default function useCanDismiss() {
         },
       });
     });
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return canDismiss;
 }
