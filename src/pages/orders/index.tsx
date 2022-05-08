@@ -19,14 +19,12 @@ import { User } from "../../utils/types";
 
 type Props = {
   user: User;
-  routerRef: React.MutableRefObject<HTMLIonRouterOutletElement | null>;
 };
 
-const Orders: React.FC<Props> = ({ user, routerRef }) => {
+const Orders: React.FC<Props> = ({ user }) => {
   const { data, isLoading, refetch } = useOrders(user?.prefs.stores[0]);
 
   const [present, dismiss] = useIonModal(ChooseProduct, {
-    routerEl: routerRef.current,
     dismiss: () => {
       dismiss();
     },

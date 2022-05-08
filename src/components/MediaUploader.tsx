@@ -1,6 +1,6 @@
 import { IonIcon, IonThumbnail } from "@ionic/react";
-import { add, close, closeCircle, imagesOutline } from "ionicons/icons";
-import React, { useEffect } from "react";
+import { add, closeCircle, imagesOutline } from "ionicons/icons";
+import { useEffect } from "react";
 import { FieldValues, UseFormSetValue } from "react-hook-form";
 import usePhotoGallery from "../hooks/usePhotoGallery";
 import useReRender from "../hooks/useReRender";
@@ -16,6 +16,7 @@ export default function MediaUploader({ setValue }: Props) {
     if (files) {
       setValue("photos", files);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files.length, setValue]);
   return (
     <div className="border rounded-xl p-1 mt-1">
@@ -57,7 +58,7 @@ export default function MediaUploader({ setValue }: Props) {
               />
               <img
                 src={photo.webPath}
-                alt="photo"
+                alt=""
                 className="object-center object-cover"
               />
             </IonThumbnail>

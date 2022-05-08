@@ -31,10 +31,9 @@ import "./Tabs.scss";
 
 type Props = {
   user: User;
-  routerRef: React.MutableRefObject<HTMLIonRouterOutletElement | null>;
 };
 
-export default function Tabs({ user, routerRef }: Props) {
+export default function Tabs({ user }: Props) {
   const location = useLocation();
   const isSelected = (tab: string) => {
     if (tab === "home" && location.pathname === "/") return true;
@@ -43,7 +42,6 @@ export default function Tabs({ user, routerRef }: Props) {
 
   // present add modal
   const [present, dismiss] = useIonModal(ChooseProduct, {
-    routerEl: routerRef.current,
     dismiss: () => {
       dismiss();
     },
@@ -61,28 +59,15 @@ export default function Tabs({ user, routerRef }: Props) {
       }}
     >
       <IonRouterOutlet>
-        <Route path="/:tab(home)" render={() => <Home user={user} />} />
+        <Route path="/home" render={() => <Home user={user} />} />
+        <Route path="/orders" render={() => <Orders user={user} />} />
+        <Route path="/products" render={() => <Products user={user} />} exact />
+        <Route path="/products/:id" render={() => <Product user={user} />} />
         <Route
-          path="/:tab(orders)"
-          render={() => <Orders user={user} routerRef={routerRef} />}
-        />
-        <Route
-          path="/:tab(products)"
-          render={() => <Products user={user} />}
-          exact
-        />
-        <Route
-          path="/:tab(products)/:id"
-          render={() => <Product user={user} />}
-        />
-        <Route
-          path="/:tab(notifications)"
+          path="/notifications"
           render={() => <Notifications user={user} />}
         />
-        <Route
-          path="/:tab(messenger)"
-          render={() => <Messenger user={user} />}
-        />
+        <Route path="/messenger" render={() => <Messenger user={user} />} />
         <Route path="/settings" component={Settings} />
 
         <Route render={() => <Redirect to="/home" />} />

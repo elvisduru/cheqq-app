@@ -19,11 +19,13 @@ export default function TagInput({ setValue }: Props) {
 
   useEffect(() => {
     setValue("tags", tags);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tags]);
 
   const onChange = (e: any) => {
     if (tags.length === 20) return;
     const value = e.target.value;
+    console.log(value);
     if (value.length > 0) {
       // check if the last character is a comma
       if (value[value.length - 1] === ",") {
@@ -73,7 +75,9 @@ export default function TagInput({ setValue }: Props) {
         ))}
       </div>
       <IonInput type="text" onIonChange={onChange} onKeyDown={handleKeyDown} />
-      <IonNote slot="helper">Enter tags separated by commas. Limit 20.</IonNote>
+      <IonNote slot="helper">
+        Optional. Enter tags separated by commas. Limit 20.
+      </IonNote>
     </IonItem>
   );
 }

@@ -1,13 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import reportWebVitals from "./reportWebVitals";
 import { defineCustomElements } from "@ionic/pwa-elements/loader";
 import { IonApp } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { QueryClientProvider, QueryClient } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import React from "react";
+import ReactDOM from "react-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 const queryClient = new QueryClient();
 

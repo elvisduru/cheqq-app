@@ -22,14 +22,10 @@ import useCanDismiss from "../hooks/useCanDismiss";
 import NewProduct from "./products/new";
 
 type Props = {
-  routerEl: HTMLIonRouterElement;
   dismiss: () => void;
 };
 
-export default function ChooseProduct({
-  routerEl,
-  dismiss: dismissModal,
-}: Props) {
+export default function ChooseProduct({ dismiss: dismissModal }: Props) {
   const [productType, setProductType] = useState<string>();
   const canDismiss = useCanDismiss();
   const [present, dismiss] = useIonModal(NewProduct, {
@@ -38,6 +34,9 @@ export default function ChooseProduct({
       dismiss();
     },
   });
+  const routerOutletEl = document.querySelector(
+    "ion-router-outlet"
+  ) as HTMLElement;
 
   const productTypes = [
     {
@@ -46,7 +45,7 @@ export default function ChooseProduct({
       handler: () => {
         setProductType("physical");
         present({
-          presentingElement: routerEl,
+          presentingElement: routerOutletEl,
           canDismiss,
         });
       },
@@ -58,7 +57,7 @@ export default function ChooseProduct({
       handler: () => {
         setProductType("digital");
         present({
-          presentingElement: routerEl,
+          presentingElement: routerOutletEl,
           canDismiss,
         });
       },
@@ -70,7 +69,7 @@ export default function ChooseProduct({
       handler: () => {
         setProductType("membership");
         present({
-          presentingElement: routerEl,
+          presentingElement: routerOutletEl,
           canDismiss,
         });
       },

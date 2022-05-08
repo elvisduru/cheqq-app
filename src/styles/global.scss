@@ -108,13 +108,21 @@ ion-popover::part(content) {
 ion-item.input {
   &::part(native) {
     border-radius: 10px;
+    
+  }
+  
+  &.checkbox::part(native) {
+    padding-left: 0;
   }
 
-  &.with-focus, &.item-has-focus, &.item-has-value {
-    .native-input {
-      padding-bottom: 0;
+  &.item-label-floating {
+    &.with-focus, &.item-has-focus, &.item-has-value {
+      .native-input {
+        padding-bottom: 0;
+      }
     }
   }
+  
 
   
 

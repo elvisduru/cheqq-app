@@ -1,8 +1,7 @@
+import { Storage } from "@capacitor/storage";
+import { useEffect, useState } from "react";
 import create from "zustand";
 import { persist, StateStorage } from "zustand/middleware";
-import { Storage } from "@capacitor/storage";
-import { Models } from "appwrite";
-import { useEffect, useState } from "react";
 import { User } from "../utils/types";
 
 const storage: StateStorage = {

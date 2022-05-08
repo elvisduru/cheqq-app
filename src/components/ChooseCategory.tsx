@@ -28,6 +28,7 @@ import {
   shirtOutline,
   sparklesOutline,
 } from "ionicons/icons";
+import React from "react";
 
 type Props = {
   dismiss: () => void;
@@ -260,8 +261,8 @@ export default function ChooseCategory({ dismiss, handleSelect }: Props) {
       <IonContent fullscreen className="ion-padding-vertical">
         <IonList className="bg-transparent" lines="none">
           {categories.map(({ name, icon, options }) => (
-            <>
-              <IonItem key={name}>
+            <React.Fragment key={name}>
+              <IonItem>
                 <div
                   className="rounded-full bg-light flex ion-align-items-center ion-justify-content-center"
                   style={{
@@ -299,7 +300,7 @@ export default function ChooseCategory({ dismiss, handleSelect }: Props) {
                   </IonLabel>
                 </IonItem>
               ))}
-            </>
+            </React.Fragment>
           ))}
         </IonList>
       </IonContent>
