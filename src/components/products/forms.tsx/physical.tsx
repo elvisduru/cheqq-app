@@ -14,11 +14,12 @@ import {
   IonToggle,
   useIonModal,
 } from "@ionic/react";
-import { add, caretDown } from "ionicons/icons";
+import { caretDown, settings } from "ionicons/icons";
+import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import MediaUploader from "../../MediaUploader";
 import SelectCategory from "../../SelectCategory";
-import ShippingZones from "../../ShippingZones";
+import ShippingZones from "../../shipping/Shipping";
 import TagInput from "../../TagInput";
 
 export default function PhysicalProductForm() {
@@ -35,10 +36,17 @@ export default function PhysicalProductForm() {
   const onError = (error: any) => console.log(error);
 
   // Shipping Zones
-  const [present, dismiss] = useIonModal(ShippingZones);
+  const [present, dismiss] = useIonModal(ShippingZones, {
+    dismiss: () => {
+      dismiss();
+    },
+  });
+
+  const ref = useRef(null);
 
   return (
     <form
+      ref={ref}
       onSubmit={handleSubmit(onSubmit, onError)}
       className="ion-padding modal-form"
     >
@@ -108,7 +116,17 @@ export default function PhysicalProductForm() {
           control={control}
           rules={{ required: "State the condition of the product" }}
           render={({ field: { onChange, onBlur, value } }) => (
-            <IonSelect onIonChange={onChange} onIonBlur={onBlur} value={value}>
+            <IonSelect
+              interface="popover"
+              interfaceOptions={{
+                translucent: true,
+                mode: "ios",
+                size: "auto",
+              }}
+              onIonChange={onChange}
+              onIonBlur={onBlur}
+              value={value}
+            >
               <IonSelectOption>New</IonSelectOption>
               <IonSelectOption>Used - like new</IonSelectOption>
               <IonSelectOption>Used - good</IonSelectOption>
@@ -392,7 +410,7 @@ export default function PhysicalProductForm() {
                 )}
               />
               <IonNote slot="helper">
-                Used to calculate shipping rates at checkout.
+                Optional. Used to calculate shipping rates at checkout.
               </IonNote>
             </IonItem>
             <IonItem className="input mt-1" fill="outline" mode="md">
@@ -402,6 +420,12 @@ export default function PhysicalProductForm() {
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <IonSelect
+                    interface="popover"
+                    interfaceOptions={{
+                      translucent: true,
+                      mode: "ios",
+                      size: "auto",
+                    }}
                     onIonChange={onChange}
                     onIonBlur={onBlur}
                     value={value}
@@ -419,9 +443,18 @@ export default function PhysicalProductForm() {
               color="medium"
               expand="block"
               className="mt-1"
+              onClick={() => {
+                present({
+                  presentingElement: document.querySelector(
+                    "#new-physical-product"
+                  ) as HTMLElement,
+                  canDismiss: true,
+                  id: "shipping-settings",
+                });
+              }}
             >
-              <IonIcon slot="start" icon={add} />
-              Add Shipping Zones
+              <IonIcon slot="start" icon={settings} />
+              Shipping Settings
             </IonButton>
           </>
         )}

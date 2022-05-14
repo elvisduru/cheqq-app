@@ -19,7 +19,10 @@ export default function MediaUploader({ setValue }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files.length, setValue]);
   return (
-    <div className="border rounded-xl p-1 mt-1">
+    <div
+      className="border rounded-xl p-1 mt-1"
+      style={{ borderStyle: "dashed" }}
+    >
       {!photos?.length ? (
         <div
           onClick={takePhotos}

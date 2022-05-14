@@ -47,6 +47,7 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
         present({
           presentingElement: routerOutletEl,
           canDismiss,
+          id: "new-physical-product",
         });
       },
       icon: bagHandleOutline,

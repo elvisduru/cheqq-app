@@ -176,3 +176,7 @@ ion-list.bg-transparent {
 .action-sheet-group-cancel .action-sheet-button.sc-ion-action-sheet-ios {
   color: var(--ion-color-dark, #fff);
 }
+
+ion-modal ion-item {
+  --background: transparent;
+}
