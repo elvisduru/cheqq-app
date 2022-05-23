@@ -30,6 +30,8 @@
     "@types/react-router": "^5.1.18",
     "@types/react-router-dom": "^5.3.3",
     "appwrite": "^7.0.0",
+    "axios": "^0.27.2",
+    "axios-auth-refresh": "^3.3.1",
     "date-fns": "^2.28.0",
     "ionicons": "^6.0.1",
     "lottie-react": "^2.2.1",

@@ -1,0 +1,31 @@
+<mjml>
+  <mj-head>
+    <mj-font name="Lato" href="https://fonts.googleapis.com/css?family=Lato" />
+    <mj-font name="Futura PT" href="http://fonts.cdnfonts.com/css/futura-pt" />
+    <mj-title>Sign in to Cheqq</mj-title>
+    <mj-preview>
+      Sign in to your Cheqq account
+    </mj-preview>
+  </mj-head>
+  <mj-body background-color="#f2f2f2">
+    <mj-section border-bottom="1px solid #e2e2e2" full-width="full-width" padding-bottom="50px">
+      <mj-column>
+        <mj-social align="left" padding-bottom="30px" padding-left="23px">
+          <mj-social-element background-color="#f2f2f2" alt="cheqq" align="left" src="https://cdn.cheqq.me/cheqq/icon.png" href="https://cheqq.me" icon-size="28px" font-size="24px" font-family="Futura PT" font-weight="500">
+            Cheqq
+          </mj-social-element>
+        </mj-social>
+        <mj-text font-family="Lato" font-size="28px" font-weight="bold">
+          Use this link to sign in to your account
+        </mj-text>
+        <mj-text font-family="Lato" font-size="18px" line-height="24px">
+          You requested a magic link to sign in, and here it is! Note that this link expires in 1 hour and can only be used once.
+        </mj-text>
+        <mj-button font-family="Lato" align="left" width="200px" font-size="18px" background-color="#f51e63" border-radius="4px" href="{{url}}">
+          Sign in
+        </mj-button>
+      </mj-column>
+    </mj-section>
+    <mj-include path="../partials/footer.mjml" />
+  </mj-body>
+</mjml>

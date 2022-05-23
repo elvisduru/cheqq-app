@@ -1,0 +1,12 @@
+<mj-section>
+  <mj-column>
+    <mj-text align="center" font-family="Lato" line-height="24px" font-size="14px">
+      Made by Cheqq Software, Ltd. <br>
+      1 Idono Street | Ijebu-Imushin, Ogun State 122103 | Nigeria
+    </mj-text>
+    <mj-text align="center" font-family="Lato" font-size="14px">
+      <a style="color: unset;" href="https://cheqq.me/blog">Our Blog</a> <span>&nbsp; &nbsp;&nbsp; &nbsp;</span> <a style="color: unset;" href="https://cheqq.me/policies">Policies</a>
+    </mj-text>
+
+  </mj-column>
+</mj-section>

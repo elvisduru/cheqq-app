@@ -81,7 +81,7 @@ const App: React.FC = () => {
           />
           <Route path="/signup" render={() => <SignUp user={user!} />} />
           <Route path="/login" render={() => <Login user={user!} />} />
-          <Route path="/confirm" render={() => <Confirm user={user!} />} />
+          <Route path="/magic-link" render={() => <Confirm user={user!} />} />
           <Route path="/new" component={New} />
           <Route
             path="/store/new"

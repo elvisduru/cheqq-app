@@ -1,8 +1,8 @@
 import { useQuery } from "react-query";
-import appwrite from "../../../lib/appwrite";
+import api from "../../../lib/api";
 
 export default function useUser() {
-  return useQuery("user", appwrite.account.get, {
+  return useQuery("user", () => api.get("/users/current"), {
     enabled: !["/signup", "/login", "/confirm"].includes(
       window.location.pathname
     ),

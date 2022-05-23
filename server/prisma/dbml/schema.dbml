@@ -1,0 +1,42 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  name String
+  email String [unique, not null]
+  emailVerified Boolean [not null, default: false]
+  active Boolean [not null, default: true]
+  password String
+  passwordUpdatedAt DateTime
+  stores Store [not null]
+  plan Plan [not null, default: 'FREE']
+  hashedRefreshToken String
+  prefs Json [not null, default: '{}']
+}
+
+Table Store {
+  id Int [pk, increment]
+  owner User [not null]
+  ownerId Int [not null]
+  name String [not null]
+  status Boolean [not null]
+  domain String
+  address String [not null]
+  country String [not null]
+  phone String [not null]
+  order_email String [not null]
+  language String [not null]
+  currency String [not null]
+  logo String [not null]
+  category String [not null]
+  public Boolean [not null]
+}
+
+Enum Plan {
+  FREE
+  PRO
+}
+
+Ref: Store.ownerId > User.id

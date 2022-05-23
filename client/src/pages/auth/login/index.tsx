@@ -39,6 +39,7 @@ export default function Login({ user }: { user: User }) {
     try {
       if (validateEmail(email)) {
         setValid(true);
+        // Send request to create magic link
         await appwrite.account.createMagicURLSession(
           "unique()",
           email,

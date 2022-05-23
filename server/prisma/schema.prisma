@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  name               String?
+  email              String    @unique
+  emailVerified      Boolean   @default(false)
+  active             Boolean   @default(true)
+  password           String?
+  passwordUpdatedAt  DateTime?
+  stores             Store[]
+  plan               Plan      @default(value: FREE)
+  hashedRefreshToken String?
+  prefs              Json      @default("{}")
+}
+
+model Store {
+  id          Int     @id @default(autoincrement())
+  owner       User    @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+  name        String
+  status      Boolean
+  domain      String?
+  address     String
+  country     String
+  phone       String
+  order_email String
+  language    String
+  currency    String
+  logo        String
+  category    String
+  public      Boolean
+}
+
+enum Plan {
+  FREE
+  PRO
+}
