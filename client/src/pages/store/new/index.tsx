@@ -6,14 +6,24 @@ import { User } from "../../../utils/types";
 import Categories from "./categories";
 import Details from "./details";
 
+export type StoreFormValues = {
+  name: string;
+  tag: string;
+  logo: File;
+  logoUrl?: string;
+  banner: File;
+  bannerUrl?: string;
+  description: string;
+  address: string;
+  category: string;
+  currency: string;
+  country: string;
+  phone: string;
+};
+
 export default function NewStore({ user }: { user: User }) {
   const [progress, setProgress] = useState(1);
-  const methods = useForm({
-    defaultValues: {
-      address: undefined,
-      avatar: undefined,
-      banner: undefined,
-    },
+  const methods = useForm<StoreFormValues>({
     mode: "onBlur",
   });
 

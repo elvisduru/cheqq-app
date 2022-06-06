@@ -10,6 +10,16 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 const queryClient = new QueryClient();
 
+// queryClient.setDefaultOptions({
+//   queries: {
+//     onError: (err: any) => {
+//       if (err?.name === "AxiosError" && err?.response.status === 401) {
+//         window.location.href = "/signup";
+//       }
+//     },
+//   },
+// });
+
 ReactDOM.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>

@@ -1,3 +1,4 @@
+import { PutObjectCommandInput } from "@aws-sdk/client-s3";
 import {
   IonBackButton,
   IonButton,
@@ -12,99 +13,64 @@ import {
   IonTitle,
   IonToolbar,
   useIonToast,
-  useIonViewDidEnter,
-  useIonViewWillEnter,
-  useIonViewWillLeave,
 } from "@ionic/react";
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Subscription } from "react-hook-form/dist/utils/createSubject";
 import { Redirect } from "react-router-dom";
 import AvatarUpload from "../../components/AvatarUpload";
-import { useUpdateUser } from "../../hooks/mutations/user/updateUser";
-import useUser from "../../hooks/queries/users/useUser";
+import useUpdateUser from "../../hooks/mutations/user/updateUser";
 import useBoolean from "../../hooks/useBoolean";
-import appwrite from "../../lib/appwrite";
+import s3Client from "../../lib/s3Client";
+import { User } from "../../utils/types";
 
-export default function New() {
+type Props = {
+  user?: User;
+  isLoading: boolean;
+};
+
+export default function New({ user, isLoading: isUserLoading }: Props) {
   const [present] = useIonToast();
-  const { data: user, isLoading: isUserLoading } = useUser();
   const updateUser = useUpdateUser();
 
-  const [funcId, setFuncId] = useState<string>("");
   type FormValues = {
     name: string;
     avatar: File;
   };
 
   const { setValue, handleSubmit, watch } = useForm<FormValues>();
-  const [fields, setFields] = useState<{ [x: string]: any }>();
-
   const { value: isLoading, toggle } = useBoolean(false);
-
-  const executeNewUserFunc = async () => {
-    // Create user bucket and activate user
-    console.log("executing function for new user");
-    const res = await appwrite.functions.createExecution(
-      "6261f1ecc820a289a0c1"
-    );
-    setFuncId(res.$id);
-  };
-
-  useIonViewWillEnter(() => {
-    executeNewUserFunc();
-  }, []);
-
-  let sub: Subscription;
-
-  useIonViewDidEnter(() => {
-    sub = watch((data) => {
-      setFields(data);
-    });
-  }, []);
-
-  useIonViewWillLeave(() => {
-    sub.unsubscribe();
-  });
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     try {
       toggle();
-
-      // Check function state
-      const res = await appwrite.functions.getExecution(
-        "6261f1ecc820a289a0c1",
-        funcId
-      );
-
-      if (
-        res.status === "failed" &&
-        !res.stderr.includes("Bucket already exists")
-      ) {
-        console.log(res.stderr);
-        executeNewUserFunc();
-        toggle();
-        return present("Error instantiating user. Please try again.", 2000);
-      }
-
       // Save avatar to cloud storage
-      const response = await appwrite.storage.createFile(
-        user?.$id!,
-        "profile_pic",
-        data.avatar,
-        ["role:all"]
-      );
+      const filePath = `users/${user?.id}/${data.avatar.name}`;
+      const params: PutObjectCommandInput = {
+        Bucket: process.env.REACT_APP_SPACES_BUCKET,
+        Key: filePath,
+        Body: data.avatar,
+        ACL: "public-read",
+        ContentType: data.avatar.type,
+      };
+
+      await s3Client.putObject(params);
 
       // Update user
       updateUser.mutate(
         {
+          avatarUrl: `${process.env.REACT_APP_CDN_URL}/${filePath}`,
           name: data.name,
-          prefs: { avatar: response.$id },
         },
         {
           onSuccess: () => {
             toggle();
-            window.location.href = "/";
+            window.location.href = "/store/new";
+          },
+          onError: () => {
+            toggle();
+            present({
+              message: "Error updating user",
+              color: "danger",
+            });
           },
         }
       );
@@ -126,9 +92,9 @@ export default function New() {
     return <Redirect to="/signup" />;
   }
 
-  // if (user?.name) {
-  //   return <Redirect to="/" />;
-  // }
+  if (user?.name) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <IonPage id="new">
@@ -162,7 +128,7 @@ export default function New() {
             <IonButton
               className="mt-1"
               expand="block"
-              disabled={!fields?.avatar || !fields?.name}
+              disabled={!watch("avatar") || !watch("name")}
               type="submit"
             >
               Done &nbsp;

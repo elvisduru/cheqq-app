@@ -1,5 +1,6 @@
-import { ErrorMessage } from "@hookform/error-message";
+import { PutObjectCommandInput } from "@aws-sdk/client-s3";
 import {
+  AlertOptions,
   IonAvatar,
   IonBackButton,
   IonButton,
@@ -12,25 +13,32 @@ import {
   IonLabel,
   IonNote,
   IonPage,
+  IonSelect,
+  IonSelectOption,
   IonSpinner,
   IonTextarea,
   IonTitle,
   IonToolbar,
   useIonRouter,
   useIonToast,
+  useIonViewWillEnter,
 } from "@ionic/react";
-import { Query } from "appwrite";
 import { imagesOutline } from "ionicons/icons";
 import { useEffect } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { Controller, useFormContext } from "react-hook-form";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps, useHistory } from "react-router";
+import { StoreFormValues } from ".";
+import currencies from "../../../assets/json/countries-currencies.json";
 import PlacesAutocomplete from "../../../components/PlacesAutocomplete";
-import { useUpdateUser } from "../../../hooks/mutations/user/updateUser";
+import useAddStore from "../../../hooks/mutations/stores/addStore";
 import useBoolean from "../../../hooks/useBoolean";
 import usePhotoGallery from "../../../hooks/usePhotoGallery";
-import appwrite from "../../../lib/appwrite";
+import api from "../../../lib/api";
+import s3Client from "../../../lib/s3Client";
 import { User } from "../../../utils/types";
+import PhoneInput, { CountryData } from "react-phone-input-2";
+import "react-phone-input-2/lib/material.css";
 
 type Props = {
   user: User;
@@ -38,7 +46,10 @@ type Props = {
 } & RouteComponentProps;
 
 export default function Details({ progress, user }: Props) {
-  const updateUser = useUpdateUser();
+  const addStore = useAddStore();
+
+  const history = useHistory();
+
   const {
     setValue,
     control,
@@ -46,12 +57,14 @@ export default function Details({ progress, user }: Props) {
     getValues,
     trigger,
     formState: { errors, isValid, isDirty },
-  } = useFormContext();
+  } = useFormContext<StoreFormValues>();
+
   const {
     photo: bannerPhoto,
     takePhoto: takeBannerPhoto,
     file: bannerFile,
   } = usePhotoGallery();
+
   const {
     photo: avatarPhoto,
     takePhoto: takeAvatarPhoto,
@@ -59,11 +72,13 @@ export default function Details({ progress, user }: Props) {
   } = usePhotoGallery();
 
   const [present] = useIonToast();
+
   const router = useIonRouter();
+
   useEffect(() => {
     if (avatarFile) {
-      setValue("avatar", avatarFile);
-      setValue("avatarUrl", avatarPhoto?.webPath);
+      setValue("logo", avatarFile);
+      setValue("logoUrl", avatarPhoto?.webPath);
     }
     if (bannerFile) {
       setValue("banner", bannerFile);
@@ -74,11 +89,13 @@ export default function Details({ progress, user }: Props) {
   const { value: isLoading, toggle } = useBoolean(false);
 
   const checkTag = async (tag: string) => {
-    const res = await appwrite.database.listDocuments("stores", [
-      Query.equal("tag", tag.substring(1)),
-    ]);
-    return res.total;
+    const res = await api.get(`stores/tag/${tag}`);
+    return res.data;
   };
+
+  useIonViewWillEnter(() => {
+    if (!watch("category")) history.replace("/store/new");
+  });
 
   return (
     <IonPage>
@@ -131,10 +148,10 @@ export default function Details({ progress, user }: Props) {
                 onClick={takeAvatarPhoto}
                 className="relative bg-mute flex ion-align-items-center ion-justify-content-center"
               >
-                {watch("avatarUrl") ? (
-                  <img src={watch("avatarUrl")} alt="avatar" />
+                {watch("logoUrl") ? (
+                  <img src={watch("logoUrl")} alt="avatar" />
                 ) : (
-                  user?.name[0]
+                  user?.name?.substring(0, 1)
                 )}
                 <div
                   style={{ padding: 5 }}
@@ -149,7 +166,11 @@ export default function Details({ progress, user }: Props) {
               </IonAvatar>
             </div>
           </div>
-          <IonItem className="input mt-1" fill="outline" mode="md">
+          <IonItem
+            className={`input mt-1 ${errors.name ? "ion-invalid" : ""}`}
+            fill="outline"
+            mode="md"
+          >
             <IonLabel position="floating">Store name</IonLabel>
             <Controller
               name="name"
@@ -166,15 +187,16 @@ export default function Details({ progress, user }: Props) {
                 />
               )}
             />
+            <IonNote slot="helper">
+              Give your store a short and clear name.
+            </IonNote>
+            <IonNote slot="error">{errors.name?.message}</IonNote>
           </IonItem>
-          <ErrorMessage
-            errors={errors}
-            name="name"
-            render={({ message }) => (
-              <IonNote color="danger">{message}</IonNote>
-            )}
-          />
-          <IonItem className="input mt-1" fill="outline" mode="md">
+          <IonItem
+            className={`input mt-1 ${errors.tag ? "ion-invalid" : ""}`}
+            fill="outline"
+            mode="md"
+          >
             <IonLabel position="floating">Cheqq Tag</IonLabel>
             <Controller
               name="tag"
@@ -212,14 +234,9 @@ export default function Details({ progress, user }: Props) {
                 />
               )}
             />
+            <IonNote slot="helper">Enter a unique tag for your store.</IonNote>
+            <IonNote slot="error">{errors.tag?.message}</IonNote>
           </IonItem>
-          <ErrorMessage
-            errors={errors}
-            name="tag"
-            render={({ message }) => (
-              <IonNote color="danger">{message}</IonNote>
-            )}
-          />
           <IonItem className="input mt-1" fill="outline" mode="md">
             <IonLabel position="floating">Store description</IonLabel>
             <Controller
@@ -239,19 +256,95 @@ export default function Details({ progress, user }: Props) {
                 </>
               )}
             />
+            <IonNote slot="helper">
+              Provide a short description of your store.
+            </IonNote>
           </IonItem>
           <Controller
             name="address"
             control={control}
+            rules={{ required: "Please enter an address for your store" }}
             render={({ field: { onChange, onBlur, value } }) => (
               <PlacesAutocomplete
                 onChange={onChange}
                 onBlur={onBlur}
                 value={value}
+                error={errors.address?.message}
               />
             )}
           />
-          {/* TODO: Add currency (Sell in...) */}
+          <IonItem
+            className={`input mt-1 ${errors.currency ? "ion-invalid" : ""}`}
+            fill="outline"
+            mode="md"
+          >
+            <IonLabel position="floating">Currency</IonLabel>
+            <Controller
+              name="currency"
+              control={control}
+              rules={{ required: "Please select a currency for your store" }}
+              render={({ field: { onBlur, onChange, value } }) => (
+                <IonSelect
+                  interface="alert"
+                  interfaceOptions={
+                    {
+                      translucent: true,
+                      mode: "ios",
+                      header: "Select currency",
+                    } as AlertOptions
+                  }
+                  onIonChange={onChange}
+                  onIonBlur={onBlur}
+                  value={value}
+                >
+                  {currencies.map((currency) => (
+                    <IonSelectOption
+                      key={currency.country}
+                      value={currency.currency_code}
+                    >
+                      {`${currency.country} - ${currency.currency_code}`}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
+              )}
+            />
+            <IonNote slot="helper">Select the currency for your store.</IonNote>
+            <IonNote slot="error">{errors.currency?.message}</IonNote>
+          </IonItem>
+          <div>
+            <Controller
+              name="phone"
+              control={control}
+              rules={{
+                required: "Please enter a phone number",
+                pattern: {
+                  value: /^\+?[0-9]{10,15}$/,
+                  message: "Please enter a valid phone number",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <PhoneInput
+                  containerClass="mt-1"
+                  country={"us"}
+                  value={value}
+                  onChange={(value, countryData: CountryData) => {
+                    setValue("country", countryData.name);
+                    onChange(value);
+                  }}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+            {!errors.phone ? (
+              <IonNote slot="helper" className="ml-1 text-xs text-helper">
+                Enter your store's phone number
+              </IonNote>
+            ) : (
+              <IonNote slot="error" className="ml-1 text-xs" color="danger">
+                {errors.phone?.message}
+              </IonNote>
+            )}
+          </div>
           <IonButton
             onClick={async () => {
               try {
@@ -264,70 +357,68 @@ export default function Details({ progress, user }: Props) {
 
                 if (!isValid || !isDirty) {
                   if (!isDirty) {
-                    trigger(["name", "tag"]);
+                    trigger(["name", "tag", "address", "currency", "phone"]);
                   } else {
-                    const errorList = Object.keys(errors);
+                    const errorList = Object.keys(errors) as Array<
+                      keyof StoreFormValues
+                    >;
                     trigger(errorList);
                   }
                   toggle();
-                  return present("Please fill the missing fields", 2000);
+                  return present("Please fill out all required fields", 2000);
                 }
 
                 // prepare data
-                delete values.avatarUrl;
+                delete values.logoUrl;
                 delete values.bannerUrl;
                 values.tag = values.tag.substring(1);
 
-                // store files and get ids
-                const avatarRes = await appwrite.storage.createFile(
-                  user?.$id!,
-                  "store_avatar",
-                  values.avatar,
-                  ["role:all"]
-                );
-                values.avatar = avatarRes.$id;
+                // store files to cloud storage
+                const logoFilePath = `users/${user?.id}/${values.logo.name}`;
+                const bannerFilePath = `users/${user?.id}/${values.banner.name}`;
+                const logoParams: PutObjectCommandInput = {
+                  Bucket: process.env.REACT_APP_SPACES_BUCKET,
+                  Key: logoFilePath,
+                  Body: values.logo,
+                  ACL: "public-read",
+                  ContentType: values.logo.type,
+                };
 
-                const bannerRes = await appwrite.storage.createFile(
-                  user?.$id!,
-                  "store_banner",
-                  values.banner,
-                  ["role:all"]
-                );
-                values.banner = bannerRes.$id;
+                const bannerParams: PutObjectCommandInput = {
+                  Bucket: process.env.REACT_APP_SPACES_BUCKET,
+                  Key: bannerFilePath,
+                  Body: values.logo,
+                  ACL: "public-read",
+                  ContentType: values.logo.type,
+                };
 
-                // create store
-                let date = Date.now();
-                await appwrite.database.createDocument("stores", "unique()", {
+                await Promise.all([
+                  s3Client.putObject(logoParams),
+                  s3Client.putObject(bannerParams),
+                ]);
+
+                // Create Store
+                await addStore.mutateAsync({
                   ...values,
-                  user_id: user?.$id,
-                  createdAt: date,
-                  updatedAt: date,
+                  logo: `${process.env.REACT_APP_CDN_URL}/${logoFilePath}`,
+                  banner: `${process.env.REACT_APP_CDN_URL}/${bannerFilePath}`,
+                  ownerId: user.id,
+                  language: navigator.language || "en-US",
+                  phone: `+${values.phone}`,
                 });
 
-                // Update user
-                if (!user?.prefs?.stores?.includes(values.tag)) {
-                  updateUser.mutate(
-                    {
-                      prefs: {
-                        ...user?.prefs,
-                        stores: user?.prefs.stores
-                          ? [...user?.prefs.stores, values.tag]
-                          : [values.tag],
-                      },
-                    },
-                    {
-                      onSuccess: () => {
-                        window.location.href = "/";
-                      },
-                    }
-                  );
-                } else {
-                  window.location.href = "/";
-                }
+                window.location.href = "/";
 
                 toggle();
-              } catch (e) {
+              } catch (e: any) {
                 console.log(e);
+                if (e.response) {
+                  if (typeof e.response.data.message === "string") {
+                    present(e.response.data.message, 2000);
+                  } else {
+                    present(e.response.data.message.join(", "), 3000);
+                  }
+                }
                 toggle();
               }
             }}

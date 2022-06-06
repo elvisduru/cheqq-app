@@ -1,5 +1,6 @@
-import { IonInput, IonItem, IonLabel, IonList } from "@ionic/react";
+import { IonInput, IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
 import { useRef } from "react";
+import { FieldError } from "react-hook-form";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 import useScript from "../hooks/useScript";
@@ -8,6 +9,7 @@ type Props = {
   onChange: (value: any) => void;
   onBlur: () => void;
   value: any;
+  error?: string;
 };
 
 // BUG: Suggestions rendering twice after selection
@@ -16,6 +18,7 @@ export default function PlacesAutocomplete({
   onChange,
   onBlur,
   value: formValue,
+  error,
 }: Props) {
   const {
     ready,
@@ -37,7 +40,11 @@ export default function PlacesAutocomplete({
   useOnClickOutside(ref, clearSuggestions);
 
   return scriptStatus !== "ready" ? (
-    <IonItem className="input mt-1" fill="outline" mode="md">
+    <IonItem
+      className={`input mt-1 ${error ? "ion-invalid" : ""}`}
+      fill="outline"
+      mode="md"
+    >
       <IonLabel position="floating">Address</IonLabel>
       <IonInput
         type="text"
@@ -48,10 +55,15 @@ export default function PlacesAutocomplete({
         onIonBlur={onBlur}
         disabled={!ready}
       />
+      <IonNote slot="error">{error}</IonNote>
     </IonItem>
   ) : (
     <div>
-      <IonItem className="input mt-1" fill="outline" mode="md">
+      <IonItem
+        className={`input mt-1 ${error ? "ion-invalid" : ""}`}
+        fill="outline"
+        mode="md"
+      >
         <IonLabel position="floating">Address</IonLabel>
         <IonInput
           type="text"
@@ -62,6 +74,7 @@ export default function PlacesAutocomplete({
           onIonBlur={onBlur}
           disabled={!ready}
         />
+        <IonNote slot="error">{error}</IonNote>
       </IonItem>
       <IonList ref={ref}>
         {status === "OK" &&

@@ -15,6 +15,7 @@ import notFoundAnimation from "../../assets/json/no-data-found.json";
 import ChooseProduct from "../../components/ChooseProduct";
 import NoData from "../../components/NoData";
 import useOrders from "../../hooks/queries/orders/useOrders";
+import { useStore } from "../../hooks/useStore";
 import { User } from "../../utils/types";
 
 type Props = {
@@ -22,15 +23,14 @@ type Props = {
 };
 
 const Orders: React.FC<Props> = ({ user }) => {
-  const { data, isLoading, refetch } = useOrders(user?.prefs.stores[0]);
+  const { selectedStore } = useStore();
+  const { data, isLoading } = useOrders();
 
   const [present, dismiss] = useIonModal(ChooseProduct, {
     dismiss: () => {
       dismiss();
     },
   });
-
-  useIonViewWillEnter(refetch, []);
 
   if (isLoading) {
     return <IonLoading isOpen={true} message={"Fetching orders..."} />;
@@ -43,10 +43,7 @@ const Orders: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img
-                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${user?.$id}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
-                  alt="avatar"
-                />
+                <img src={user.stores[selectedStore].logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

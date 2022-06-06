@@ -13,9 +13,9 @@ import {
   IonToolbar,
   useIonRouter,
 } from "@ionic/react";
+import axios from "axios";
 import { useState } from "react";
 import { Redirect } from "react-router";
-import appwrite from "../../../lib/appwrite";
 import { User } from "../../../utils/types";
 import "./index.scss";
 
@@ -40,12 +40,11 @@ export default function Login({ user }: { user: User }) {
       if (validateEmail(email)) {
         setValid(true);
         // Send request to create magic link
-        await appwrite.account.createMagicURLSession(
-          "unique()",
+        await axios.post(`${process.env.REACT_APP_API_URL}/auth/magic-link`, {
           email,
-          "https://cheqq.me/confirm"
-        );
-        router.push("/confirm?email=" + email);
+        });
+
+        router.push("/magic-link?email=" + email);
       } else {
         setValid(false);
       }

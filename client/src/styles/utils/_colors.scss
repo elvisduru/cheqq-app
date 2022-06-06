@@ -14,6 +14,7 @@ $colors: (
   "gray": #ddd,
   "modal": var(--ion-color-step-100),
   "card": var(--ion-card-background),
+  "helper": var(--ion-color-step-600, #666666)
 );
 
 @each $property, $value in $colors {
@@ -23,5 +24,13 @@ $colors: (
 
   .bg-#{$property} {
     background-color: $value;
+  }
+
+  .text-#{$property}\! {
+    color: $value !important;
+  }
+
+  .bg-#{$property}\! {
+    background-color: $value !important;
   }
 }

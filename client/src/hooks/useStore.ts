@@ -39,8 +39,11 @@ export const useHydration = () => {
 export const useStore = create(
   persist(
     (set, get) => ({
-      user: null as User,
+      user: null,
       setUser: (user: User) => set(() => ({ user })),
+      selectedStore: 0,
+      setSelectedStore: (selectedStore: number) =>
+        set(() => ({ selectedStore })),
     }),
     {
       name: "cheqq-storage",

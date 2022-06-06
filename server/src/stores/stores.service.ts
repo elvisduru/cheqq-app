@@ -17,9 +17,9 @@ export class StoresService {
   ): Promise<Store[]> {
     return this.prisma.store.findMany({
       where,
-      take: pagination.take || 10,
-      skip: pagination.skip || 1,
-      cursor: pagination.cursor ? { id: pagination.cursor } : undefined,
+      take: pagination?.take || 10,
+      skip: pagination?.skip || 1,
+      cursor: pagination?.cursor ? { id: pagination.cursor } : undefined,
       orderBy: {
         id: 'asc',
       },
@@ -30,6 +30,14 @@ export class StoresService {
     return this.prisma.store.findUnique({
       where: {
         id,
+      },
+    });
+  }
+
+  async findByTag(tag: string) {
+    return this.prisma.store.findUnique({
+      where: {
+        tag,
       },
     });
   }

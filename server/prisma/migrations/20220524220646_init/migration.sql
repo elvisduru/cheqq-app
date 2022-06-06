@@ -22,23 +22,27 @@ CREATE TABLE "Store" (
     "id" SERIAL NOT NULL,
     "ownerId" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
-    "status" BOOLEAN NOT NULL,
+    "tag" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
     "domain" TEXT,
     "address" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
-    "order_email" TEXT NOT NULL,
+    "order_email" TEXT,
     "language" TEXT NOT NULL,
     "currency" TEXT NOT NULL,
-    "logo" TEXT NOT NULL,
+    "logo" TEXT,
     "category" TEXT NOT NULL,
-    "public" BOOLEAN NOT NULL,
+    "public" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Store_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Store_tag_key" ON "Store"("tag");
 
 -- AddForeignKey
 ALTER TABLE "Store" ADD CONSTRAINT "Store_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

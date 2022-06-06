@@ -19,6 +19,7 @@ import { format } from "date-fns";
 import { notifications } from "ionicons/icons";
 import { Link } from "react-router-dom";
 import ChartCard from "../../components/ChartCard";
+import { useStore } from "../../hooks/useStore";
 import { getCurrentDayPeriod } from "../../utils";
 import { User } from "../../utils/types";
 import "./index.scss";
@@ -28,6 +29,7 @@ type Props = {
 };
 
 const Home: React.FC<Props> = ({ user }) => {
+  const { selectedStore } = useStore();
   const orders = [
     {
       orderId: "#774312",
@@ -156,10 +158,7 @@ const Home: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img
-                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${user?.$id}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
-                  alt="avatar"
-                />
+                <img src={user.stores[selectedStore].logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>
@@ -172,7 +171,7 @@ const Home: React.FC<Props> = ({ user }) => {
         <div className="ion-padding">
           <h3>
             Good {getCurrentDayPeriod()},{" "}
-            <span className="font-light">{user?.name.split(" ")[0]}</span>
+            <span className="font-light">{user?.name?.split(" ")[0]}</span>
           </h3>
           <div className="bubble">
             <IonNote>

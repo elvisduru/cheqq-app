@@ -10,7 +10,6 @@ import {
 } from "@ionic/react";
 import React from "react";
 import { useQueryClient } from "react-query";
-import appwrite from "../../lib/appwrite";
 
 type Props = {};
 
@@ -36,7 +35,7 @@ const Settings: React.FC = (props: Props) => {
         <IonButton
           onClick={async () => {
             try {
-              await appwrite.account.deleteSession("current");
+              // await appwrite.account.deleteSession("current");
               await queryClient.invalidateQueries("user");
               window.location.href = "/signup";
             } catch (e) {

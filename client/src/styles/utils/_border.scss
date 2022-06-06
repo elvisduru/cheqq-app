@@ -99,6 +99,14 @@ $radii: (
   border: 1px solid var(--ion-color-light);
 }
 
+.border\! {
+  border: 1px solid var(--ion-color-step-500, gray) !important;
+}
+
+.border-light\! {
+  border: 1px solid var(--ion-color-light) !important;
+}
+
 .border-b {
   border-bottom: 1px solid var(--ion-color-step-500, gray);
 }

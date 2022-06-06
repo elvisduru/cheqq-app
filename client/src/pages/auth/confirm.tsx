@@ -1,3 +1,4 @@
+import { Storage } from "@capacitor/storage";
 import {
   IonBackButton,
   IonButton,
@@ -13,17 +14,16 @@ import {
   useIonViewDidEnter,
   useIonViewWillLeave,
 } from "@ionic/react";
+import axios from "axios";
 import { useCallback, useEffect } from "react";
 import { Redirect } from "react-router";
 import useCountdown from "../../hooks/useCountdown";
 import useQuery from "../../hooks/useQuery";
-import appwrite from "../../lib/appwrite";
 import { User } from "../../utils/types";
 
 export default function Confirm({ user }: { user: User }) {
   const query = useQuery();
   const email = query.get("email");
-  const userId = query.get("userId");
   const secret = query.get("secret");
 
   const router = useIonRouter();
@@ -53,13 +53,21 @@ export default function Confirm({ user }: { user: User }) {
   const confirmMagicLink = useCallback(async () => {
     try {
       if (user) return;
-      console.log("confirming magic link...");
-      if (userId && secret) {
-        const res = await appwrite.account.updateMagicURLSession(
-          userId,
-          secret
+      if (secret) {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/auth/magic-link/${secret}`
         );
         if (res) {
+          await Promise.all([
+            Storage.set({
+              key: "access_token",
+              value: res.data.access_token,
+            }),
+            Storage.set({
+              key: "refresh_token",
+              value: res.data.refresh_token,
+            }),
+          ]);
           present({
             duration: 1500,
             message: "Signed in successfully!",
@@ -79,10 +87,11 @@ export default function Confirm({ user }: { user: User }) {
             text: "Retry",
             handler: async () => {
               if (email) {
-                await appwrite.account.createMagicURLSession(
-                  "unique()",
-                  email!,
-                  "https://cheqq.me/confirm"
+                await axios.post(
+                  `${process.env.REACT_APP_API_URL}/auth/magic-link`,
+                  {
+                    email,
+                  }
                 );
                 dismiss();
               } else {
@@ -94,11 +103,11 @@ export default function Confirm({ user }: { user: User }) {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email, secret, userId]);
+  }, [email, secret]);
 
-  useEffect(() => {
-    confirmMagicLink();
-  }, [userId, secret, confirmMagicLink]);
+  // useEffect(() => {
+  //   confirmMagicLink();
+  // }, [secret, confirmMagicLink]);
 
   if (user) {
     return <Redirect to="/" />;
@@ -135,10 +144,11 @@ export default function Confirm({ user }: { user: User }) {
               reset();
               start();
               if (email) {
-                await appwrite.account.createMagicURLSession(
-                  "unique()",
-                  email,
-                  `${process.env.REACT_APP_BASE_URL}/confirm`
+                await axios.post(
+                  `${process.env.REACT_APP_API_URL}/auth/magic-link`,
+                  {
+                    email,
+                  }
                 );
               } else {
                 router.push("/login", "back");

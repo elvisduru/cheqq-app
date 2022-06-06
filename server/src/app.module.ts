@@ -28,6 +28,7 @@ import { StoresModule } from './stores/stores.module';
             user: configService.get('SMTP_USERNAME'),
             pass: configService.get('SMTP_PASSWORD'),
           },
+          secure: true,
           pool: true,
         },
         defaults: {

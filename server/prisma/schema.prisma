@@ -20,33 +20,375 @@ model User {
   email              String    @unique
   emailVerified      Boolean   @default(false)
   active             Boolean   @default(true)
+  avatarUrl          String?
   password           String?
   passwordUpdatedAt  DateTime?
   stores             Store[]
+  // orders             Order[]
   plan               Plan      @default(value: FREE)
   hashedRefreshToken String?
   prefs              Json      @default("{}")
+  magicSecret        String?
+  magicSecretExpiry  DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  addresses          Address[]
 }
 
 model Store {
-  id          Int     @id @default(autoincrement())
-  owner       User    @relation(fields: [ownerId], references: [id])
+  id          Int       @id @default(autoincrement())
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     Int
   name        String
-  status      Boolean
+  tag         String    @unique
+  status      Boolean   @default(true)
   domain      String?
   address     String
   country     String
   phone       String
-  order_email String
+  order_email String?
   language    String
   currency    String
-  logo        String
+  logo        String?
+  banner      String?
+  description String?
   category    String
-  public      Boolean
+  public      Boolean   @default(false)
+  // orders      Order[]
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id                     Int                  @id @default(autoincrement())
+  Store                  Store                @relation(fields: [storeId], references: [id])
+  storeId                Int
+  type                   String
+  title                  String
+  description            String
+  sku                    String
+  weight                 Float?
+  weightUnit             String?
+  width                  Float?
+  height                 Float?
+  depth                  Float?
+  price                  Float
+  compareAtPrice         Float?
+  costPrice              Float?
+  taxable                Boolean              @default(false)
+  tax                    Tax?                 @relation(fields: [taxId], references: [id])
+  taxId                  Int?
+  categories             Category[]
+  brand                  Brand?               @relation(fields: [brandId], references: [id])
+  brandId                Int?
+  inventoryTracking      Boolean              @default(false)
+  inventoryPolicy        InventoryPolicy      @default(value: deny)
+  inventoryLevel         Int                  @default(value: 0)
+  inventoryWarningLevel  Int                  @default(value: 0)
+  isFreeShipping         Boolean              @default(true)
+  fixedShippingRate      Float?
+  public                 Boolean              @default(false)
+  featured               Boolean              @default(false)
+  relatedProductRelation Product[]            @relation("RelatedProducts")
+  relatedProducts        Product[]            @relation("RelatedProducts")
+  warranty               String?
+  layout                 String               @default(value: "default")
+  gtin                   String?
+  mpn                    String?
+  searchKeywords         String[]
+  availability           ProductAvailability  @default(value: available)
+  availabilityLabel      String? // For products that are for display only (availability disabled), not for sale
+  preorderReleaseDate    DateTime?
+  preOrderMessage        String?
+  preOrderOnly           Boolean              @default(false)
+  minHandlingTime        Int?
+  maxHandlingTime        Int?
+  giftWrap               Boolean              @default(false)
+  giftWrapOptions        GiftWrapOption[]
+  condition              Condition            @default(value: new)
+  showCondition          Boolean              @default(false)
+  orderQuantityMinimum   Int                  @default(value: 1)
+  orderQuantityMaximum   Int?
+  // SEO
+  pageTitle              String?
+  metaDescription        String?
+  metaKeywords           String[]
+  viewCount              Int                  @default(value: 0)
+  customUrl              String?
+  openGraphTitle         String?
+  openGraphDescription   String?
+  openGraphType          OpenGraphType        @default(value: product)
+  totalSold              Int                  @default(value: 0)
+  reviewCount            Int                  @default(value: 0)
+  reviewAverage          Float                @default(value: 0)
+  customFields           Json[]
+  // Bulk Pricing rules
+  bulkPricingRules       BulkPricingRule[]
+  images                 ProductImage[]
+  videos                 ProductVideo[]
+  // Subscriptions
+  subscription           Boolean              @default(false)
+  subscriptionInterval   SubscriptionInterval
+  subscriptionLength     Int?
+  subscriptionPrice      Float
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+}
+
+model ProductImage {
+  id          Int      @id @default(autoincrement())
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   Int
+  url         String
+  description String? // TODO: clicking on image gives you more control, i.e. zoom, thumbnail, description etc.
+  sortOrder   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProductVideo {
+  id          Int      @id @default(autoincrement())
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   Int
+  url         String
+  description String?
+  sortOrder   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BulkPricingRule {
+  id              Int                 @id @default(autoincrement())
+  product         Product             @relation(fields: [productId], references: [id])
+  productId       Int
+  quantityMin     Int                 @default(value: 1)
+  quantityMax     Int
+  adjusmentType   PriceAdjustmentType @default(value: fixed)
+  adjustmentValue Float // Percentage (in decimals) or fixed value
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model GiftWrapOption {
+  id        Int      @id @default(autoincrement())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  name      String
+  message   String
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Brand {
+  id      Int       @id @default(autoincrement())
+  name    String
+  Product Product[]
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String
+  products Product[]
+}
+
+model Tax {
+  id        Int       @id @default(autoincrement())
+  products  Product[]
+  name      String
+  rate      Float
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// model Order {
+//   id                Int             @id @default(autoincrement())
+//   store             Store           @relation(fields: [storeId], references: [id])
+//   storeId           Int
+//   customer          User            @relation(fields: [customerId], references: [id])
+//   customerId        Int
+//   billingAddress    Address         @relation(name: "BillingAddress", fields: [billingAddressId], references: [id])
+//   billingAddressId  Int
+//   shippingAddress   Address?        @relation(name: "ShippingAddress", fields: [shippingAddressId], references: [id])
+//   shippingAddressId Int?
+//   ipAddress         String?
+//   cancelReason      CancelReason?
+//   cancelledAt       DateTime?
+//   note              String?
+//   annotations       Json[]
+//   pickupDetails     PickupDetails[]
+//   lineItems         LineItem[]
+//   status            OrderStatus     @default(value: PROCESSING)
+//   createdAt         DateTime        @default(now())
+//   updatedAt         DateTime        @updatedAt
+// }
+
+// model LineItem {
+//   id                Int       @id @default(autoincrement())
+//   Order             Order     @relation(fields: [orderId], references: [id])
+//   orderId           Int
+//   quantityOrdered   Int
+//   quantityShipped   Int?
+//   quantityPending   Int?
+//   quantityCancelled Int?
+//   quantityReturned  Int?
+//   quantityDelivered Int?
+//   // Shipping details
+//   shippingMethod    String
+//   shippingCarrier   String?
+//   minDaysInTransit  Int
+//   maxDaysInTransit  Int
+//   isReturnable      Boolean
+//   daysToReturn      Int?
+//   policyUrl         String?
+//   // Product Details
+//   targetCountry     String?
+//   price             Int
+//   currency          String
+//   imageLink         String?
+//   title             String
+//   gtin              String?
+//   brand             String?
+//   mpn               String?
+//   condition         Condition
+//   attributes        Json[] //Extra attributes
+//   additionalFees    Json[] // Additional Fees at order creation time
+//   returns           Json[] // Returned items
+//   cancellations     Json[] // Cancelled items
+//   annotations       Json[] //Annotations that are attached to the line item.
+//   adjustments       Json[] // Price and tax adjustments that are attached to the line item.
+// }
+
+// model PickupDetails {
+//   id         Int         @id @default(autoincrement())
+//   order      Order       @relation(fields: [orderId], references: [id])
+//   orderId    Int
+//   pickupType PickupType
+//   collectors Collector[]
+//   address    Address     @relation(fields: [addressId], references: [id])
+//   addressId  Int
+//   createdAt  DateTime    @default(now())
+//   updatedAt  DateTime    @updatedAt
+// }
+
+// model Collector {
+//   id        Int           @id @default(autoincrement())
+//   pickup    PickupDetails @relation(fields: [pickupId], references: [id])
+//   pickupId  Int
+//   name      String
+//   phone     String
+//   createdAt DateTime      @default(now())
+//   updatedAt DateTime      @updatedAt
+// }
+
+model Address {
+  id        Int     @id @default(autoincrement())
+  firstName String
+  lastName  String
+  address1  String
+  address2  String?
+  city      String
+  state     String?
+  zip       String
+  country   String
+  phone     String
+  User      User?   @relation(fields: [userId], references: [id])
+  userId    Int?
+  // PickupDetails        PickupDetails[]
+  // billingAddressOrder  Order[]         @relation("BillingAddress")
+  // shippingAddressOrder Order[]         @relation("ShippingAddress")
 }
 
 enum Plan {
   FREE
   PRO
+}
+
+enum InventoryPolicy {
+  deny
+  continue
+}
+
+enum ProductAvailability {
+  available
+  disabled
+  preorder
+}
+
+enum ProductType {
+  physical
+  digital
+}
+
+// enum ReturnReason {
+//   customerDiscretionaryReturn
+//   customerInitiatedMerchantCancel
+//   deliveredTooLate
+//   expiredItem
+//   invalidCoupon
+//   malformedShippingAddress
+//   productArrivedDamaged
+//   productNotAsDescribed
+//   productNotAsExpected
+//   undeliverableShippingAddress
+//   wrongProductShipped
+// }
+
+enum PriceAdjustmentType {
+  fixed
+  percent
+}
+
+enum Condition {
+  new
+  used
+  refurbished
+}
+
+enum OpenGraphType {
+  product
+  album
+  book
+  drink
+  food
+  game
+  movie
+  song
+  tv_show
+}
+
+enum SubscriptionInterval {
+  day
+  week
+  month
+  year
+}
+
+// enum CancelReason {
+//   customer
+//   fraud
+//   inventory
+//   declined
+//   other
+// }
+
+// enum PickupType {
+//   merchantStore
+//   merchantStoreCurbside
+//   merchantStoreLocker
+//   thirdPartyPickupPoint
+//   thirdPartyLocker
+// }
+
+enum OrderStatus {
+  PROCESSING
+  CANCELLED
+  PENDING_SHIPMENT
+  PARTIALLY_SHIPPED
+  SHIPPED
+  PARTIALLY_DELIVERED
+  DELIVERED
+  PARTIALLY_RETURNED
+  RETURNED
 }

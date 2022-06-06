@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { UsersService } from './users.service';
-import {GetCurrentUserId} from '../common/decorators/get-current-user-id.decorator'
+import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -26,14 +26,22 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('current')
+  getCurrentUser(@GetCurrentUserId() userId: number) {
+    return this.usersService.findById(userId);
+  }
+
   @Get(':id')
   findById(@Param() id: string) {
     return this.usersService.findById(+id);
   }
 
-  @Get('/current')
-  getCurrentUser(@GetCurrentUserId() userId: number) {
-    return this.usersService.findById(userId);
+  @Patch('current')
+  updateCurrentUser(
+    @GetCurrentUserId() userId: number,
+    @Body() updateUserDto: Prisma.UserUpdateInput,
+  ) {
+    return this.usersService.updateById(userId, updateUserDto);
   }
 
   @Patch(':id')

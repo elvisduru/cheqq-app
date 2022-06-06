@@ -10,6 +10,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useStore } from "../../hooks/useStore";
 import { User } from "../../utils/types";
 
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
 };
 
 const Messenger: React.FC<Props> = ({ user }) => {
+  const { selectedStore } = useStore();
   return (
     <IonPage id="messenger">
       <IonHeader collapse="fade" translucent>
@@ -24,10 +26,7 @@ const Messenger: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img
-                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${user?.$id}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
-                  alt="avatar"
-                />
+                <img src={user.stores[selectedStore].logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

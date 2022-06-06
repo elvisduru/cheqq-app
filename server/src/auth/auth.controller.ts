@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -56,9 +57,15 @@ export class AuthController {
   }
 
   @Public()
-  @Post('magic-url')
+  @Post('magic-link')
   @HttpCode(HttpStatus.OK)
   magicUrl(@Body() data: MagicUrlDto) {
     return this.authService.magicUrl(data.email);
+  }
+
+  @Public()
+  @Get('magic-link/:secret')
+  verifyMagicToken(@Param('secret') secret: string) {
+    return this.authService.verifyMagicToken(secret);
   }
 }

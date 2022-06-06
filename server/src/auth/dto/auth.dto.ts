@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsJWT,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class AuthDto {
   @IsNotEmpty()
@@ -12,11 +18,11 @@ export class AuthDto {
 
 export class TokenDto {
   @IsNotEmpty()
-  @IsString()
+  @IsJWT()
   access_token: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsJWT()
   refresh_token: string;
 }
 
@@ -24,4 +30,7 @@ export class MagicUrlDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+
+  @IsOptional()
+  secret?: string;
 }

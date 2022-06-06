@@ -26,6 +26,7 @@ import {
   searchOutline,
 } from "ionicons/icons";
 import { useRef } from "react";
+import { useStore } from "../hooks/useStore";
 import { User } from "../utils/types";
 import "./SideMenu.scss";
 
@@ -36,12 +37,12 @@ type Props = {
 
 export default function SideMenu({ user, contentId }: Props) {
   const menuRef = useRef<HTMLIonMenuElement>(null);
-
+  const { selectedStore } = useStore();
   return (
     <IonMenu
       side="start"
       contentId={contentId}
-      disabled={!user?.name}
+      disabled={!user?.name || !user?.stores.length}
       draggable={!user?.name}
       ref={menuRef}
     >
@@ -50,15 +51,10 @@ export default function SideMenu({ user, contentId }: Props) {
           <IonItem lines="none">
             <div>
               <IonAvatar className="ion-margin-bottom">
-                <img
-                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${user?.$id}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
-                  alt="avatar"
-                />
+                <img src={user.stores[selectedStore].logo} alt="avatar" />
               </IonAvatar>
               <IonLabel>{user?.name}</IonLabel>
-              {user?.prefs?.stores && (
-                <IonNote>@{user?.prefs?.stores[0]}</IonNote>
-              )}
+              <IonNote>@{user.stores[selectedStore].tag}</IonNote>
               <p className="flex ion-justify-content-between w-full">
                 <span>
                   230 <IonNote>Followers</IonNote>

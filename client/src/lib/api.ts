@@ -33,14 +33,18 @@ api.interceptors.request.use(async (request) => {
 const refreshAccessToken = async (failedRequest: any) => {
   const refreshToken = await getToken(TokenEnum.refresh_token);
   if (!refreshToken) {
+    console.log("No refresh token found");
     return Promise.reject(failedRequest);
   }
-  const response = await api.get("/auth/refresh", {
-    skipAuthRefresh: true,
-    headers: {
-      Authorization: `Bearer ${refreshToken}`,
-    },
-  } as AxiosAuthRefreshRequestConfig);
+  const response = await axios.get(
+    `${process.env.REACT_APP_API_URL}/auth/refresh`,
+    {
+      skipAuthRefresh: true,
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    } as AxiosAuthRefreshRequestConfig
+  );
   await Promise.all([
     Storage.set({
       key: TokenEnum.access_token,

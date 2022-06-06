@@ -1,12 +1,12 @@
+import { MailerService } from '@derech1e/mailer';
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import * as argon2 from 'argon2';
+import { randomBytes } from 'crypto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto } from './dto';
-import * as argon2 from 'argon2';
 import { Tokens } from './types';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { Prisma } from '@prisma/client';
-import { MailerService } from '@derech1e/mailer';
 
 @Injectable()
 export class AuthService {
@@ -80,36 +80,29 @@ export class AuthService {
   }
 
   async magicUrl(email: string) {
-    let user: Prisma.UserGetPayload<{ select: { email: true; id: true } }>;
-    
     // Find user
     const foundUser = await this.prisma.user.findUnique({
       where: { email },
     });
 
     // If user does not exist, create new user
-    if (foundUser) {
-      user = foundUser;
-    } else {
-      user = await this.prisma.user.create({
+    if (!foundUser) {
+      await this.prisma.user.create({
         data: {
           email,
         },
       });
     }
 
-    const magicToken = await this.jwtService.signAsync(
-      {
-        sub: user.id,
-        email,
+    // Create secret and save for user
+    const secret = randomBytes(32).toString('hex');
+    await this.prisma.user.update({
+      where: { email },
+      data: {
+        magicSecret: secret,
+        magicSecretExpiry: new Date(Date.now() + 3600000),
       },
-      {
-        secret: this.configService.get<string>('JWT_MAGIC_URL_SECRET'),
-        expiresIn: '1h',
-      },
-    );
-
-    const hashedMagicToken = await this.hashData(magicToken);
+    });
 
     // Send Email with magic token
     const res = await this.mailerService.sendMail({
@@ -117,10 +110,28 @@ export class AuthService {
       subject: 'Sign in to Cheqq',
       template: 'signin',
       context: {
-        url: `${this.configService.get<string>('APP_URL')}/magic-link/${hashedMagicToken}`,
+        url: `${this.configService.get<string>(
+          'APP_URL',
+        )}/magic-link?email=${email}&secret=${secret}`,
       },
     });
     return res.response;
+  }
+
+  async verifyMagicToken(secret: string) {
+    if (!secret) throw new ForbiddenException('No secret provided');
+    const user = await this.prisma.user.findFirst({
+      where: { magicSecret: secret, magicSecretExpiry: { gt: new Date() } },
+    });
+    if (!user) throw new ForbiddenException('No user found');
+
+    const tokens = await this.getTokens(user.id, user.email);
+    const hashedRefreshToken = await this.hashData(tokens.refresh_token);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { hashedRefreshToken, magicSecret: null, magicSecretExpiry: null },
+    });
+    return tokens;
   }
 
   hashData(data: string) {

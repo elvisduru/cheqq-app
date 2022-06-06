@@ -20,11 +20,11 @@ export default function ProtectedRoute({
   }
 
   if (!user?.name) {
-    return <Redirect to="/new" />;
+    window.location.href = "/new";
   }
 
-  if (!disableExtraRedirect && !user.prefs?.stores?.length) {
-    return <Redirect to="/store/new" />;
+  if (!disableExtraRedirect && !user.stores.length) {
+    window.location.href = "/store/new";
   }
 
   return children;

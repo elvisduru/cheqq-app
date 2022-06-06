@@ -137,7 +137,6 @@ export default function PhysicalProductForm() {
         <IonNote slot="helper">State the condition of the product.</IonNote>
         <IonNote slot="error">{errors.condition?.message}</IonNote>
       </IonItem>
-      {}
       <IonItem
         className={`input mt-1 ${errors.description ? "ion-invalid" : ""}`}
         fill="outline"
@@ -174,8 +173,8 @@ export default function PhysicalProductForm() {
           className="ion-padding-horizontal text-xs"
           style={{ color: "#999" }}
         >
-          Photos · {watch("photos")?.length || 0}/10 - You can add up to 10
-          Photos.
+          Photos · {watch("photos")?.length || 0}/10 - Add up to 10 Photos. Drag
+          to reorder.
         </IonNote>
       </IonItemGroup>
       <IonItemGroup className="mt-2">

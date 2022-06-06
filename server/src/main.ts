@@ -1,12 +1,15 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { AccessTokenGuard } from './common/guards';
 import { PrismaService } from './prisma/prisma.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: ['http://localhost:8100', 'http://192.168.0.145:8100'],
+    },
+  });
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()

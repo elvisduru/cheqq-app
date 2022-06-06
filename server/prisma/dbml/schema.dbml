@@ -8,12 +8,18 @@ Table User {
   email String [unique, not null]
   emailVerified Boolean [not null, default: false]
   active Boolean [not null, default: true]
+  avatarUrl String
   password String
   passwordUpdatedAt DateTime
   stores Store [not null]
   plan Plan [not null, default: 'FREE']
   hashedRefreshToken String
   prefs Json [not null, default: '{}']
+  magicSecret String
+  magicSecretExpiry DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  addresses Address [not null]
 }
 
 Table Store {
@@ -21,17 +27,187 @@ Table Store {
   owner User [not null]
   ownerId Int [not null]
   name String [not null]
-  status Boolean [not null]
+  tag String [unique, not null]
+  status Boolean [not null, default: true]
   domain String
   address String [not null]
   country String [not null]
   phone String [not null]
-  order_email String [not null]
+  order_email String
   language String [not null]
   currency String [not null]
-  logo String [not null]
+  logo String
+  banner String
+  description String
   category String [not null]
-  public Boolean [not null]
+  public Boolean [not null, default: false]
+  products Product [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Product {
+  id Int [pk, increment]
+  Store Store [not null]
+  storeId Int [not null]
+  type String [not null]
+  title String [not null]
+  description String [not null]
+  sku String [not null]
+  weight Float
+  weightUnit String
+  width Float
+  height Float
+  depth Float
+  price Float [not null]
+  compareAtPrice Float
+  costPrice Float
+  taxable Boolean [not null, default: false]
+  tax Tax
+  taxId Int
+  categories Category [not null]
+  brand Brand
+  brandId Int
+  inventoryTracking Boolean [not null, default: false]
+  inventoryPolicy InventoryPolicy [not null, default: 'deny']
+  inventoryLevel Int [not null, default: 0]
+  inventoryWarningLevel Int [not null, default: 0]
+  isFreeShipping Boolean [not null, default: true]
+  fixedShippingRate Float
+  public Boolean [not null, default: false]
+  featured Boolean [not null, default: false]
+  relatedProductRelation Product [not null]
+  relatedProducts Product [not null]
+  warranty String
+  layout String [not null, default: 'default']
+  gtin String
+  mpn String
+  searchKeywords String[] [not null]
+  availability ProductAvailability [not null, default: 'available']
+  availabilityLabel String
+  preorderReleaseDate DateTime
+  preOrderMessage String
+  preOrderOnly Boolean [not null, default: false]
+  minHandlingTime Int
+  maxHandlingTime Int
+  giftWrap Boolean [not null, default: false]
+  giftWrapOptions GiftWrapOption [not null]
+  condition Condition [not null, default: 'new']
+  showCondition Boolean [not null, default: false]
+  orderQuantityMinimum Int [not null, default: 1]
+  orderQuantityMaximum Int
+  pageTitle String
+  metaDescription String
+  metaKeywords String[] [not null]
+  viewCount Int [not null, default: 0]
+  customUrl String
+  openGraphTitle String
+  openGraphDescription String
+  openGraphType OpenGraphType [not null, default: 'product']
+  totalSold Int [not null, default: 0]
+  reviewCount Int [not null, default: 0]
+  reviewAverage Float [not null, default: 0]
+  customFields Json[] [not null]
+  bulkPricingRules BulkPricingRule [not null]
+  images ProductImage [not null]
+  videos ProductVideo [not null]
+  subscription Boolean [not null, default: false]
+  subscriptionInterval SubscriptionInterval [not null]
+  subscriptionLength Int
+  subscriptionPrice Float [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ProductImage {
+  id Int [pk, increment]
+  product Product [not null]
+  productId Int [not null]
+  url String [not null]
+  description String
+  sortOrder Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ProductVideo {
+  id Int [pk, increment]
+  product Product [not null]
+  productId Int [not null]
+  url String [not null]
+  description String
+  sortOrder Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table BulkPricingRule {
+  id Int [pk, increment]
+  product Product [not null]
+  productId Int [not null]
+  quantityMin Int [not null, default: 1]
+  quantityMax Int [not null]
+  adjusmentType PriceAdjustmentType [not null, default: 'fixed']
+  adjustmentValue Float [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table GiftWrapOption {
+  id Int [pk, increment]
+  product Product [not null]
+  productId Int [not null]
+  name String [not null]
+  message String [not null]
+  price Float [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Brand {
+  id Int [pk, increment]
+  name String [not null]
+  Product Product [not null]
+}
+
+Table Category {
+  id Int [pk, increment]
+  name String [not null]
+  products Product [not null]
+}
+
+Table Tax {
+  id Int [pk, increment]
+  products Product [not null]
+  name String [not null]
+  rate Float [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Address {
+  id Int [pk, increment]
+  firstName String [not null]
+  lastName String [not null]
+  address1 String [not null]
+  address2 String
+  city String [not null]
+  state String
+  zip String [not null]
+  country String [not null]
+  phone String [not null]
+  User User
+  userId Int
+}
+
+Table CategoryToProduct {
+  categoriesId Int [ref: > Category.id]
+  productsId Int [ref: > Product.id]
+}
+
+Table RelatedProducts {
+  relatedproductrelationId Int [ref: > Product.id]
+  relatedproductsId Int [ref: > Product.id]
 }
 
 Enum Plan {
@@ -39,4 +215,78 @@ Enum Plan {
   PRO
 }
 
-Ref: Store.ownerId > User.id
+Enum InventoryPolicy {
+  deny
+  continue
+}
+
+Enum ProductAvailability {
+  available
+  disabled
+  preorder
+}
+
+Enum ProductType {
+  physical
+  digital
+}
+
+Enum PriceAdjustmentType {
+  fixed
+  percent
+}
+
+Enum Condition {
+  new
+  used
+  refurbished
+}
+
+Enum OpenGraphType {
+  product
+  album
+  book
+  drink
+  food
+  game
+  movie
+  song
+  tv_show
+}
+
+Enum SubscriptionInterval {
+  day
+  week
+  month
+  year
+}
+
+Enum OrderStatus {
+  PROCESSING
+  CANCELLED
+  PENDING_SHIPMENT
+  PARTIALLY_SHIPPED
+  SHIPPED
+  PARTIALLY_DELIVERED
+  DELIVERED
+  PARTIALLY_RETURNED
+  RETURNED
+}
+
+Ref: Store.ownerId > User.id [delete: Cascade]
+
+Ref: Product.storeId > Store.id
+
+Ref: Product.taxId > Tax.id
+
+Ref: Product.brandId > Brand.id
+
+Ref: ProductImage.productId > Product.id
+
+Ref: ProductVideo.productId > Product.id
+
+Ref: BulkPricingRule.productId > Product.id
+
+Ref: GiftWrapOption.productId > Product.id
+
+Ref: Address.userId > User.id

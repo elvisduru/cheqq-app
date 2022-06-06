@@ -44,7 +44,6 @@ setupIonicReact({
 const App: React.FC = () => {
   const { data: user, isLoading } = useUser();
   const ionRouter = useIonRouter();
-
   useEffect(() => {
     document.addEventListener("ionBackButton", (ev) => {
       (ev as BackButtonEvent).detail.register(0, () => {
@@ -68,7 +67,7 @@ const App: React.FC = () => {
     <>
       <AppUrlListener />
       <IonSplitPane contentId="main">
-        <SideMenu user={user!} contentId="main" />
+        {user && <SideMenu user={user!} contentId="main" />}
         <IonRouterOutlet id="main">
           <Route
             path="/"
@@ -82,7 +81,10 @@ const App: React.FC = () => {
           <Route path="/signup" render={() => <SignUp user={user!} />} />
           <Route path="/login" render={() => <Login user={user!} />} />
           <Route path="/magic-link" render={() => <Confirm user={user!} />} />
-          <Route path="/new" component={New} />
+          <Route
+            path="/new"
+            render={() => <New user={user} isLoading={isLoading} />}
+          />
           <Route
             path="/store/new"
             render={() => (
@@ -95,7 +97,11 @@ const App: React.FC = () => {
               </ProtectedRoute>
             )}
           />
-          <Route render={() => <Redirect to="/home" />} />
+          {user ? (
+            <Route render={() => <Redirect to="/home" />} />
+          ) : (
+            <Redirect to="/signup" />
+          )}
         </IonRouterOutlet>
       </IonSplitPane>
     </>
