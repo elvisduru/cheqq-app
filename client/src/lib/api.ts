@@ -45,6 +45,9 @@ const refreshAccessToken = async (failedRequest: any) => {
       },
     } as AxiosAuthRefreshRequestConfig
   );
+  if (response.status !== 200) {
+    console.log("Refresh token failed");
+  }
   await Promise.all([
     Storage.set({
       key: TokenEnum.access_token,

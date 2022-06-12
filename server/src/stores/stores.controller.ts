@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { GetCurrentUserId } from 'src/common/decorators';
-import { CreateStoreDto } from './dto/store.dto';
+import { CreateStoreDto } from './dto';
 import { StoresService } from './stores.service';
 
 @Controller('stores')

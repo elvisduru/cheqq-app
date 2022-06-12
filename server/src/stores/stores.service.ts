@@ -1,14 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Store } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateStoreDto } from './dto/store.dto';
+import { CreateStoreDto } from './dto';
 
 @Injectable()
 export class StoresService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CreateStoreDto): Promise<Store> {
-    return this.prisma.store.create({ data });
+    const categories = [...data.categories];
+    delete data.categories;
+    return this.prisma.store.create({
+      data: {
+        ...data,
+        categories: {
+          connect: categories.map((category) => ({ id: category })),
+        },
+      },
+    });
   }
 
   async findAll(

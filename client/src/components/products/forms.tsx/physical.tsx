@@ -15,22 +15,47 @@ import {
   useIonModal,
 } from "@ionic/react";
 import { caretDown, settings } from "ionicons/icons";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
+import shallow from "zustand/shallow";
+import { useDeleteImages } from "../../../hooks/mutations/images/deleteImages";
+import useUser from "../../../hooks/queries/users/useUser";
+import { AppState, ModalState, useStore } from "../../../hooks/useStore";
+import { Image } from "../../../utils/types";
 import MediaUploader from "../../MediaUploader";
 import SelectCategory from "../../SelectCategory";
 import ShippingZones from "../../shipping/Shipping";
 import TagInput from "../../TagInput";
 
+const selector = ({
+  setPhysicalFormData,
+  physicalFormData,
+  physicalModalState,
+}: AppState) => ({
+  setPhysicalFormData,
+  physicalFormData,
+  physicalModalState,
+});
+
+// TODO: When submitting form update sortOrder of photos and videos
+
 export default function PhysicalProductForm() {
+  const { data: user } = useUser();
+  const { setPhysicalFormData, physicalFormData, physicalModalState } =
+    useStore(selector, shallow);
+
+  const deleteImages = useDeleteImages();
+
   const {
     control,
     handleSubmit,
     setValue,
     watch,
     formState: { errors },
+    getValues,
   } = useForm({
     mode: "onBlur",
+    defaultValues: { ...physicalFormData },
   });
   const onSubmit = (data: any) => console.log(data);
   const onError = (error: any) => console.log(error);
@@ -43,6 +68,37 @@ export default function PhysicalProductForm() {
   });
 
   const ref = useRef(null);
+
+  // HACK: This is a hack to fix form state if images are already present in store but not in form state.
+  // useEffect(() => {
+  //   if (physicalFormData && physicalFormData?.savedPhotos)
+  //     setValue("savedPhotos", physicalFormData.savedPhotos);
+  // }, [physicalFormData]);
+
+  // Save photos to cloud
+  useEffect(() => {
+    const formValues = getValues();
+    if (physicalModalState === ModalState.SAVE) {
+      // Save form state
+      // let existingImages: Image[] = [];
+
+      // if (formValues?.savedPhotos) {
+      //   existingImages = [...formValues.savedPhotos];
+      // }
+
+      setPhysicalFormData({ ...formValues });
+    }
+
+    if (physicalModalState === ModalState.DELETE) {
+      // Delete all uploaded images
+      if (formValues?.photos.length) {
+        deleteImages.mutate(formValues.photos);
+      }
+      setPhysicalFormData(undefined);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [physicalModalState]);
 
   return (
     <form
@@ -90,9 +146,10 @@ export default function PhysicalProductForm() {
           style={{ fontSize: 14, top: "calc(50% - 7px)" }}
         />
         <IonLabel position="floating">Category</IonLabel>
+        {/* TODO: Clean categoryName onSubmit */}
         <Controller
           control={control}
-          name="category"
+          name="categoryName"
           render={({ field: { onChange, onBlur, value } }) => (
             <SelectCategory
               setValue={setValue}
@@ -163,12 +220,24 @@ export default function PhysicalProductForm() {
         </IonNote>
         <IonNote slot="error">{errors.description?.message}</IonNote>
       </IonItem>
-      <TagInput setValue={setValue} />
+      <TagInput value={watch("tags")} setValue={setValue} />
       <IonItemGroup className="mt-2">
         <IonItemDivider className="pl-0">
           <IonLabel color="medium">Media</IonLabel>
         </IonItemDivider>
-        <MediaUploader setValue={setValue} />
+        <MediaUploader
+          setValue={setValue}
+          photos={watch("photos")}
+          user={user!}
+          // deleteFormImage={(id) => {
+          //   setPhysicalFormData({
+          //     ...physicalFormData,
+          //     savedPhotos: physicalFormData.savedPhotos.filter(
+          //       (photo: Image) => photo.id !== id
+          //     ),
+          //   });
+          // }}
+        />
         <IonNote
           className="ion-padding-horizontal text-xs"
           style={{ color: "#999" }}

@@ -1,8 +1,14 @@
 import { useIonActionSheet } from "@ionic/react";
 import { useCallback } from "react";
+import shallow from "zustand/shallow";
+import { AppState, ModalState, useStore } from "./useStore";
+const selector = ({ setPhysicalModalState }: AppState) => ({
+  setPhysicalModalState,
+});
 
-export default function useCanDismiss() {
+export default function useCanDismiss(formType: string) {
   const [present] = useIonActionSheet();
+  const { setPhysicalModalState } = useStore(selector, shallow);
 
   const canDismiss = useCallback(() => {
     return new Promise(async (resolve: (value: boolean) => void) => {
@@ -18,11 +24,27 @@ export default function useCanDismiss() {
             text: "Keep Editing",
             role: "cancel",
           },
+          {
+            text: "Save Changes and Quit",
+            handler: () => {
+              setPhysicalModalState(ModalState.SAVE);
+              resolve(true);
+            },
+          },
         ],
         onDidDismiss: (ev: CustomEvent) => {
           const role = ev.detail.role;
 
           if (role === "destructive") {
+            // Delete form data
+            switch (formType) {
+              case "physical":
+                setPhysicalModalState(ModalState.DELETE);
+                break;
+
+              default:
+                break;
+            }
             resolve(true);
           }
 

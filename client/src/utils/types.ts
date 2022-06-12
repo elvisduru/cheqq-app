@@ -50,8 +50,40 @@ export type Store = {
   logo: string | null;
   banner: string | null;
   description: string | null;
-  category: string;
+  categories: number[];
   public?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type Category = {
+  id: number;
+  name: string;
+  subCategories?: {
+    id: number;
+    name: string;
+    parentCategoryId: number;
+  }[];
+};
+
+export type Image = {
+  id?: number;
+  userId?: number;
+  productId?: number;
+  url: string;
+  description?: string;
+  sortOrder: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type Video = {
+  id?: number;
+  userId?: number;
+  productId?: number;
+  url: string;
+  description?: string;
+  sortOrder: number;
   createdAt?: Date;
   updatedAt?: Date;
 };

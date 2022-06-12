@@ -173,8 +173,8 @@ ion-list.bg-transparent {
 }
 
 // HACK: Fix Action sheet cancel btn primary color
-.action-sheet-group-cancel .action-sheet-button.sc-ion-action-sheet-ios {
-  color: var(--ion-color-dark, #fff);
+ion-action-sheet, .sc-ion-action-sheet-ios-h  {
+  --button-color: var(--ion-color-dark, #fff);
 }
 
 ion-modal ion-item {

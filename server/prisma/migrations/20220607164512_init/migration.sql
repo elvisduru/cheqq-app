@@ -1,10 +1,6 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Plan" AS ENUM ('FREE', 'PRO');
 
-  - You are about to drop the `CustomerAddress` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Order` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "InventoryPolicy" AS ENUM ('deny', 'continue');
 
@@ -29,26 +25,50 @@ CREATE TYPE "SubscriptionInterval" AS ENUM ('day', 'week', 'month', 'year');
 -- CreateEnum
 CREATE TYPE "OrderStatus" AS ENUM ('PROCESSING', 'CANCELLED', 'PENDING_SHIPMENT', 'PARTIALLY_SHIPPED', 'SHIPPED', 'PARTIALLY_DELIVERED', 'DELIVERED', 'PARTIALLY_RETURNED', 'RETURNED');
 
--- DropForeignKey
-ALTER TABLE "CustomerAddress" DROP CONSTRAINT "CustomerAddress_customerId_fkey";
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT,
+    "email" TEXT NOT NULL,
+    "emailVerified" BOOLEAN NOT NULL DEFAULT false,
+    "active" BOOLEAN NOT NULL DEFAULT true,
+    "avatarUrl" TEXT,
+    "password" TEXT,
+    "passwordUpdatedAt" TIMESTAMP(3),
+    "plan" "Plan" NOT NULL DEFAULT E'FREE',
+    "hashedRefreshToken" TEXT,
+    "prefs" JSONB NOT NULL DEFAULT '{}',
+    "magicSecret" TEXT,
+    "magicSecretExpiry" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
--- DropForeignKey
-ALTER TABLE "Order" DROP CONSTRAINT "Order_billingAddressId_fkey";
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
--- DropForeignKey
-ALTER TABLE "Order" DROP CONSTRAINT "Order_customerId_fkey";
+-- CreateTable
+CREATE TABLE "Store" (
+    "id" SERIAL NOT NULL,
+    "ownerId" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "tag" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
+    "domain" TEXT,
+    "address" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "order_email" TEXT,
+    "language" TEXT NOT NULL,
+    "currency" TEXT NOT NULL,
+    "logo" TEXT,
+    "banner" TEXT,
+    "description" TEXT,
+    "public" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
--- DropForeignKey
-ALTER TABLE "Order" DROP CONSTRAINT "Order_shippingAddressId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Order" DROP CONSTRAINT "Order_storeId_fkey";
-
--- DropTable
-DROP TABLE "CustomerAddress";
-
--- DropTable
-DROP TABLE "Order";
+    CONSTRAINT "Store_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Product" (
@@ -181,6 +201,10 @@ CREATE TABLE "Brand" (
 CREATE TABLE "Category" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "description" TEXT,
+    "parentCategoryId" INTEGER,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -225,6 +249,18 @@ CREATE TABLE "_CategoryToProduct" (
     "B" INTEGER NOT NULL
 );
 
+-- CreateTable
+CREATE TABLE "_CategoryToStore" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Store_tag_key" ON "Store"("tag");
+
 -- CreateIndex
 CREATE UNIQUE INDEX "_RelatedProducts_AB_unique" ON "_RelatedProducts"("A", "B");
 
@@ -236,6 +272,15 @@ CREATE UNIQUE INDEX "_CategoryToProduct_AB_unique" ON "_CategoryToProduct"("A", 
 
 -- CreateIndex
 CREATE INDEX "_CategoryToProduct_B_index" ON "_CategoryToProduct"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_CategoryToStore_AB_unique" ON "_CategoryToStore"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_CategoryToStore_B_index" ON "_CategoryToStore"("B");
+
+-- AddForeignKey
+ALTER TABLE "Store" ADD CONSTRAINT "Store_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -259,6 +304,9 @@ ALTER TABLE "BulkPricingRule" ADD CONSTRAINT "BulkPricingRule_productId_fkey" FO
 ALTER TABLE "GiftWrapOption" ADD CONSTRAINT "GiftWrapOption_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Category" ADD CONSTRAINT "Category_parentCategoryId_fkey" FOREIGN KEY ("parentCategoryId") REFERENCES "Category"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Address" ADD CONSTRAINT "Address_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -272,3 +320,9 @@ ALTER TABLE "_CategoryToProduct" ADD CONSTRAINT "_CategoryToProduct_A_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "_CategoryToProduct" ADD CONSTRAINT "_CategoryToProduct_B_fkey" FOREIGN KEY ("B") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_CategoryToStore" ADD CONSTRAINT "_CategoryToStore_A_fkey" FOREIGN KEY ("A") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_CategoryToStore" ADD CONSTRAINT "_CategoryToStore_B_fkey" FOREIGN KEY ("B") REFERENCES "Store"("id") ON DELETE CASCADE ON UPDATE CASCADE;

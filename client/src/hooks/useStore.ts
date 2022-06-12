@@ -36,14 +36,40 @@ export const useHydration = () => {
   return hydrated;
 };
 
+export enum ModalState {
+  SAVE = "SAVE",
+  DELETE = "DELETE",
+}
+
+export type AppState = {
+  user?: User;
+  setUser: (user: User) => void;
+  selectedStore: number;
+  setSelectedStore: (storeId: number) => void;
+  physicalFormData: any;
+  setPhysicalFormData: (data: any) => void;
+  physicalModalState?: ModalState;
+  setPhysicalModalState: (modalState: ModalState | undefined) => void;
+  deleteForm: boolean;
+  setDeleteForm: (deleteForm: boolean) => void;
+};
+
 export const useStore = create(
   persist(
-    (set, get) => ({
-      user: null,
+    (set) => ({
+      user: undefined,
       setUser: (user: User) => set(() => ({ user })),
       selectedStore: 0,
       setSelectedStore: (selectedStore: number) =>
         set(() => ({ selectedStore })),
+      physicalFormData: undefined,
+      setPhysicalFormData: (physicalFormData: any) =>
+        set(() => ({ physicalFormData })),
+      physicalModalState: undefined,
+      setPhysicalModalState: (physicalModalState: ModalState | undefined) =>
+        set(() => ({ physicalModalState })),
+      deleteForm: false,
+      setDeleteForm: (deleteForm: boolean) => set(() => ({ deleteForm })),
     }),
     {
       name: "cheqq-storage",

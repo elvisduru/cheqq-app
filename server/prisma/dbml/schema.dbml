@@ -20,6 +20,8 @@ Table User {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   addresses Address [not null]
+  images Image [not null]
+  videos Video [not null]
 }
 
 Table Store {
@@ -39,7 +41,7 @@ Table Store {
   logo String
   banner String
   description String
-  category String [not null]
+  categories Category [not null]
   public Boolean [not null, default: false]
   products Product [not null]
   createdAt DateTime [default: `now()`, not null]
@@ -109,8 +111,8 @@ Table Product {
   reviewAverage Float [not null, default: 0]
   customFields Json[] [not null]
   bulkPricingRules BulkPricingRule [not null]
-  images ProductImage [not null]
-  videos ProductVideo [not null]
+  images Image [not null]
+  videos Video [not null]
   subscription Boolean [not null, default: false]
   subscriptionInterval SubscriptionInterval [not null]
   subscriptionLength Int
@@ -119,10 +121,12 @@ Table Product {
   updatedAt DateTime [not null]
 }
 
-Table ProductImage {
+Table Image {
   id Int [pk, increment]
-  product Product [not null]
-  productId Int [not null]
+  user User [not null]
+  userId Int [not null]
+  product Product
+  productId Int
   url String [not null]
   description String
   sortOrder Int [not null]
@@ -130,10 +134,12 @@ Table ProductImage {
   updatedAt DateTime [not null]
 }
 
-Table ProductVideo {
+Table Video {
   id Int [pk, increment]
-  product Product [not null]
-  productId Int [not null]
+  user User [not null]
+  userId Int [not null]
+  product Product
+  productId Int
   url String [not null]
   description String
   sortOrder Int [not null]
@@ -173,7 +179,14 @@ Table Brand {
 Table Category {
   id Int [pk, increment]
   name String [not null]
+  description String
   products Product [not null]
+  stores Store [not null]
+  parentCategory Category
+  parentCategoryId Int
+  subCategories Category [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
 }
 
 Table Tax {
@@ -198,6 +211,11 @@ Table Address {
   phone String [not null]
   User User
   userId Int
+}
+
+Table CategoryToStore {
+  categoriesId Int [ref: > Category.id]
+  storesId Int [ref: > Store.id]
 }
 
 Table CategoryToProduct {
@@ -281,12 +299,18 @@ Ref: Product.taxId > Tax.id
 
 Ref: Product.brandId > Brand.id
 
-Ref: ProductImage.productId > Product.id
+Ref: Image.userId > User.id [delete: Cascade]
 
-Ref: ProductVideo.productId > Product.id
+Ref: Image.productId > Product.id
+
+Ref: Video.userId > User.id [delete: Cascade]
+
+Ref: Video.productId > Product.id
 
 Ref: BulkPricingRule.productId > Product.id
 
 Ref: GiftWrapOption.productId > Product.id
+
+Ref: Category.parentCategoryId - Category.id
 
 Ref: Address.userId > User.id

@@ -94,7 +94,7 @@ export default function Details({ progress, user }: Props) {
   };
 
   useIonViewWillEnter(() => {
-    if (!watch("category")) history.replace("/store/new");
+    if (!watch("categories")) history.replace("/store/new");
   });
 
   return (
@@ -350,8 +350,8 @@ export default function Details({ progress, user }: Props) {
               try {
                 toggle();
                 const values = getValues();
-                if (!values.category) {
-                  present("Please select a category", 2000);
+                if (!values.categories) {
+                  present("Please select a categories", 2000);
                   return router.push("/store/new", "back");
                 }
 

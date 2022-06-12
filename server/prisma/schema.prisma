@@ -33,15 +33,17 @@ model User {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   addresses          Address[]
+  images             Image[]
+  videos             Video[]
 }
 
 model Store {
-  id          Int       @id @default(autoincrement())
-  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id          Int        @id @default(autoincrement())
+  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     Int
   name        String
-  tag         String    @unique
-  status      Boolean   @default(true)
+  tag         String     @unique
+  status      Boolean    @default(true)
   domain      String?
   address     String
   country     String
@@ -52,12 +54,12 @@ model Store {
   logo        String?
   banner      String?
   description String?
-  category    String
-  public      Boolean   @default(false)
+  categories  Category[]
+  public      Boolean    @default(false)
   // orders      Order[]
   products    Product[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Product {
@@ -125,8 +127,8 @@ model Product {
   customFields           Json[]
   // Bulk Pricing rules
   bulkPricingRules       BulkPricingRule[]
-  images                 ProductImage[]
-  videos                 ProductVideo[]
+  images                 Image[]
+  videos                 Video[]
   // Subscriptions
   subscription           Boolean              @default(false)
   subscriptionInterval   SubscriptionInterval
@@ -136,10 +138,12 @@ model Product {
   updatedAt              DateTime             @updatedAt
 }
 
-model ProductImage {
+model Image {
   id          Int      @id @default(autoincrement())
-  product     Product  @relation(fields: [productId], references: [id])
-  productId   Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  product     Product? @relation(fields: [productId], references: [id])
+  productId   Int?
   url         String
   description String? // TODO: clicking on image gives you more control, i.e. zoom, thumbnail, description etc.
   sortOrder   Int
@@ -147,10 +151,12 @@ model ProductImage {
   updatedAt   DateTime @updatedAt
 }
 
-model ProductVideo {
+model Video {
   id          Int      @id @default(autoincrement())
-  product     Product  @relation(fields: [productId], references: [id])
-  productId   Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  product     Product? @relation(fields: [productId], references: [id])
+  productId   Int?
   url         String
   description String?
   sortOrder   Int
@@ -188,9 +194,16 @@ model Brand {
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
-  name     String
-  products Product[]
+  id               Int        @id @default(autoincrement())
+  name             String
+  description      String?
+  products         Product[]
+  stores           Store[]
+  parentCategory   Category?  @relation("CategorySubcategories", fields: [parentCategoryId], references: [id])
+  parentCategoryId Int?
+  subCategories    Category[] @relation("CategorySubcategories")
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
 }
 
 model Tax {

@@ -12,10 +12,11 @@ import { FieldValues, UseFormSetValue } from "react-hook-form";
 
 type Props = {
   setValue: UseFormSetValue<FieldValues>;
+  value: string[];
 };
 
-export default function TagInput({ setValue }: Props) {
-  const [tags, setTags] = useState<string[]>([]);
+export default function TagInput({ setValue, value }: Props) {
+  const [tags, setTags] = useState<string[]>(value || []);
 
   useEffect(() => {
     setValue("tags", tags);
@@ -25,7 +26,6 @@ export default function TagInput({ setValue }: Props) {
   const onChange = (e: any) => {
     if (tags.length === 20) return;
     const value = e.target.value;
-    console.log(value);
     if (value.length > 0) {
       // check if the last character is a comma
       if (value[value.length - 1] === ",") {
@@ -62,11 +62,11 @@ export default function TagInput({ setValue }: Props) {
     >
       <IonLabel position="floating">Product Tags</IonLabel>
       <div className="w-full">
-        {tags.map((tag, index) => (
+        {tags.map((tag: string, index: number) => (
           <IonChip
             key={index}
             onClick={() => {
-              setTags(tags.filter((t) => t !== tag));
+              setTags(tags.filter((t: string) => t !== tag));
             }}
           >
             <IonLabel>{tag}</IonLabel>

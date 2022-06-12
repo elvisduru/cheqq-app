@@ -19,8 +19,9 @@ export default function SelectCategory({
     dismiss: () => {
       dismiss();
     },
-    handleSelect: (category: string) => {
-      setValue("category", category);
+    handleSelect: (categoryId: number, categoryName: string) => {
+      setValue("category", categoryId);
+      setValue("categoryName", categoryName);
       dismiss();
     },
   });

@@ -15,7 +15,7 @@ export type StoreFormValues = {
   bannerUrl?: string;
   description: string;
   address: string;
-  category: string;
+  categories: number[];
   currency: string;
   country: string;
   phone: string;

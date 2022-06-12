@@ -3,20 +3,42 @@ import { add, closeCircle, imagesOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { FieldValues, UseFormSetValue } from "react-hook-form";
 import { ReactSortable } from "react-sortablejs";
+import useAddImages from "../hooks/mutations/images/addImages";
+import { useDeleteImage } from "../hooks/mutations/images/deleteImage";
 import usePhotoGallery from "../hooks/usePhotoGallery";
 import useReRender from "../hooks/useReRender";
+import { uploadFiles } from "../utils";
+import { Image, User } from "../utils/types";
 
 type Props = {
   setValue: UseFormSetValue<FieldValues>;
+  photos?: Image[];
+  user: User;
 };
 
-export default function MediaUploader({ setValue }: Props) {
-  const { photos, takePhotos, files, setPhotos } = usePhotoGallery();
-  const forceUpdate = useReRender();
+type ImageWithRequiredId = Image & { id: number };
+
+export default function MediaUploader({ setValue, photos, user }: Props) {
+  const { takePhotos, files, setPhotos, setFiles, uploading } =
+    usePhotoGallery();
   const [isSorting, setIsSorting] = useState(false);
+  const deleteImage = useDeleteImage();
+  const addImages = useAddImages();
+
   useEffect(() => {
-    if (files) {
-      setValue("photos", files);
+    if (files.length) {
+      // upload files to s3
+      uploadFiles(user, files).then((uploadedFiles) => {
+        addImages.mutate(uploadedFiles, {
+          onSuccess: ({ data }) => {
+            // update form state
+            setValue("photos", photos ? [...photos, ...data] : data);
+            // reset usePhotoGallery hook state
+            setPhotos([]);
+            setFiles([]);
+          },
+        });
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files.length, setValue]);
@@ -46,7 +68,50 @@ export default function MediaUploader({ setValue }: Props) {
         </div>
       ) : (
         <div className="flex ion-wrap">
-          <ReactSortable
+          {photos?.length ? (
+            <ReactSortable
+              className="flex ion-wrap"
+              onUpdate={() => setIsSorting(true)}
+              list={photos as ImageWithRequiredId[]}
+              setList={(newState) => {
+                if (!isSorting) return;
+                setIsSorting(false);
+                // Update images sort order
+                setValue("photos", newState);
+              }}
+            >
+              {photos.map((photo) => (
+                <IonThumbnail
+                  key={photo.id}
+                  className="rounded mr-1 mb-1 relative w-3 h-3"
+                >
+                  <IonIcon
+                    icon={closeCircle}
+                    size="small"
+                    className="absolute"
+                    style={{ top: -7, right: -7 }}
+                    onClick={() => {
+                      // delete photo from server update form state
+                      deleteImage.mutate(photo.id!, {
+                        onSuccess: (_, id) => {
+                          setValue(
+                            "photos",
+                            photos.filter((photo) => photo.id !== id)
+                          );
+                        },
+                      });
+                    }}
+                  />
+                  <img
+                    src={photo.url}
+                    alt=""
+                    className="object-center object-cover"
+                  />
+                </IonThumbnail>
+              ))}
+            </ReactSortable>
+          ) : null}
+          {/* <ReactSortable
             className="flex ion-wrap"
             onUpdate={() => setIsSorting(true)}
             list={photos}
@@ -79,7 +144,7 @@ export default function MediaUploader({ setValue }: Props) {
                 />
               </IonThumbnail>
             ))}
-          </ReactSortable>
+          </ReactSortable> */}
           {photos.length < 10 && (
             <IonThumbnail className="bg-light rounded mr-1 mb-1 w-3 h-3 flex ion-justify-content-center ion-align-items-center">
               <IonIcon

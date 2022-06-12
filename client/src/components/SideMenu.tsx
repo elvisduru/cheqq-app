@@ -51,10 +51,10 @@ export default function SideMenu({ user, contentId }: Props) {
           <IonItem lines="none">
             <div>
               <IonAvatar className="ion-margin-bottom">
-                <img src={user.stores[selectedStore].logo} alt="avatar" />
+                <img src={user.stores[selectedStore]?.logo} alt="avatar" />
               </IonAvatar>
               <IonLabel>{user?.name}</IonLabel>
-              <IonNote>@{user.stores[selectedStore].tag}</IonNote>
+              <IonNote>@{user.stores[selectedStore]?.tag}</IonNote>
               <p className="flex ion-justify-content-between w-full">
                 <span>
                   230 <IonNote>Followers</IonNote>

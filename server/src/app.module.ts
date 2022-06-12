@@ -12,6 +12,8 @@ import { UsersModule } from './users/users.module';
 import { HandlebarsAdapter } from '@derech1e/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { StoresModule } from './stores/stores.module';
+import { CategoriesModule } from './categories/categories.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { StoresModule } from './stores/stores.module';
     AuthModule,
     PrismaModule,
     StoresModule,
+    CategoriesModule,
+    ImagesModule,
   ],
   controllers: [AppController],
   providers: [

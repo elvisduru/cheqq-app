@@ -28,7 +28,7 @@ const Products: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user.stores[selectedStore].logo} alt="avatar" />
+                <img src={user.stores[selectedStore]?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

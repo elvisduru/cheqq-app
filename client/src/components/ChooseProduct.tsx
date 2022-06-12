@@ -10,6 +10,7 @@ import {
   IonTitle,
   IonToolbar,
   useIonModal,
+  useIonToast,
 } from "@ionic/react";
 import {
   bagHandleOutline,
@@ -18,22 +19,43 @@ import {
   reloadOutline,
 } from "ionicons/icons";
 import { useState } from "react";
+import shallow from "zustand/shallow";
 import useCanDismiss from "../hooks/useCanDismiss";
+import { AppState, useStore } from "../hooks/useStore";
 import NewProduct from "./products/new";
 
 type Props = {
   dismiss: () => void;
 };
 
+const selector = ({
+  setPhysicalModalState,
+  physicalFormData,
+  physicalModalState,
+}: AppState) => ({
+  setPhysicalModalState,
+  physicalFormData,
+  physicalModalState,
+});
+
 export default function ChooseProduct({ dismiss: dismissModal }: Props) {
   const [productType, setProductType] = useState<string>();
-  const canDismiss = useCanDismiss();
+  const canDismissPhyical = useCanDismiss("physical");
+  const canDismissDigital = useCanDismiss("digital");
+  const canDismissMembership = useCanDismiss("membership");
+  const { physicalFormData, setPhysicalModalState } = useStore(
+    selector,
+    shallow
+  );
   const [present, dismiss] = useIonModal(NewProduct, {
     productType,
     dismiss: () => {
       dismiss();
     },
   });
+
+  const [presentToast] = useIonToast();
+
   const routerOutletEl = document.querySelector(
     "ion-router-outlet"
   ) as HTMLElement;
@@ -46,8 +68,20 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
         setProductType("physical");
         present({
           presentingElement: routerOutletEl,
-          canDismiss,
+          canDismiss: canDismissPhyical,
           id: "new-physical-product",
+          onWillPresent() {
+            if (physicalFormData) {
+              console.log(physicalFormData);
+              presentToast(
+                "Continue where you left off. We saved your progress 🎉.",
+                3000
+              );
+            }
+          },
+          onDidDismiss() {
+            setPhysicalModalState(undefined);
+          },
         });
       },
       icon: bagHandleOutline,
@@ -59,7 +93,7 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
         setProductType("digital");
         present({
           presentingElement: routerOutletEl,
-          canDismiss,
+          canDismiss: canDismissDigital,
         });
       },
       icon: downloadOutline,
@@ -71,7 +105,7 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
         setProductType("membership");
         present({
           presentingElement: routerOutletEl,
-          canDismiss,
+          canDismiss: canDismissMembership,
         });
       },
       icon: reloadOutline,
