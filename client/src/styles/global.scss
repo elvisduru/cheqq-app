@@ -181,6 +181,13 @@ ion-modal ion-item {
   --background: transparent;
 }
 
+ion-item-divider {
+  --inner-padding-end: 0;
+  ion-button {
+    --padding-end: 0;
+  }
+}
+
 .react-tel-input {
   .special-label {
     background-color: #000;

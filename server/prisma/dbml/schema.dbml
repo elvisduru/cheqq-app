@@ -55,7 +55,8 @@ Table Product {
   type String [not null]
   title String [not null]
   description String [not null]
-  sku String [not null]
+  sku String
+  tags String[] [not null]
   weight Float
   weightUnit String
   width Float
@@ -67,7 +68,8 @@ Table Product {
   taxable Boolean [not null, default: false]
   tax Tax
   taxId Int
-  categories Category [not null]
+  category Category
+  categoryId Int
   brand Brand
   brandId Int
   inventoryTracking Boolean [not null, default: false]
@@ -94,7 +96,7 @@ Table Product {
   maxHandlingTime Int
   giftWrap Boolean [not null, default: false]
   giftWrapOptions GiftWrapOption [not null]
-  condition Condition [not null, default: 'new']
+  condition Condition
   showCondition Boolean [not null, default: false]
   orderQuantityMinimum Int [not null, default: 1]
   orderQuantityMaximum Int
@@ -218,11 +220,6 @@ Table CategoryToStore {
   storesId Int [ref: > Store.id]
 }
 
-Table CategoryToProduct {
-  categoriesId Int [ref: > Category.id]
-  productsId Int [ref: > Product.id]
-}
-
 Table RelatedProducts {
   relatedproductrelationId Int [ref: > Product.id]
   relatedproductsId Int [ref: > Product.id]
@@ -296,6 +293,8 @@ Ref: Store.ownerId > User.id [delete: Cascade]
 Ref: Product.storeId > Store.id
 
 Ref: Product.taxId > Tax.id
+
+Ref: Product.categoryId > Category.id
 
 Ref: Product.brandId > Brand.id
 

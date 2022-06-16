@@ -8,25 +8,40 @@ import {
 } from "@ionic/react";
 import { closeCircle } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import { FieldValues, UseFormSetValue } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 
 type Props = {
-  setValue: UseFormSetValue<FieldValues>;
-  value: string[];
+  setValue: (val: string[]) => void;
+  name: string;
+  control: any;
+  label: string;
+  note?: string;
 };
 
-export default function TagInput({ setValue, value }: Props) {
+export default function TagInput({
+  name,
+  control,
+  setValue,
+  label,
+  note,
+}: Props) {
+  const value = useWatch({
+    control,
+    name,
+  });
+
   const [tags, setTags] = useState<string[]>(value || []);
 
   useEffect(() => {
-    setValue("tags", tags);
+    setValue(tags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tags]);
 
   const onChange = (e: any) => {
     if (tags.length === 20) return;
-    const value = e.target.value;
-    if (value.length > 0) {
+    const value = e.target.value.trim();
+    if (value.length > 1) {
+      if (value.startsWith(",")) return;
       // check if the last character is a comma
       if (value[value.length - 1] === ",") {
         // check if tag already exists
@@ -44,8 +59,9 @@ export default function TagInput({ setValue, value }: Props) {
     }
 
     if (e.key === "Enter") {
-      const value = e.target.value;
-      if (value.length > 0) {
+      const value = e.target.value.trim();
+      if (value.startsWith(",")) return;
+      if (value.length >= 1) {
         if (tags.indexOf(value) === -1) {
           setTags([...tags, value]);
         }
@@ -60,7 +76,7 @@ export default function TagInput({ setValue, value }: Props) {
       fill="outline"
       mode="md"
     >
-      <IonLabel position="floating">Product Tags</IonLabel>
+      <IonLabel position="floating">{label}</IonLabel>
       <div className="w-full">
         {tags.map((tag: string, index: number) => (
           <IonChip
@@ -75,9 +91,7 @@ export default function TagInput({ setValue, value }: Props) {
         ))}
       </div>
       <IonInput type="text" onIonChange={onChange} onKeyDown={handleKeyDown} />
-      <IonNote slot="helper">
-        Optional. Enter tags separated by commas. Limit 20.
-      </IonNote>
+      <IonNote slot="helper">{note}</IonNote>
     </IonItem>
   );
 }

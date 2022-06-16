@@ -66,28 +66,34 @@ model Product {
   id                     Int                  @id @default(autoincrement())
   Store                  Store                @relation(fields: [storeId], references: [id])
   storeId                Int
-  type                   String
+  type                   ProductType
   title                  String
   description            String
-  sku                    String
+  tags                   String[]
   weight                 Float?
-  weightUnit             String?
+  weightUnit             WeightUnit           @default(value: g)
   width                  Float?
   height                 Float?
   depth                  Float?
+  dimensionUnit          DimensionUnit        @default(value: cm)
   price                  Float
   compareAtPrice         Float?
   costPrice              Float?
   taxable                Boolean              @default(false)
   tax                    Tax?                 @relation(fields: [taxId], references: [id])
   taxId                  Int?
-  categories             Category[]
+  category               Category?            @relation(fields: [categoryId], references: [id])
+  categoryId             Int?
   brand                  Brand?               @relation(fields: [brandId], references: [id])
   brandId                Int?
+  options                ProductOption[]
+  // Inventory
   inventoryTracking      Boolean              @default(false)
-  inventoryPolicy        InventoryPolicy      @default(value: deny)
+  allowBackOrder         Boolean              @default(value: false)
   inventoryLevel         Int                  @default(value: 0)
-  inventoryWarningLevel  Int                  @default(value: 0)
+  inventoryWarningLevel  Int?
+  sku                    String?
+  gtin                   String?
   isFreeShipping         Boolean              @default(true)
   fixedShippingRate      Float?
   public                 Boolean              @default(false)
@@ -96,9 +102,6 @@ model Product {
   relatedProducts        Product[]            @relation("RelatedProducts")
   warranty               String?
   layout                 String               @default(value: "default")
-  gtin                   String?
-  mpn                    String?
-  searchKeywords         String[]
   availability           ProductAvailability  @default(value: available)
   availabilityLabel      String? // For products that are for display only (availability disabled), not for sale
   preorderReleaseDate    DateTime?
@@ -108,11 +111,10 @@ model Product {
   maxHandlingTime        Int?
   giftWrap               Boolean              @default(false)
   giftWrapOptions        GiftWrapOption[]
-  condition              Condition            @default(value: new)
-  showCondition          Boolean              @default(false)
-  orderQuantityMinimum   Int                  @default(value: 1)
-  orderQuantityMaximum   Int?
+  condition              Condition?
+  showCondition          Boolean              @default(false) // TODO: add this to the UI
   // SEO
+  searchKeywords         String[]
   pageTitle              String?
   metaDescription        String?
   metaKeywords           String[]
@@ -136,6 +138,15 @@ model Product {
   subscriptionPrice      Float
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
+}
+
+model ProductOption {
+  id        Int      @id @default(autoincrement())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  name      String
+  position  Int
+  values    String[]
 }
 
 model Image {
@@ -318,11 +329,6 @@ enum Plan {
   PRO
 }
 
-enum InventoryPolicy {
-  deny
-  continue
-}
-
 enum ProductAvailability {
   available
   disabled
@@ -332,6 +338,19 @@ enum ProductAvailability {
 enum ProductType {
   physical
   digital
+}
+
+enum WeightUnit {
+  lb
+  kg
+  oz
+  g
+}
+
+enum DimensionUnit {
+  in
+  cm
+  m
 }
 
 // enum ReturnReason {

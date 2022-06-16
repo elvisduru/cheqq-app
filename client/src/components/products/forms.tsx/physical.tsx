@@ -8,19 +8,22 @@ import {
   IonItemGroup,
   IonLabel,
   IonNote,
+  IonReorder,
+  IonReorderGroup,
   IonSelect,
   IonSelectOption,
   IonTextarea,
   IonToggle,
   useIonModal,
 } from "@ionic/react";
-import { caretDown, settings } from "ionicons/icons";
-import { useEffect, useRef } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { caretDown, settings, toggle, trash } from "ionicons/icons";
+import React, { useEffect, useRef } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import shallow from "zustand/shallow";
 import { useDeleteImages } from "../../../hooks/mutations/images/deleteImages";
 import useUser from "../../../hooks/queries/users/useUser";
 import { AppState, ModalState, useStore } from "../../../hooks/useStore";
+import useToggle from "../../../hooks/useToggle";
 import { Image } from "../../../utils/types";
 import MediaUploader from "../../MediaUploader";
 import SelectCategory from "../../SelectCategory";
@@ -37,7 +40,8 @@ const selector = ({
   physicalModalState,
 });
 
-// TODO: When submitting form update sortOrder of photos and videos
+// TODO: When submitting form, update sortOrder of photos and videos
+// TODO: Split form into sections
 
 export default function PhysicalProductForm() {
   const { data: user } = useUser();
@@ -55,8 +59,16 @@ export default function PhysicalProductForm() {
     getValues,
   } = useForm({
     mode: "onBlur",
-    defaultValues: { ...physicalFormData },
+    defaultValues: { ...physicalFormData, type: "physical" },
   });
+
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control,
+      name: "options",
+    }
+  );
+
   const onSubmit = (data: any) => console.log(data);
   const onError = (error: any) => console.log(error);
 
@@ -66,6 +78,9 @@ export default function PhysicalProductForm() {
       dismiss();
     },
   });
+
+  const [dimensions, toggleDimensions] = useToggle();
+  const [shippingInfo, toggleShippingInfo] = useToggle();
 
   const ref = useRef(null);
 
@@ -91,7 +106,7 @@ export default function PhysicalProductForm() {
 
     if (physicalModalState === ModalState.DELETE) {
       // Delete all uploaded images
-      if (formValues?.photos.length) {
+      if (formValues?.photos?.length) {
         deleteImages.mutate(formValues.photos);
       }
       setPhysicalFormData(undefined);
@@ -99,6 +114,8 @@ export default function PhysicalProductForm() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [physicalModalState]);
+
+  const options = watch("options");
 
   return (
     <form
@@ -184,10 +201,9 @@ export default function PhysicalProductForm() {
               onIonBlur={onBlur}
               value={value}
             >
-              <IonSelectOption>New</IonSelectOption>
-              <IonSelectOption>Used - like new</IonSelectOption>
-              <IonSelectOption>Used - good</IonSelectOption>
-              <IonSelectOption>Used - fair</IonSelectOption>
+              <IonSelectOption value="new">New</IonSelectOption>
+              <IonSelectOption value="used">Used</IonSelectOption>
+              <IonSelectOption value="refurbished">Refurbished</IonSelectOption>
             </IonSelect>
           )}
         />
@@ -220,14 +236,23 @@ export default function PhysicalProductForm() {
         </IonNote>
         <IonNote slot="error">{errors.description?.message}</IonNote>
       </IonItem>
-      <TagInput value={watch("tags")} setValue={setValue} />
+      <TagInput
+        label="Product Tags"
+        name="tags"
+        control={control}
+        setValue={(tags) => {
+          setValue("tags", tags);
+        }}
+        note="Optional. Enter tags separated by commas. Limit 20."
+      />
       <IonItemGroup className="mt-2">
         <IonItemDivider className="pl-0">
           <IonLabel color="medium">Media</IonLabel>
         </IonItemDivider>
         <MediaUploader
           setValue={setValue}
-          photos={watch("photos")}
+          name="photos"
+          control={control}
           user={user!}
           // deleteFormImage={(id) => {
           //   setPhysicalFormData({
@@ -333,7 +358,7 @@ export default function PhysicalProductForm() {
           <IonLabel>Track inventory for this product</IonLabel>
           <Controller
             control={control}
-            name="inventory"
+            name="inventoryTracking"
             render={({ field: { onChange, onBlur, value } }) => (
               <IonCheckbox
                 onIonChange={(e) => {
@@ -346,21 +371,24 @@ export default function PhysicalProductForm() {
             )}
           />
         </IonItem>
-        {watch("inventory") && (
+        {watch("inventoryTracking") && (
           <>
             <IonItem
-              className={`input mt-1 ${errors.quantity ? "ion-invalid" : ""}`}
+              className={`input mt-1 ${
+                errors.inventoryLevel ? "ion-invalid" : ""
+              }`}
               fill="outline"
               mode="md"
             >
               <IonLabel position="floating">Quantity</IonLabel>
               <Controller
-                name="quantity"
+                name="inventoryLevel"
                 control={control}
+                shouldUnregister
                 rules={{
                   required: "Please enter a quantity",
                   min: {
-                    value: 0,
+                    value: 1,
                     message: "Quantity must be greater than 0",
                   },
                 }}
@@ -370,14 +398,72 @@ export default function PhysicalProductForm() {
                     type="number"
                     onIonChange={onChange}
                     onIonBlur={onBlur}
-                    min={0}
+                    min={1}
                   />
                 )}
               />
               <IonNote slot="helper">
                 How many of this product are you selling?
               </IonNote>
-              <IonNote slot="error">{errors.quantity?.message}</IonNote>
+              <IonNote slot="error">{errors.inventoryLevel?.message}</IonNote>
+            </IonItem>
+            <IonItem
+              className={`input mt-1 ${
+                errors.inventoryWarningLevel ? "ion-invalid" : ""
+              }`}
+              fill="outline"
+              mode="md"
+            >
+              <IonLabel position="floating">Warning Level</IonLabel>
+              <Controller
+                name="inventoryWarningLevel"
+                control={control}
+                shouldUnregister
+                rules={{
+                  min: {
+                    value: 1,
+                    message: "Quantity must be greater than 0",
+                  },
+                  max: {
+                    value: watch("inventoryLevel") || 1,
+                    message: "Warning level must be less than quantity",
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <IonInput
+                    value={value}
+                    type="number"
+                    onIonChange={onChange}
+                    onIonBlur={onBlur}
+                    min={1}
+                  />
+                )}
+              />
+              <IonNote slot="helper">
+                Optional. Set a warning level when low on stock.
+              </IonNote>
+              <IonNote slot="error">
+                {errors.inventoryWarningLevel?.message}
+              </IonNote>
+            </IonItem>
+            <IonItem lines="none" className="input checkbox mt-1">
+              <IonLabel>Allow purchase when out of stock</IonLabel>
+              <Controller
+                control={control}
+                name="allowBackOrder"
+                shouldUnregister
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <IonToggle
+                    mode="ios"
+                    color="primary"
+                    onIonChange={(e) => {
+                      onChange(e.detail.checked);
+                    }}
+                    onIonBlur={onBlur}
+                    value={value}
+                  />
+                )}
+              />
             </IonItem>
             <IonItem className="input mt-1" fill="outline" mode="md">
               <IonLabel position="floating">SKU</IonLabel>
@@ -419,36 +505,18 @@ export default function PhysicalProductForm() {
                 Optional. ISBN, UPC, GTIN, etc. Only visible to you.
               </IonNote>
             </IonItem>
-            <IonItem lines="none" className="input checkbox mt-1">
-              <IonLabel>Allow purchase when out of stock</IonLabel>
-              <Controller
-                control={control}
-                name="allowBackorder"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <IonToggle
-                    mode="ios"
-                    color="primary"
-                    onIonChange={(e) => {
-                      onChange(e.detail.checked);
-                    }}
-                    onIonBlur={onBlur}
-                    value={value}
-                  />
-                )}
-              />
-            </IonItem>
           </>
         )}
       </IonItemGroup>
       <IonItemGroup className="mt-2">
         <IonItemDivider className="pl-0">
-          <IonLabel color="medium">Shipping</IonLabel>
+          <IonLabel color="medium">Variants</IonLabel>
         </IonItemDivider>
-        <IonItem lines="none" className="input checkbox">
-          <IonLabel>This product requires shipping</IonLabel>
+        <IonItem lines="none" className="input mt-1 checkbox">
+          <IonLabel>Create options like size, color, etc</IonLabel>
           <Controller
             control={control}
-            name="shipping"
+            name="hasVariants"
             render={({ field: { onChange, onBlur, value } }) => (
               <IonCheckbox
                 onIonChange={(e) => {
@@ -461,13 +529,184 @@ export default function PhysicalProductForm() {
             )}
           />
         </IonItem>
-        {watch("shipping") && (
+        {watch("hasVariants") && (
+          <>
+            <IonReorderGroup
+              disabled={false}
+              onIonItemReorder={(e) => {
+                move(e.detail.from, e.detail.to);
+                e.detail.complete();
+              }}
+            >
+              {fields.map((field, index) => (
+                <div key={field.id} className="mb-1">
+                  <div className="flex ion-justify-content-between">
+                    <IonReorder />
+                    <IonButton
+                      slot="end"
+                      fill="clear"
+                      color="danger"
+                      size="small"
+                      onClick={() => {
+                        remove(index);
+                      }}
+                    >
+                      <IonIcon slot="icon-only" icon={trash} />
+                    </IonButton>
+                  </div>
+                  <IonItem
+                    className={`input mt-1 ${
+                      errors.options?.[index]?.name ? "ion-invalid" : ""
+                    }`}
+                    fill="outline"
+                    mode="md"
+                  >
+                    <IonLabel position="floating">Option name</IonLabel>
+                    <Controller
+                      name={`options.${index}.name`}
+                      rules={{
+                        required: "Option name is required",
+                        validate: (value) => {
+                          // Get value of all options name property except the current one
+                          const names = options.map(
+                            (option: any) => option.name
+                          );
+                          names.splice(index, 1);
+                          // Check if value is already in the array
+                          if (names.includes(value)) {
+                            return `You already have an option with the name "${value}"`;
+                          }
+                          return true;
+                        },
+                      }}
+                      control={control}
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <IonInput
+                          value={value}
+                          type="text"
+                          onIonChange={onChange}
+                          onIonBlur={onBlur}
+                          minlength={3}
+                          autoCorrect="on"
+                        />
+                      )}
+                    />
+                    <IonNote slot="error">
+                      {errors.options?.[index]?.name?.message}
+                    </IonNote>
+                  </IonItem>
+                  <TagInput
+                    setValue={(val) => {
+                      setValue(`options.${index}.values`, val);
+                    }}
+                    label="Option values"
+                    name={`options.${index}.values`}
+                    control={control}
+                  />
+                </div>
+              ))}
+            </IonReorderGroup>
+            <IonButton
+              fill="solid"
+              expand="block"
+              color="medium"
+              onClick={() => {
+                append({ name: "", values: [] });
+              }}
+            >
+              Add new option
+            </IonButton>
+            {options.length && options[0].name && options[0].values.length ? (
+              <IonButton
+                fill="solid"
+                expand="block"
+                color="medium"
+                class="mt-1"
+              >
+                Manage Variants
+              </IonButton>
+            ) : null}
+          </>
+        )}
+      </IonItemGroup>
+      <IonItemGroup className="mt-2">
+        <IonItemDivider className="pl-0">
+          <IonLabel color="medium">Shipping</IonLabel>
+          <IonButton
+            size="small"
+            fill="clear"
+            slot="end"
+            onClick={() => {
+              present({
+                presentingElement: document.querySelector(
+                  "#new-physical-product"
+                ) as HTMLElement,
+                canDismiss: true,
+                id: "shipping-settings",
+              });
+            }}
+          >
+            Manage Settings
+          </IonButton>
+        </IonItemDivider>
+        <IonItem lines="none" className="input mt-1 checkbox">
+          <IonLabel>Enable Free Shipping</IonLabel>
+          <Controller
+            control={control}
+            name="isFreeShipping"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <IonToggle
+                mode="ios"
+                color="primary"
+                onIonChange={(e) => {
+                  onChange(e.detail.checked);
+                }}
+                onIonBlur={onBlur}
+                value={value}
+              />
+            )}
+          />
+        </IonItem>
+        {!watch("isFreeShipping") && (
+          <IonItem className="input mt-1" fill="outline" mode="md">
+            <IonLabel position="floating">Fixed Shipping Rate</IonLabel>
+            <Controller
+              name="fixedShippingRate"
+              control={control}
+              shouldUnregister
+              render={({ field: { onChange, onBlur, value } }) => (
+                <IonInput
+                  value={value}
+                  type="number"
+                  onIonChange={onChange}
+                  onIonBlur={onBlur}
+                />
+              )}
+            />
+            <IonNote slot="helper">
+              Optional. This will override your default shipping rate settings.
+            </IonNote>
+          </IonItem>
+        )}
+        <IonItem lines="none" className="input mt-1 checkbox">
+          <IonLabel>Add Shipping Information</IonLabel>
+          <IonCheckbox
+            onIonChange={(e) => {
+              toggleShippingInfo();
+            }}
+            checked={shippingInfo}
+            slot="start"
+          />
+        </IonItem>
+
+        {shippingInfo && (
           <>
             <IonItem className="input mt-1" fill="outline" mode="md">
               <IonLabel position="floating">Weight</IonLabel>
               <Controller
-                name="shippingWeight"
+                name="weight"
                 control={control}
+                shouldUnregister
                 render={({ field: { onChange, onBlur, value } }) => (
                   <IonInput
                     value={value}
@@ -482,9 +721,10 @@ export default function PhysicalProductForm() {
               </IonNote>
             </IonItem>
             <IonItem className="input mt-1" fill="outline" mode="md">
-              <IonLabel position="floating">Unit</IonLabel>
+              <IonLabel position="floating">Weight Unit</IonLabel>
               <Controller
-                name="shippingWeightUnit"
+                name="weightUnit"
+                shouldUnregister
                 control={control}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <IonSelect
@@ -498,32 +738,101 @@ export default function PhysicalProductForm() {
                     onIonBlur={onBlur}
                     value={value}
                   >
-                    <IonSelectOption>kg</IonSelectOption>
                     <IonSelectOption>g</IonSelectOption>
+                    <IonSelectOption>kg</IonSelectOption>
                     <IonSelectOption>lb</IonSelectOption>
                     <IonSelectOption>oz</IonSelectOption>
                   </IonSelect>
                 )}
               />
             </IonItem>
-            <IonButton
-              fill="outline"
-              color="medium"
-              expand="block"
-              className="mt-1"
-              onClick={() => {
-                present({
-                  presentingElement: document.querySelector(
-                    "#new-physical-product"
-                  ) as HTMLElement,
-                  canDismiss: true,
-                  id: "shipping-settings",
-                });
-              }}
-            >
-              <IonIcon slot="start" icon={settings} />
-              Shipping Settings
-            </IonButton>
+            <IonItem lines="none" className="input mt-1 checkbox">
+              <IonLabel>Add product dimensions</IonLabel>
+              <IonCheckbox
+                onIonChange={() => {
+                  toggleDimensions();
+                }}
+                checked={dimensions}
+                slot="start"
+              />
+            </IonItem>
+            {dimensions && (
+              <>
+                <IonItem className="input mt-1" fill="outline" mode="md">
+                  <IonLabel position="floating">Width</IonLabel>
+                  <Controller
+                    name="width"
+                    shouldUnregister
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <IonInput
+                        value={value}
+                        type="number"
+                        onIonChange={onChange}
+                        onIonBlur={onBlur}
+                      />
+                    )}
+                  />
+                </IonItem>
+                <IonItem className="input mt-1" fill="outline" mode="md">
+                  <IonLabel position="floating">Height</IonLabel>
+                  <Controller
+                    name="height"
+                    shouldUnregister
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <IonInput
+                        value={value}
+                        type="number"
+                        onIonChange={onChange}
+                        onIonBlur={onBlur}
+                      />
+                    )}
+                  />
+                </IonItem>
+                <IonItem className="input mt-1" fill="outline" mode="md">
+                  <IonLabel position="floating">Depth</IonLabel>
+                  <Controller
+                    name="depth"
+                    shouldUnregister
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <IonInput
+                        value={value}
+                        type="number"
+                        onIonChange={onChange}
+                        onIonBlur={onBlur}
+                      />
+                    )}
+                  />
+                </IonItem>
+                <IonItem className="input mt-1" fill="outline" mode="md">
+                  <IonLabel position="floating">Dimensions Unit</IonLabel>
+                  <Controller
+                    name="dimensionUnit"
+                    shouldUnregister
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <IonSelect
+                        interface="popover"
+                        interfaceOptions={{
+                          translucent: true,
+                          mode: "ios",
+                          size: "auto",
+                        }}
+                        onIonChange={onChange}
+                        onIonBlur={onBlur}
+                        value={value}
+                      >
+                        <IonSelectOption>in</IonSelectOption>
+                        <IonSelectOption>cm</IonSelectOption>
+                        <IonSelectOption>m</IonSelectOption>
+                      </IonSelect>
+                    )}
+                  />
+                </IonItem>
+              </>
+            )}
           </>
         )}
       </IonItemGroup>

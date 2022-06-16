@@ -1,29 +1,39 @@
 import { IonIcon, IonThumbnail } from "@ionic/react";
 import { add, closeCircle, imagesOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import { FieldValues, UseFormSetValue } from "react-hook-form";
+import { FieldValues, UseFormSetValue, useWatch } from "react-hook-form";
 import { ReactSortable } from "react-sortablejs";
 import useAddImages from "../hooks/mutations/images/addImages";
 import { useDeleteImage } from "../hooks/mutations/images/deleteImage";
 import usePhotoGallery from "../hooks/usePhotoGallery";
-import useReRender from "../hooks/useReRender";
 import { uploadFiles } from "../utils";
 import { Image, User } from "../utils/types";
 
 type Props = {
   setValue: UseFormSetValue<FieldValues>;
-  photos?: Image[];
   user: User;
+  name: string;
+  control: any;
 };
 
 type ImageWithRequiredId = Image & { id: number };
 
-export default function MediaUploader({ setValue, photos, user }: Props) {
+export default function MediaUploader({
+  name,
+  control,
+  setValue,
+  user,
+}: Props) {
   const { takePhotos, files, setPhotos, setFiles, uploading } =
     usePhotoGallery();
   const [isSorting, setIsSorting] = useState(false);
   const deleteImage = useDeleteImage();
   const addImages = useAddImages();
+
+  const photos: Image[] = useWatch({
+    control,
+    name,
+  });
 
   useEffect(() => {
     if (files.length) {
