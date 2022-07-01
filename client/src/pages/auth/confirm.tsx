@@ -105,9 +105,9 @@ export default function Confirm({ user }: { user: User }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email, secret]);
 
-  // useEffect(() => {
-  //   confirmMagicLink();
-  // }, [secret, confirmMagicLink]);
+  useEffect(() => {
+    confirmMagicLink();
+  }, [secret, confirmMagicLink]);
 
   if (user) {
     return <Redirect to="/" />;

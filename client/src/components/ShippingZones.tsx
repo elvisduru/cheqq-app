@@ -47,7 +47,7 @@ export default function ShippingZones({ dismiss }: Props) {
     items?: any;
     children?: JSX.Element[] | JSX.Element;
   }) => (
-    <IonList className="bg-modal ion-text-left h-full ion-padding-horizontal flex flex-column ion-align-items-center">
+    <IonList className="bg-modal ion-text-left h-full ion-padding-horizontal flex flex-column items-center">
       <IonListHeader className="ion-no-padding">
         <IonLabel>{title}</IonLabel>
       </IonListHeader>
@@ -122,7 +122,7 @@ export default function ShippingZones({ dismiss }: Props) {
                     <IonRouterLink routerLink="/">Learn more.</IonRouterLink>
                   </IonNote>
                 </IonLabel>
-                <IonToggle mode="ios" color="primary" />
+                <IonToggle color="primary" />
               </IonItem>
               <IonButton
                 fill="clear"

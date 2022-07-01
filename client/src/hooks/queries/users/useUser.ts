@@ -1,9 +1,11 @@
 import { useQuery } from "react-query";
 import api from "../../../lib/api";
 import { User } from "../../../utils/types";
+import { useStore } from "../../useStore";
 
 const getUser = async () => {
   const { data } = await api.get<User>("/users/current");
+  useStore.setState({ user: data });
   return data;
 };
 

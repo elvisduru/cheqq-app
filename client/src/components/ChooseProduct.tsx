@@ -72,10 +72,9 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
           id: "new-physical-product",
           onWillPresent() {
             if (physicalFormData) {
-              console.log(physicalFormData);
               presentToast(
                 "Continue where you left off. We saved your progress 🎉.",
-                3000
+                1500
               );
             }
           },
@@ -137,9 +136,14 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
               lines="none"
               button
               onClick={handler}
-              className="py-1 bg-transparent"
+              className="mt-4 bg-transparent"
             >
-              <IonIcon slot="start" style={{ fontSize: 50 }} icon={icon} />
+              <div
+                slot="start"
+                className="flex items-center justify-center p-4 bg-card text-2xl"
+              >
+                <IonIcon icon={icon} />
+              </div>
               <IonLabel className="ion-text-wrap">
                 {title}
                 <p>{description}</p>

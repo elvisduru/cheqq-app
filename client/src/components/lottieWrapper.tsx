@@ -3,46 +3,51 @@ import { useLottie } from "lottie-react";
 
 type Props = {
   title: string;
+  animationData: any;
   description?: string;
   buttonText?: string;
   buttonLink?: string;
-  animationData?: any;
+  loop?: boolean;
   buttonHandler?: () => void;
+  initialSegment?: [number, number];
 };
 
-export default function NoData({
+export default function LottieWrapper({
   title,
   description,
   buttonLink,
   buttonText,
   animationData,
   buttonHandler,
+  loop = true,
+  initialSegment,
 }: Props) {
   const { View } = useLottie({
     animationData,
-    loop: true,
+    loop,
+    initialSegment,
   });
   return (
-    <>
-      <IonGrid className="mt-2">
+    <div className="mt-2">
+      <IonGrid>
         <IonRow>
           <IonCol>{View}</IonCol>
         </IonRow>
       </IonGrid>
-      <div className="ion-text-center mt-2 px-2">
+      <div className="ion-text-center leading-normal mt-10">
         <h3>{title}</h3>
-        {description && <p>{description}</p>}
+        {description && <p className="text-gray">{description}</p>}
         {buttonText && (
           <IonButton
             routerLink={buttonLink}
             onClick={buttonHandler}
-            className="mt-3"
+            className="mt-12"
             expand="block"
           >
             {buttonText}
           </IonButton>
         )}
       </div>
-    </>
+    </div>
   );
 }

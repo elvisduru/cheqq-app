@@ -121,11 +121,11 @@ export default function Details({ progress, user }: Props) {
             <p>Setup your store by entering it's details</p>
           </IonLabel>
         </IonItem>
-        <div className="ion-padding">
+        <div className="ion-padding mb-14">
           <div>
             <div
               onClick={takeBannerPhoto}
-              className="banner bg-mute rounded-t-3xl w-full h-11 relative border"
+              className="banner bg-mute rounded-t-3xl w-full h-44 relative border"
             >
               {watch("bannerUrl") && (
                 <img
@@ -146,7 +146,7 @@ export default function Details({ progress, user }: Props) {
             <div className="rounded-b-3xl border border-t-none ion-padding">
               <IonAvatar
                 onClick={takeAvatarPhoto}
-                className="relative bg-mute flex ion-align-items-center ion-justify-content-center"
+                className="relative bg-mute flex items-center ion-justify-content-center"
               >
                 {watch("logoUrl") ? (
                   <img src={watch("logoUrl")} alt="avatar" />
@@ -155,7 +155,7 @@ export default function Details({ progress, user }: Props) {
                 )}
                 <div
                   style={{ padding: 5 }}
-                  className="bg-light absolute bottom-0 right-0 rounded-full flex ion-align-items-center ion-justify-content-center"
+                  className="bg-light absolute bottom-0 right-0 rounded-full flex items-center ion-justify-content-center"
                 >
                   <IonIcon
                     slot="icon-only"
@@ -167,7 +167,7 @@ export default function Details({ progress, user }: Props) {
             </div>
           </div>
           <IonItem
-            className={`input mt-1 ${errors.name ? "ion-invalid" : ""}`}
+            className={`input mt-4 ${errors.name ? "ion-invalid" : ""}`}
             fill="outline"
             mode="md"
           >
@@ -193,7 +193,7 @@ export default function Details({ progress, user }: Props) {
             <IonNote slot="error">{errors.name?.message}</IonNote>
           </IonItem>
           <IonItem
-            className={`input mt-1 ${errors.tag ? "ion-invalid" : ""}`}
+            className={`input mt-4 ${errors.tag ? "ion-invalid" : ""}`}
             fill="outline"
             mode="md"
           >
@@ -237,7 +237,7 @@ export default function Details({ progress, user }: Props) {
             <IonNote slot="helper">Enter a unique tag for your store.</IonNote>
             <IonNote slot="error">{errors.tag?.message}</IonNote>
           </IonItem>
-          <IonItem className="input mt-1" fill="outline" mode="md">
+          <IonItem className="input mt-4" fill="outline" mode="md">
             <IonLabel position="floating">Store description</IonLabel>
             <Controller
               name="description"
@@ -274,7 +274,7 @@ export default function Details({ progress, user }: Props) {
             )}
           />
           <IonItem
-            className={`input mt-1 ${errors.currency ? "ion-invalid" : ""}`}
+            className={`input mt-4 ${errors.currency ? "ion-invalid" : ""}`}
             fill="outline"
             mode="md"
           >
@@ -300,7 +300,7 @@ export default function Details({ progress, user }: Props) {
                   {currencies.map((currency) => (
                     <IonSelectOption
                       key={currency.country}
-                      value={currency.currency_code}
+                      value={`${currency.country}-${currency.currency_code}`}
                     >
                       {`${currency.country} - ${currency.currency_code}`}
                     </IonSelectOption>
@@ -324,7 +324,7 @@ export default function Details({ progress, user }: Props) {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <PhoneInput
-                  containerClass="mt-1"
+                  containerClass="mt-4"
                   country={"us"}
                   value={value}
                   onChange={(value, countryData: CountryData) => {
@@ -345,6 +345,11 @@ export default function Details({ progress, user }: Props) {
               </IonNote>
             )}
           </div>
+        </div>
+        <div
+          slot="fixed"
+          className="bg-black bg-opacity-80 [backdrop-filter:blur(1px)] bottom-0 ion-padding-horizontal pb-4 w-full"
+        >
           <IonButton
             onClick={async () => {
               try {
@@ -356,14 +361,7 @@ export default function Details({ progress, user }: Props) {
                 }
 
                 if (!isValid || !isDirty) {
-                  if (!isDirty) {
-                    trigger(["name", "tag", "address", "currency", "phone"]);
-                  } else {
-                    const errorList = Object.keys(errors) as Array<
-                      keyof StoreFormValues
-                    >;
-                    trigger(errorList);
-                  }
+                  trigger(["name", "tag", "address", "currency", "phone"]);
                   toggle();
                   return present("Please fill out all required fields", 2000);
                 }
@@ -372,6 +370,7 @@ export default function Details({ progress, user }: Props) {
                 delete values.logoUrl;
                 delete values.bannerUrl;
                 values.tag = values.tag.substring(1);
+                values.currency = values.currency.split("-")[1];
 
                 // store files to cloud storage
                 const logoFilePath = `users/${user?.id}/${values.logo.name}`;
@@ -423,7 +422,6 @@ export default function Details({ progress, user }: Props) {
               }
             }}
             expand="block"
-            className="mt-2"
           >
             Complete &nbsp;
             {isLoading && <IonSpinner name="crescent" />}

@@ -5,7 +5,7 @@ import {
   GalleryPhoto,
   Photo,
 } from "@capacitor/camera";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export type SortablePhoto = GalleryPhoto & { id: number };
 export type SortableFile = File & { id: number };

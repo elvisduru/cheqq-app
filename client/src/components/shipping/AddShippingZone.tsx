@@ -14,7 +14,6 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { close } from "ionicons/icons";
-import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
 type Props = {

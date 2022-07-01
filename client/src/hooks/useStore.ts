@@ -57,7 +57,7 @@ export type AppState = {
 export const useStore = create(
   persist(
     (set) => ({
-      user: undefined,
+      user: undefined as User | undefined,
       setUser: (user: User) => set(() => ({ user })),
       selectedStore: 0,
       setSelectedStore: (selectedStore: number) =>

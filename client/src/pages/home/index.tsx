@@ -22,7 +22,6 @@ import ChartCard from "../../components/ChartCard";
 import { useStore } from "../../hooks/useStore";
 import { getCurrentDayPeriod } from "../../utils";
 import { User } from "../../utils/types";
-import "./index.scss";
 
 type Props = {
   user: User;
@@ -187,14 +186,14 @@ const Home: React.FC<Props> = ({ user }) => {
         </IonListHeader>
         <ChartCard title="Your Sales" />
 
-        <IonList lines="none" className="table">
+        <IonList lines="none">
           <IonListHeader>
             <IonLabel>Recent Orders</IonLabel>
           </IonListHeader>
           {orders.map((order: Order) => (
-            <IonItem key={order.orderId} shape="round" button>
+            <IonItem key={order.orderId} className="my-2" shape="round" button>
               <IonThumbnail
-                className="flex ion-align-items-center ion-justify-content-center"
+                className="flex items-center justify-center"
                 slot="start"
               >
                 {order.cart.length > 1 ? (

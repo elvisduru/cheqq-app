@@ -70,3 +70,24 @@ export const categoryIcons: Record<string, string> = {
   Automotive: carOutline,
   Others: sparklesOutline,
 };
+
+const DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+function getRandomCharFromAlphabet(alphabet: string): string {
+  return alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+}
+
+export function generateId(
+  idDesiredLength: number,
+  alphabet = DEFAULT_ALPHABET
+): string {
+  /**
+   * Create n-long array and map it to random chars from given alphabet.
+   * Then join individual chars as string
+   */
+  return Array.from({ length: idDesiredLength })
+    .map(() => {
+      return getRandomCharFromAlphabet(alphabet);
+    })
+    .join("");
+}

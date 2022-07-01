@@ -1,7 +1,4 @@
-import {
-  DeleteObjectCommandInput,
-  DeleteObjectsCommandInput,
-} from "@aws-sdk/client-s3";
+import { DeleteObjectCommandInput } from "@aws-sdk/client-s3";
 import { useMutation, useQueryClient } from "react-query";
 import api from "../../../lib/api";
 import s3Client from "../../../lib/s3Client";

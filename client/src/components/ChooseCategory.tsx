@@ -11,23 +11,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import {
-  barbellOutline,
-  carOutline,
-  close,
-  colorPaletteOutline,
-  desktopOutline,
-  fastFoodOutline,
-  flaskOutline,
-  gameControllerOutline,
-  homeOutline,
-  libraryOutline,
-  medicalOutline,
-  pawOutline,
-  planetOutline,
-  shirtOutline,
-  sparklesOutline,
-} from "ionicons/icons";
+import { close } from "ionicons/icons";
 import React from "react";
 import useCategories from "../hooks/queries/categories/useCategories";
 import { categoryIcons } from "../utils";
@@ -69,7 +53,7 @@ export default function ChooseCategory({ dismiss, handleSelect }: Props) {
             <React.Fragment key={id}>
               <IonItem>
                 <div
-                  className="rounded-full bg-light flex ion-align-items-center ion-justify-content-center"
+                  className="rounded-full bg-light flex items-center ion-justify-content-center"
                   style={{
                     padding: "0.5rem",
                     fontSize: 25,

@@ -72,7 +72,7 @@ export default function TagInput({
 
   return (
     <IonItem
-      className={`input tags mt-1 ${tags.length ? "item-has-value" : ""}`}
+      className={`input tags mt-4 ${tags.length ? "item-has-value" : ""}`}
       fill="outline"
       mode="md"
     >
@@ -90,7 +90,12 @@ export default function TagInput({
           </IonChip>
         ))}
       </div>
-      <IonInput type="text" onIonChange={onChange} onKeyDown={handleKeyDown} />
+      <IonInput
+        type="text"
+        enterkeyhint="enter"
+        onIonChange={onChange}
+        onKeyDown={handleKeyDown}
+      />
       <IonNote slot="helper">{note}</IonNote>
     </IonItem>
   );

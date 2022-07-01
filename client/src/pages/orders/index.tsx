@@ -3,17 +3,16 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonLoading,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
   useIonModal,
-  useIonViewWillEnter,
 } from "@ionic/react";
 import notFoundAnimation from "../../assets/json/no-data-found.json";
 import ChooseProduct from "../../components/ChooseProduct";
-import NoData from "../../components/NoData";
+import LottieWrapper from "../../components/lottieWrapper";
+import OrdersSkeleton from "../../components/skeletons/orders";
 import useOrders from "../../hooks/queries/orders/useOrders";
 import { useStore } from "../../hooks/useStore";
 import { User } from "../../utils/types";
@@ -31,10 +30,6 @@ const Orders: React.FC<Props> = ({ user }) => {
       dismiss();
     },
   });
-
-  if (isLoading) {
-    return <IonLoading isOpen={true} message={"Fetching orders..."} />;
-  }
 
   return (
     <IonPage id="orders">
@@ -56,22 +51,28 @@ const Orders: React.FC<Props> = ({ user }) => {
             <IonTitle size="large">Orders</IonTitle>
           </IonToolbar>
         </IonHeader>
-        {!data?.pages[0].total ? (
-          <NoData
-            title="No Order"
-            description="Create a new product to start receiving orders from customers"
-            buttonText="Create Product"
-            animationData={notFoundAnimation}
-            buttonHandler={() =>
-              present({
-                breakpoints: [0, 0.5],
-                initialBreakpoint: 0.5,
-              })
-            }
-          />
-        ) : (
-          <div>Order list here</div>
-        )}
+        <div className="ion-padding">
+          {isLoading ? (
+            <OrdersSkeleton length={9} />
+          ) : !data?.pages[0].total ? (
+            <div className="mt-8">
+              <LottieWrapper
+                title="No Order"
+                description="Create a new product to start receiving orders from customers"
+                buttonText="Create Product"
+                animationData={notFoundAnimation}
+                buttonHandler={() =>
+                  present({
+                    breakpoints: [0, 0.5],
+                    initialBreakpoint: 0.5,
+                  })
+                }
+              />
+            </div>
+          ) : (
+            <div>Order list here</div>
+          )}
+        </div>
       </IonContent>
     </IonPage>
   );

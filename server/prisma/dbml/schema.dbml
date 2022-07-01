@@ -12,6 +12,7 @@ Table User {
   password String
   passwordUpdatedAt DateTime
   stores Store [not null]
+  orders Order [not null]
   plan Plan [not null, default: 'FREE']
   hashedRefreshToken String
   prefs Json [not null, default: '{}']
@@ -43,7 +44,9 @@ Table Store {
   description String
   categories Category [not null]
   public Boolean [not null, default: false]
+  orders Order [not null]
   products Product [not null]
+  pricingRule PricingRule [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
 }
@@ -52,19 +55,22 @@ Table Product {
   id Int [pk, increment]
   Store Store [not null]
   storeId Int [not null]
-  type String [not null]
+  collection Collection
+  collectionId Int
+  type ProductType [not null]
   title String [not null]
   description String [not null]
-  sku String
   tags String[] [not null]
   weight Float
-  weightUnit String
+  weightUnit WeightUnit [not null, default: 'g']
   width Float
   height Float
   depth Float
+  dimensionUnit DimensionUnit [not null, default: 'cm']
   price Float [not null]
   compareAtPrice Float
   costPrice Float
+  currency String [not null, default: 'USD']
   taxable Boolean [not null, default: false]
   tax Tax
   taxId Int
@@ -72,10 +78,14 @@ Table Product {
   categoryId Int
   brand Brand
   brandId Int
+  options ProductOption [not null]
+  variants ProductVariant [not null]
   inventoryTracking Boolean [not null, default: false]
-  inventoryPolicy InventoryPolicy [not null, default: 'deny']
+  allowBackOrder Boolean [not null, default: false]
   inventoryLevel Int [not null, default: 0]
-  inventoryWarningLevel Int [not null, default: 0]
+  inventoryWarningLevel Int
+  sku String
+  gtin String
   isFreeShipping Boolean [not null, default: true]
   fixedShippingRate Float
   public Boolean [not null, default: false]
@@ -84,9 +94,6 @@ Table Product {
   relatedProducts Product [not null]
   warranty String
   layout String [not null, default: 'default']
-  gtin String
-  mpn String
-  searchKeywords String[] [not null]
   availability ProductAvailability [not null, default: 'available']
   availabilityLabel String
   preorderReleaseDate DateTime
@@ -96,10 +103,10 @@ Table Product {
   maxHandlingTime Int
   giftWrap Boolean [not null, default: false]
   giftWrapOptions GiftWrapOption [not null]
+  redirectUrl String
   condition Condition
   showCondition Boolean [not null, default: false]
-  orderQuantityMinimum Int [not null, default: 1]
-  orderQuantityMaximum Int
+  searchKeywords String[] [not null]
   pageTitle String
   metaDescription String
   metaKeywords String[] [not null]
@@ -112,7 +119,7 @@ Table Product {
   reviewCount Int [not null, default: 0]
   reviewAverage Float [not null, default: 0]
   customFields Json[] [not null]
-  bulkPricingRules BulkPricingRule [not null]
+  pricingRules PricingRule [not null]
   images Image [not null]
   videos Video [not null]
   subscription Boolean [not null, default: false]
@@ -123,12 +130,62 @@ Table Product {
   updatedAt DateTime [not null]
 }
 
+Table ProductOption {
+  id Int [pk, increment]
+  product Product [not null]
+  productId Int [not null]
+  name String [not null]
+  price Float [not null]
+  compareAtPrice Float
+}
+
+Table ProductVariant {
+  id Int [pk, increment]
+  product Product [not null]
+  productId Int [not null]
+  name String [not null]
+  price Float [not null]
+  compareAtPrice Float
+  costPrice Float
+  currency String [not null, default: 'USD']
+  inventoryTracking Boolean [not null, default: false]
+  allowBackOrder Boolean [not null, default: false]
+  inventoryLevel Int [not null, default: 0]
+  inventoryWarningLevel Int
+  sku String
+  gtin String
+  isFreeShipping Boolean [not null, default: true]
+  fixedShippingRate Float
+  image Image
+  imageId Int
+  videos Video
+  videoId Int
+  enabled Boolean [not null, default: true]
+  pricingRule PricingRule
+  pricingRuleId Int
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table Collection {
+  id Int [pk, increment]
+  name String [not null]
+  slug String [not null]
+  description String
+  products Product [not null]
+  pricingRule PricingRule
+  pricingRuleId Int
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
 Table Image {
   id Int [pk, increment]
   user User [not null]
   userId Int [not null]
   product Product
   productId Int
+  productVariant ProductVariant [not null]
   url String [not null]
   description String
   sortOrder Int [not null]
@@ -141,6 +198,7 @@ Table Video {
   user User [not null]
   userId Int [not null]
   product Product
+  productVariant ProductVariant [not null]
   productId Int
   url String [not null]
   description String
@@ -149,14 +207,25 @@ Table Video {
   updatedAt DateTime [not null]
 }
 
-Table BulkPricingRule {
+Table PricingRule {
   id Int [pk, increment]
-  product Product [not null]
-  productId Int [not null]
+  store Store [not null]
+  storeId Int [not null]
+  title String
+  code String [unique]
+  shipping Boolean [not null, default: false]
+  order Boolean [not null, default: false]
+  products Product [not null]
+  variants ProductVariant [not null]
+  collections Collection [not null]
   quantityMin Int [not null, default: 1]
-  quantityMax Int [not null]
   adjusmentType PriceAdjustmentType [not null, default: 'fixed']
   adjustmentValue Float [not null]
+  allocationLimit Int
+  usageLimit Int
+  usageCount Int [not null, default: 0]
+  startsAt DateTime
+  endsAt DateTime
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
 }
@@ -200,6 +269,25 @@ Table Tax {
   updatedAt DateTime [not null]
 }
 
+Table Order {
+  id Int [pk, increment]
+  store Store [not null]
+  storeId Int [not null]
+  customer User [not null]
+  customerId Int [not null]
+  billingAddress Address [not null]
+  billingAddressId Int [not null]
+  shippingAddress Address
+  shippingAddressId Int
+  ipAddress String
+  cancelledAt DateTime
+  note String
+  annotations Json[] [not null]
+  status OrderStatus [not null, default: 'PROCESSING']
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
 Table Address {
   id Int [pk, increment]
   firstName String [not null]
@@ -213,6 +301,8 @@ Table Address {
   phone String [not null]
   User User
   userId Int
+  billingAddressOrder Order [not null]
+  shippingAddressOrder Order [not null]
 }
 
 Table CategoryToStore {
@@ -225,14 +315,14 @@ Table RelatedProducts {
   relatedproductsId Int [ref: > Product.id]
 }
 
+Table PricingRuleToProduct {
+  pricingrulesId Int [ref: > PricingRule.id]
+  productsId Int [ref: > Product.id]
+}
+
 Enum Plan {
   FREE
   PRO
-}
-
-Enum InventoryPolicy {
-  deny
-  continue
 }
 
 Enum ProductAvailability {
@@ -244,6 +334,19 @@ Enum ProductAvailability {
 Enum ProductType {
   physical
   digital
+}
+
+Enum WeightUnit {
+  lb
+  kg
+  oz
+  g
+}
+
+Enum DimensionUnit {
+  in
+  cm
+  m
 }
 
 Enum PriceAdjustmentType {
@@ -292,11 +395,25 @@ Ref: Store.ownerId > User.id [delete: Cascade]
 
 Ref: Product.storeId > Store.id
 
+Ref: Product.collectionId > Collection.id
+
 Ref: Product.taxId > Tax.id
 
 Ref: Product.categoryId > Category.id
 
 Ref: Product.brandId > Brand.id
+
+Ref: ProductOption.productId > Product.id
+
+Ref: ProductVariant.productId > Product.id
+
+Ref: ProductVariant.imageId > Image.id
+
+Ref: ProductVariant.videoId > Video.id
+
+Ref: ProductVariant.pricingRuleId > PricingRule.id
+
+Ref: Collection.pricingRuleId > PricingRule.id
 
 Ref: Image.userId > User.id [delete: Cascade]
 
@@ -306,10 +423,18 @@ Ref: Video.userId > User.id [delete: Cascade]
 
 Ref: Video.productId > Product.id
 
-Ref: BulkPricingRule.productId > Product.id
+Ref: PricingRule.storeId > Store.id
 
 Ref: GiftWrapOption.productId > Product.id
 
 Ref: Category.parentCategoryId - Category.id
+
+Ref: Order.storeId > Store.id
+
+Ref: Order.customerId > User.id
+
+Ref: Order.billingAddressId > Address.id
+
+Ref: Order.shippingAddressId > Address.id
 
 Ref: Address.userId > User.id

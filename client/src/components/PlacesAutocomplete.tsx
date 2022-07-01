@@ -1,6 +1,5 @@
 import { IonInput, IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
 import { useRef } from "react";
-import { FieldError } from "react-hook-form";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 import useScript from "../hooks/useScript";
@@ -41,7 +40,7 @@ export default function PlacesAutocomplete({
 
   return scriptStatus !== "ready" ? (
     <IonItem
-      className={`input mt-1 ${error ? "ion-invalid" : ""}`}
+      className={`input mt-4 ${error ? "ion-invalid" : ""}`}
       fill="outline"
       mode="md"
     >
@@ -60,7 +59,7 @@ export default function PlacesAutocomplete({
   ) : (
     <div>
       <IonItem
-        className={`input mt-1 ${error ? "ion-invalid" : ""}`}
+        className={`input mt-4 ${error ? "ion-invalid" : ""}`}
         fill="outline"
         mode="md"
       >

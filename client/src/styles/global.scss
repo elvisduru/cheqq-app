@@ -7,8 +7,10 @@
 @use "utils/position";
 @use "utils/shadow";
 
+@tailwind components;
+@tailwind utilities;
+
 h1,
-h2,
 h3,
 h4,
 h5,
@@ -113,6 +115,7 @@ ion-item.input {
   
   &.checkbox::part(native) {
     padding-left: 0;
+    --inner-padding-end: 0;
   }
 
   &.item-label-floating {
@@ -122,9 +125,6 @@ ion-item.input {
       }
     }
   }
-  
-
-  
 
   &:not(.item-has-focus) {
     ion-label {
@@ -141,6 +141,34 @@ ion-item.tags {
   &.item-has-value::part(native), &.item-has-focus::part(native) {
     padding-bottom: 10px;
   }
+
+  &:not(.item-has-focus) {
+    .native-input.sc-ion-input-md {
+      height: 10px;
+    }
+  }
+}
+
+ion-item {
+  &.px-0 {
+    &::part(native) {
+      --padding-start: 0;
+      --padding-end: 0;
+      --inner-padding-end: 0;
+    }
+  }
+}
+
+ion-toggle {
+  width: 48px;
+  height: 28px;
+  --handle-width: 24px;
+}
+
+.item-disabled {
+  cursor: default;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .modal-form ion-item.input {
@@ -231,5 +259,12 @@ ion-item-divider {
         }
       }
     }
+  }
+}
+
+#home {
+  ion-thumbnail {
+    --size: 40px;
+    --border-radius: 9999px;
   }
 }

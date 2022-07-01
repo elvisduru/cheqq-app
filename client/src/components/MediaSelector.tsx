@@ -1,35 +1,32 @@
 import { IonIcon, IonThumbnail } from "@ionic/react";
-import { add, closeCircle, imagesOutline } from "ionicons/icons";
-import { useEffect, useState } from "react";
+import { add, checkmarkCircle, imagesOutline } from "ionicons/icons";
+import { useEffect } from "react";
 import { FieldValues, UseFormSetValue, useWatch } from "react-hook-form";
-import { ReactSortable } from "react-sortablejs";
 import useAddImages from "../hooks/mutations/images/addImages";
-import { useDeleteImage } from "../hooks/mutations/images/deleteImage";
+import useUser from "../hooks/queries/users/useUser";
 import usePhotoGallery from "../hooks/usePhotoGallery";
 import { uploadFiles } from "../utils";
-import { Image, User } from "../utils/types";
+import { Image } from "../utils/types";
 
 type Props = {
   setValue: UseFormSetValue<FieldValues>;
-  user: User;
   name: string;
   control: any;
+  selected: number;
+  setSelected: (index?: number) => void;
 };
 
-type ImageWithRequiredId = Image & { id: number };
-
-export default function MediaUploader({
+export default function MediaSelector({
   name,
   control,
   setValue,
-  user,
+  selected,
+  setSelected,
 }: Props) {
+  const { data: user } = useUser(); //TODO: show loading if user data not ready
   const { takePhotos, files, setPhotos, setFiles, uploading } =
     usePhotoGallery();
-  const [isSorting, setIsSorting] = useState(false);
-  const deleteImage = useDeleteImage();
   const addImages = useAddImages();
-
   const photos: Image[] = useWatch({
     control,
     name,
@@ -38,7 +35,7 @@ export default function MediaUploader({
   useEffect(() => {
     if (files.length) {
       // upload files to s3
-      uploadFiles(user, files).then((uploadedFiles) => {
+      uploadFiles(user!, files).then((uploadedFiles) => {
         addImages.mutate(uploadedFiles, {
           onSuccess: ({ data }) => {
             // update form state
@@ -79,52 +76,28 @@ export default function MediaUploader({
       ) : (
         <div className="flex ion-wrap swiper-no-swiping">
           {photos?.length ? (
-            <ReactSortable
-              className="flex ion-wrap"
-              onUpdate={() => setIsSorting(true)}
-              list={photos as ImageWithRequiredId[]}
-              setList={(newState) => {
-                if (!isSorting) return;
-                setIsSorting(false);
-                // Update images sort order
-                setValue("photos", newState);
-              }}
-              animation={150}
-              filter=".upload-btn"
-              preventOnFilter
-            >
+            <div className="flex ion-wrap">
               {photos.map((photo) => (
                 <IonThumbnail
                   key={photo.id}
-                  className="rounded mr-4 mb-4 relative w-16 h-16"
+                  className={`${
+                    selected == photo.id ? "border border-primary" : ""
+                  } relative rounded mr-4 mb-4 w-16 h-16`}
+                  onClick={() => {
+                    if (selected === photo.id) {
+                      setSelected(undefined);
+                    } else {
+                      setSelected(photo.id!);
+                    }
+                  }}
                 >
-                  <IonIcon
-                    icon={closeCircle}
-                    size="small"
-                    className="absolute -top-3 -right-3"
-                    onTouchStart={() => {
-                      deleteImage.mutate(photo.id!, {
-                        onSuccess: (_, id) => {
-                          setValue(
-                            "photos",
-                            photos.filter((photo) => photo.id !== id)
-                          );
-                        },
-                      });
-                    }}
-                    onClick={() => {
-                      console.log("clicked delete icon");
-                      // delete photo from server update form state
-                      deleteImage.mutate(photo.id!, {
-                        onSuccess: (_, id) => {
-                          setValue(
-                            "photos",
-                            photos.filter((photo) => photo.id !== id)
-                          );
-                        },
-                      });
-                    }}
-                  />
+                  {selected === photo.id ? (
+                    <IonIcon
+                      className="absolute text-primary"
+                      size="small"
+                      icon={checkmarkCircle}
+                    />
+                  ) : null}
                   <img
                     src={photo.url}
                     alt=""
@@ -142,7 +115,7 @@ export default function MediaUploader({
                   />
                 </IonThumbnail>
               )}
-            </ReactSortable>
+            </div>
           ) : null}
         </div>
       )}

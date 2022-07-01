@@ -55,7 +55,7 @@ export default function ShippingZones({ dismiss }: Props) {
                 Allow customers pick up orders from your store.
               </IonNote>
             </IonLabel>
-            <IonToggle mode="ios" color="primary" />
+            <IonToggle color="primary" />
           </IonItem>
           <IonItemGroup className="mt-1">
             <IonItem lines="none" className="input checkbox w-full">

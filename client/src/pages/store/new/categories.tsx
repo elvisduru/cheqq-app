@@ -32,11 +32,11 @@ type Props = {
 export default function Categories({ progress, setProgress }: Props) {
   const { data: categories, isLoading } = useCategories({ root: true });
   const [selected, setSelected] = useState<number[]>([]);
-  const { setValue, watch } = useFormContext();
+  const { setValue } = useFormContext();
 
   useEffect(() => {
     setValue("categories", selected);
-  }, [selected]);
+  }, [selected, setValue]);
 
   return (
     <IonPage id="store-new-categories">
@@ -68,7 +68,7 @@ export default function Categories({ progress, setProgress }: Props) {
           </IonLabel>
         </IonItem>
 
-        <div className="ion-padding mb-3">
+        <div className="ion-padding mb-12">
           <IonGrid>
             <IonRow className="ion-text-center">
               {categories?.map(({ id, name }) => (
@@ -86,7 +86,7 @@ export default function Categories({ progress, setProgress }: Props) {
                   }
                 >
                   <div
-                    className={`flex flex-column ion-align-items-center border-light ion-padding rounded-lg h-full ${
+                    className={`flex flex-column items-center border-light ion-padding rounded-lg h-full ${
                       selected?.includes(id) ? "selected" : ""
                     }`}
                   >
@@ -100,7 +100,10 @@ export default function Categories({ progress, setProgress }: Props) {
             </IonRow>
           </IonGrid>
         </div>
-        <div slot="fixed" className="bottom-0 ion-padding-horizontal w-full">
+        <div
+          slot="fixed"
+          className="bg-black bg-opacity-80 bottom-0 ion-padding-horizontal pb-4 w-full"
+        >
           <IonButton
             expand="block"
             routerLink="/store/new/details"

@@ -24,7 +24,7 @@ model User {
   password           String?
   passwordUpdatedAt  DateTime?
   stores             Store[]
-  // orders             Order[]
+  orders             Order[]
   plan               Plan      @default(value: FREE)
   hashedRefreshToken String?
   prefs              Json      @default("{}")
@@ -38,12 +38,12 @@ model User {
 }
 
 model Store {
-  id          Int        @id @default(autoincrement())
-  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id          Int           @id @default(autoincrement())
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     Int
   name        String
-  tag         String     @unique
-  status      Boolean    @default(true)
+  tag         String        @unique
+  status      Boolean       @default(true)
   domain      String?
   address     String
   country     String
@@ -55,17 +55,20 @@ model Store {
   banner      String?
   description String?
   categories  Category[]
-  public      Boolean    @default(false)
-  // orders      Order[]
+  public      Boolean       @default(false)
+  orders      Order[]
   products    Product[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  pricingRule PricingRule[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 model Product {
   id                     Int                  @id @default(autoincrement())
   Store                  Store                @relation(fields: [storeId], references: [id])
   storeId                Int
+  collection             Collection?          @relation(fields: [collectionId], references: [id])
+  collectionId           Int?
   type                   ProductType
   title                  String
   description            String
@@ -79,6 +82,7 @@ model Product {
   price                  Float
   compareAtPrice         Float?
   costPrice              Float?
+  currency               String               @default(value: "USD")
   taxable                Boolean              @default(false)
   tax                    Tax?                 @relation(fields: [taxId], references: [id])
   taxId                  Int?
@@ -87,6 +91,7 @@ model Product {
   brand                  Brand?               @relation(fields: [brandId], references: [id])
   brandId                Int?
   options                ProductOption[]
+  variants               ProductVariant[]
   // Inventory
   inventoryTracking      Boolean              @default(false)
   allowBackOrder         Boolean              @default(value: false)
@@ -111,6 +116,7 @@ model Product {
   maxHandlingTime        Int?
   giftWrap               Boolean              @default(false)
   giftWrapOptions        GiftWrapOption[]
+  redirectUrl            String?
   condition              Condition?
   showCondition          Boolean              @default(false) // TODO: add this to the UI
   // SEO
@@ -128,7 +134,7 @@ model Product {
   reviewAverage          Float                @default(value: 0)
   customFields           Json[]
   // Bulk Pricing rules
-  bulkPricingRules       BulkPricingRule[]
+  pricingRules           PricingRule[]
   images                 Image[]
   videos                 Video[]
   // Subscriptions
@@ -138,51 +144,105 @@ model Product {
   subscriptionPrice      Float
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
+
 }
 
 model ProductOption {
-  id        Int      @id @default(autoincrement())
-  product   Product  @relation(fields: [productId], references: [id])
-  productId Int
-  name      String
-  position  Int
-  values    String[]
+  id             Int     @id @default(autoincrement())
+  product        Product @relation(fields: [productId], references: [id])
+  productId      Int
+  name           String
+  price          Float
+  compareAtPrice Float?
+}
+
+model ProductVariant {
+  id                    Int          @id @default(autoincrement())
+  product               Product      @relation(fields: [productId], references: [id])
+  productId             Int
+  name                  String
+  price                 Float
+  compareAtPrice        Float?
+  costPrice             Float?
+  currency              String       @default(value: "USD")
+  inventoryTracking     Boolean      @default(false)
+  allowBackOrder        Boolean      @default(value: false)
+  inventoryLevel        Int          @default(value: 0)
+  inventoryWarningLevel Int?
+  sku                   String?
+  gtin                  String?
+  isFreeShipping        Boolean      @default(true)
+  fixedShippingRate     Float?
+  image                 Image?       @relation(fields: [imageId], references: [id])
+  imageId               Int?
+  videos                Video?       @relation(fields: [videoId], references: [id])
+  videoId               Int?
+  enabled               Boolean      @default(true)
+  pricingRule           PricingRule? @relation(fields: [pricingRuleId], references: [id])
+  pricingRuleId         Int?
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+}
+
+model Collection {
+  id            Int          @id @default(autoincrement())
+  name          String
+  slug          String
+  description   String?
+  products      Product[]
+  pricingRule   PricingRule? @relation(fields: [pricingRuleId], references: [id])
+  pricingRuleId Int?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Image {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
-  product     Product? @relation(fields: [productId], references: [id])
-  productId   Int?
-  url         String
-  description String? // TODO: clicking on image gives you more control, i.e. zoom, thumbnail, description etc.
-  sortOrder   Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             Int              @id @default(autoincrement())
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
+  product        Product?         @relation(fields: [productId], references: [id])
+  productId      Int?
+  productVariant ProductVariant[]
+  url            String
+  description    String? // TODO: clicking on image gives you more control, i.e. zoom, thumbnail, description etc.
+  sortOrder      Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 }
 
 model Video {
-  id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
-  product     Product? @relation(fields: [productId], references: [id])
-  productId   Int?
-  url         String
-  description String?
-  sortOrder   Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             Int              @id @default(autoincrement())
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
+  product        Product?         @relation(fields: [productId], references: [id])
+  productVariant ProductVariant[]
+  productId      Int?
+  url            String
+  description    String?
+  sortOrder      Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 }
 
-model BulkPricingRule {
+model PricingRule {
   id              Int                 @id @default(autoincrement())
-  product         Product             @relation(fields: [productId], references: [id])
-  productId       Int
+  store           Store               @relation(fields: [storeId], references: [id])
+  storeId         Int
+  title           String?
+  code            String?             @unique
+  shipping        Boolean             @default(false)
+  order           Boolean             @default(false)
+  products        Product[]
+  variants        ProductVariant[]
+  collections     Collection[]
   quantityMin     Int                 @default(value: 1)
-  quantityMax     Int
   adjusmentType   PriceAdjustmentType @default(value: fixed)
   adjustmentValue Float // Percentage (in decimals) or fixed value
+  allocationLimit Int? // Buy X get Y free discounts
+  usageLimit      Int?
+  usageCount      Int                 @default(value: 0)
+  startsAt        DateTime?
+  endsAt          DateTime?
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 }
@@ -226,27 +286,27 @@ model Tax {
   updatedAt DateTime  @updatedAt
 }
 
-// model Order {
-//   id                Int             @id @default(autoincrement())
-//   store             Store           @relation(fields: [storeId], references: [id])
-//   storeId           Int
-//   customer          User            @relation(fields: [customerId], references: [id])
-//   customerId        Int
-//   billingAddress    Address         @relation(name: "BillingAddress", fields: [billingAddressId], references: [id])
-//   billingAddressId  Int
-//   shippingAddress   Address?        @relation(name: "ShippingAddress", fields: [shippingAddressId], references: [id])
-//   shippingAddressId Int?
-//   ipAddress         String?
-//   cancelReason      CancelReason?
-//   cancelledAt       DateTime?
-//   note              String?
-//   annotations       Json[]
-//   pickupDetails     PickupDetails[]
-//   lineItems         LineItem[]
-//   status            OrderStatus     @default(value: PROCESSING)
-//   createdAt         DateTime        @default(now())
-//   updatedAt         DateTime        @updatedAt
-// }
+model Order {
+  id                Int         @id @default(autoincrement())
+  store             Store       @relation(fields: [storeId], references: [id])
+  storeId           Int
+  customer          User        @relation(fields: [customerId], references: [id])
+  customerId        Int
+  billingAddress    Address     @relation(name: "BillingAddress", fields: [billingAddressId], references: [id])
+  billingAddressId  Int
+  shippingAddress   Address?    @relation(name: "ShippingAddress", fields: [shippingAddressId], references: [id])
+  shippingAddressId Int?
+  ipAddress         String?
+  // cancelReason      CancelReason?
+  cancelledAt       DateTime?
+  note              String?
+  annotations       Json[]
+  // pickupDetails     PickupDetails[]
+  // lineItems         LineItem[]
+  status            OrderStatus @default(value: PROCESSING)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
 
 // model LineItem {
 //   id                Int       @id @default(autoincrement())
@@ -307,21 +367,21 @@ model Tax {
 // }
 
 model Address {
-  id        Int     @id @default(autoincrement())
-  firstName String
-  lastName  String
-  address1  String
-  address2  String?
-  city      String
-  state     String?
-  zip       String
-  country   String
-  phone     String
-  User      User?   @relation(fields: [userId], references: [id])
-  userId    Int?
+  id                   Int     @id @default(autoincrement())
+  firstName            String
+  lastName             String
+  address1             String
+  address2             String?
+  city                 String
+  state                String?
+  zip                  String
+  country              String
+  phone                String
+  User                 User?   @relation(fields: [userId], references: [id])
+  userId               Int?
   // PickupDetails        PickupDetails[]
-  // billingAddressOrder  Order[]         @relation("BillingAddress")
-  // shippingAddressOrder Order[]         @relation("ShippingAddress")
+  billingAddressOrder  Order[] @relation("BillingAddress")
+  shippingAddressOrder Order[] @relation("ShippingAddress")
 }
 
 enum Plan {

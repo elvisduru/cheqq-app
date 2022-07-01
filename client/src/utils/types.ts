@@ -28,6 +28,7 @@ export type User = {
     name: string;
     tag: string;
     logo: string;
+    currency: string;
   }[];
   prefs: JsonObject;
   createdAt: Date;

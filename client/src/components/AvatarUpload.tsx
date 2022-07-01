@@ -21,7 +21,7 @@ export default function AvatarUpload({ setValue }: Props) {
   return (
     <IonThumbnail
       onClick={takePhoto}
-      className="flex ion-align-items-center ion-align-self-center ion-justify-content-center border rounded-full my-2 relative w-8 h-8"
+      className="flex items-center ion-align-self-center ion-justify-content-center border rounded-full my-2 relative w-8 h-8"
     >
       {photo ? (
         <img src={photo.webPath} alt="avatar" className="rounded-full" />

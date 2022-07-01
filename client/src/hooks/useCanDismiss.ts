@@ -6,13 +6,13 @@ const selector = ({ setPhysicalModalState }: AppState) => ({
   setPhysicalModalState,
 });
 
-export default function useCanDismiss(formType: string) {
+export default function useCanDismiss(formType?: string) {
   const [present] = useIonActionSheet();
   const { setPhysicalModalState } = useStore(selector, shallow);
 
   const canDismiss = useCallback(() => {
-    return new Promise(async (resolve: (value: boolean) => void) => {
-      await present({
+    return new Promise<boolean>((resolve, reject) => {
+      present({
         translucent: true,
         header: "Are you sure you want to discard your changes?",
         buttons: [
@@ -32,7 +32,7 @@ export default function useCanDismiss(formType: string) {
             },
           },
         ],
-        onDidDismiss: (ev: CustomEvent) => {
+        onWillDismiss: (ev: CustomEvent) => {
           const role = ev.detail.role;
 
           if (role === "destructive") {
@@ -46,9 +46,9 @@ export default function useCanDismiss(formType: string) {
                 break;
             }
             resolve(true);
+          } else {
+            reject();
           }
-
-          resolve(false);
         },
       });
     });
