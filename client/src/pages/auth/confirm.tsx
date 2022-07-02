@@ -105,6 +105,7 @@ export default function Confirm({ user }: { user: User }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email, secret]);
 
+  // TODO: Log user in all devices (sockets listen and set user and tokens) after confirming email
   useEffect(() => {
     confirmMagicLink();
   }, [secret, confirmMagicLink]);
