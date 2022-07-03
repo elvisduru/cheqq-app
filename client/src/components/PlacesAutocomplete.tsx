@@ -31,7 +31,9 @@ export default function PlacesAutocomplete({
   });
 
   const scriptStatus = useScript(
-    `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_MAPS_API_KEY}&libraries=places&callback=initMap`
+    `https://maps.googleapis.com/maps/api/js?key=${
+      import.meta.env.VITE_MAPS_API_KEY
+    }&libraries=places&callback=initMap`
   );
 
   const ref = useRef<HTMLIonListElement>(null);

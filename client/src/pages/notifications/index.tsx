@@ -25,7 +25,13 @@ const Notifications: React.FC<Props> = ({ user }) => {
             <IonMenuButton>
               <IonAvatar>
                 <img
-                  src={`${process.env.REACT_APP_APPWRITE_ENDPOINT}/storage/buckets/${user?.id}/files/${user?.prefs.avatar}/preview?width=65&height=65&project=${process.env.REACT_APP_APPWRITE_PROJECT_ID}`}
+                  src={`${
+                    import.meta.env.VITE_APPWRITE_ENDPOINT
+                  }/storage/buckets/${user?.id}/files/${
+                    user?.prefs.avatar
+                  }/preview?width=65&height=65&project=${
+                    import.meta.env.VITE_APPWRITE_PROJECT_ID
+                  }`}
                   alt="avatar"
                 />
               </IonAvatar>

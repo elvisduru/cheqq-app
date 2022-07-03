@@ -4,8 +4,8 @@ const s3Client = new S3({
   endpoint: "https://fra1.digitaloceanspaces.com",
   region: "fra1",
   credentials: {
-    accessKeyId: process.env.REACT_APP_SPACES_KEY!,
-    secretAccessKey: process.env.REACT_APP_SPACES_SECRET!,
+    accessKeyId: import.meta.env.VITE_SPACES_KEY!,
+    secretAccessKey: import.meta.env.VITE_SPACES_SECRET!,
   },
 });
 

@@ -55,7 +55,7 @@ export default function Confirm({ user }: { user: User }) {
       if (user) return;
       if (secret) {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}/auth/magic-link/${secret}`
+          `${import.meta.env.VITE_API_URL}/auth/magic-link/${secret}`
         );
         if (res) {
           await Promise.all([
@@ -88,7 +88,7 @@ export default function Confirm({ user }: { user: User }) {
             handler: async () => {
               if (email) {
                 await axios.post(
-                  `${process.env.REACT_APP_API_URL}/auth/magic-link`,
+                  `${import.meta.env.VITE_API_URL}/auth/magic-link`,
                   {
                     email,
                   }
@@ -147,7 +147,7 @@ export default function Confirm({ user }: { user: User }) {
               start();
               if (email) {
                 await axios.post(
-                  `${process.env.REACT_APP_API_URL}/auth/magic-link`,
+                  `${import.meta.env.VITE_API_URL}/auth/magic-link`,
                   {
                     email,
                   }

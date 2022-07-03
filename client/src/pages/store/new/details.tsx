@@ -376,7 +376,7 @@ export default function Details({ progress, user }: Props) {
                 const logoFilePath = `users/${user?.id}/${values.logo.name}`;
                 const bannerFilePath = `users/${user?.id}/${values.banner.name}`;
                 const logoParams: PutObjectCommandInput = {
-                  Bucket: process.env.REACT_APP_SPACES_BUCKET,
+                  Bucket: import.meta.env.VITE_SPACES_BUCKET,
                   Key: logoFilePath,
                   Body: values.logo,
                   ACL: "public-read",
@@ -384,7 +384,7 @@ export default function Details({ progress, user }: Props) {
                 };
 
                 const bannerParams: PutObjectCommandInput = {
-                  Bucket: process.env.REACT_APP_SPACES_BUCKET,
+                  Bucket: import.meta.env.VITE_SPACES_BUCKET,
                   Key: bannerFilePath,
                   Body: values.logo,
                   ACL: "public-read",
@@ -399,8 +399,8 @@ export default function Details({ progress, user }: Props) {
                 // Create Store
                 await addStore.mutateAsync({
                   ...values,
-                  logo: `${process.env.REACT_APP_CDN_URL}/${logoFilePath}`,
-                  banner: `${process.env.REACT_APP_CDN_URL}/${bannerFilePath}`,
+                  logo: `${import.meta.env.VITE_CDN_URL}/${logoFilePath}`,
+                  banner: `${import.meta.env.VITE_CDN_URL}/${bannerFilePath}`,
                   ownerId: user.id,
                   language: navigator.language || "en-US",
                   phone: `+${values.phone}`,

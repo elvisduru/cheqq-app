@@ -38,6 +38,7 @@ type Props = {
 export default function SideMenu({ user, contentId }: Props) {
   const menuRef = useRef<HTMLIonMenuElement>(null);
   const { selectedStore } = useStore();
+
   return (
     <IonMenu
       side="start"

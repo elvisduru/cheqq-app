@@ -5,7 +5,7 @@ import createAuthRefreshInterceptor, {
 } from "axios-auth-refresh";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     accept: "*/*",
     "Content-Type": "application/json",
@@ -37,7 +37,7 @@ const refreshAccessToken = async (failedRequest: any) => {
     return Promise.reject(failedRequest);
   }
   const response = await axios.get(
-    `${process.env.REACT_APP_API_URL}/auth/refresh`,
+    `${import.meta.env.VITE_API_URL}/auth/refresh`,
     {
       skipAuthRefresh: true,
       headers: {

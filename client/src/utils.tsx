@@ -26,7 +26,7 @@ export const uploadFiles = async (
     files.map(async (file, index): Promise<Image> => {
       const filePath = `users/${user?.id}/${file.name}`;
       const params: PutObjectCommandInput = {
-        Bucket: process.env.REACT_APP_SPACES_BUCKET,
+        Bucket: import.meta.env.VITE_SPACES_BUCKET,
         Key: filePath,
         Body: file,
         ACL: "public-read",
@@ -35,7 +35,7 @@ export const uploadFiles = async (
       await s3Client.putObject(params);
 
       return {
-        url: `${process.env.REACT_APP_CDN_URL}/${filePath}`,
+        url: `${import.meta.env.VITE_CDN_URL}/${filePath}`,
         sortOrder: index,
         userId: user.id,
       };

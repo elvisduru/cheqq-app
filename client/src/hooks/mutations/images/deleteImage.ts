@@ -11,7 +11,7 @@ export function useDeleteImage() {
       queryClient.invalidateQueries("images");
       // delete file from s3 bucket
       const params: DeleteObjectCommandInput = {
-        Bucket: process.env.REACT_APP_SPACES_BUCKET,
+        Bucket: import.meta.env.VITE_SPACES_BUCKET,
         Key: data.url.substring(data.url.indexOf("users")),
       };
       s3Client.deleteObject(params);

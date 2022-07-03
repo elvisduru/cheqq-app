@@ -40,7 +40,7 @@ export default function Login({ user }: { user: User }) {
       if (validateEmail(email)) {
         setValid(true);
         // Send request to create magic link
-        await axios.post(`${process.env.REACT_APP_API_URL}/auth/magic-link`, {
+        await axios.post(`${import.meta.env.VITE_API_URL}/auth/magic-link`, {
           email,
         });
 

@@ -45,7 +45,7 @@ export default function New({ user, isLoading: isUserLoading }: Props) {
       // Save avatar to cloud storage
       const filePath = `users/${user?.id}/${data.avatar.name}`;
       const params: PutObjectCommandInput = {
-        Bucket: process.env.REACT_APP_SPACES_BUCKET,
+        Bucket: import.meta.env.VITE_SPACES_BUCKET,
         Key: filePath,
         Body: data.avatar,
         ACL: "public-read",
@@ -57,7 +57,7 @@ export default function New({ user, isLoading: isUserLoading }: Props) {
       // Update user
       updateUser.mutate(
         {
-          avatarUrl: `${process.env.REACT_APP_CDN_URL}/${filePath}`,
+          avatarUrl: `${import.meta.env.VITE_CDN_URL}/${filePath}`,
           name: data.name,
         },
         {

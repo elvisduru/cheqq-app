@@ -14,7 +14,7 @@ export function useDeleteImages() {
         // delete files from s3 bucket
         data.forEach((image) => {
           const params: DeleteObjectCommandInput = {
-            Bucket: process.env.REACT_APP_SPACES_BUCKET,
+            Bucket: import.meta.env.VITE_SPACES_BUCKET,
             Key: image.url.substring(image.url.indexOf("users")),
           };
           s3Client.deleteObject(params);
