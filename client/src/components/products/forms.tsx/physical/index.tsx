@@ -58,6 +58,7 @@ export default function PhysicalProductForm() {
     const formValues = methods.getValues();
     if (physicalModalState === ModalState.SAVE) {
       setPhysicalFormData({ ...formValues });
+      console.log(formValues);
     }
 
     if (physicalModalState === ModalState.DELETE) {

@@ -9,17 +9,20 @@ import {
 } from "@ionic/react";
 import { close } from "ionicons/icons";
 import React from "react";
+import SelectCollections from "./collections/SelectCollections";
+import SelectProducts from "./products/SelectProducts";
 
 type Props = {
   dismiss: () => void;
+  type: string;
 };
 
-export default function SelectProduct({ dismiss }: Props) {
+export default function SelectItems({ dismiss, type }: Props) {
   return (
     <>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Select Products</IonTitle>
+          <IonTitle className="capitalize">Select {type}</IonTitle>
           <IonButtons slot="start">
             <IonButton
               color="dark"
@@ -32,7 +35,13 @@ export default function SelectProduct({ dismiss }: Props) {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen></IonContent>
+      <IonContent fullscreen className="ion-padding-horizontal">
+        {type === "products" ? (
+          <SelectProducts handleSelection={() => {}} />
+        ) : (
+          <SelectCollections handleSelection={() => {}} />
+        )}
+      </IonContent>
     </>
   );
 }

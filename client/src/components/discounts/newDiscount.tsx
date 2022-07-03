@@ -24,7 +24,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useStore } from "../../hooks/useStore";
 import useToggle from "../../hooks/useToggle";
 import { generateId } from "../../utils";
-import SelectProduct from "../SelectProduct";
+import SelectItems from "../SelectItems";
 
 type Props = {
   dismiss: () => void;
@@ -46,10 +46,11 @@ export default function NewDiscount({ dismiss, title }: Props) {
   });
   const adjustmentType = watch("adjustmentType", "percent");
   const inputRef = useRef<HTMLIonItemElement>(null);
-  const [present, dismissModal] = useIonModal(SelectProduct, {
+  const [present, dismissModal] = useIonModal(SelectItems, {
     dismiss: () => {
       dismissModal();
     },
+    type: appliedTo,
   });
 
   return (
@@ -249,10 +250,11 @@ export default function NewDiscount({ dismiss, title }: Props) {
               className="!px-0"
               onClick={() => {
                 present({
-                  breakpoints: [0, 0.5],
+                  breakpoints: [0, 0.5, 1],
                   initialBreakpoint: 0.5,
                 });
               }}
+              placeholder={`Search ${appliedTo}`}
             />
           </IonItemGroup>
         </form>

@@ -29,6 +29,7 @@ export default function usePhotoGallery() {
       const file = await getFileFromPath(photo.webPath!, photo.format);
       setFile(file);
     } catch (error) {
+      setUploading(false);
       console.error(error);
     }
   };
@@ -65,6 +66,7 @@ export default function usePhotoGallery() {
       );
       setUploading(false);
     } catch (error) {
+      setUploading(false);
       console.error(error);
     }
   };
@@ -79,6 +81,7 @@ export default function usePhotoGallery() {
     setPhotos,
     setFiles,
     uploading,
+    setUploading,
   };
 }
 

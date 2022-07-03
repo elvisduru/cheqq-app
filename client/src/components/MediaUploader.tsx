@@ -1,4 +1,4 @@
-import { IonIcon, IonThumbnail } from "@ionic/react";
+import { IonIcon, IonSpinner, IonThumbnail, isPlatform } from "@ionic/react";
 import { add, closeCircle, imagesOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { FieldValues, UseFormSetValue, useWatch } from "react-hook-form";
@@ -24,7 +24,7 @@ export default function MediaUploader({
   setValue,
   user,
 }: Props) {
-  const { takePhotos, files, setPhotos, setFiles, uploading } =
+  const { takePhotos, files, setPhotos, setFiles, uploading, setUploading } =
     usePhotoGallery();
   const [isSorting, setIsSorting] = useState(false);
   const deleteImage = useDeleteImage();
@@ -38,6 +38,7 @@ export default function MediaUploader({
   useEffect(() => {
     if (files.length) {
       // upload files to s3
+      setUploading(true);
       uploadFiles(user, files).then((uploadedFiles) => {
         addImages.mutate(uploadedFiles, {
           onSuccess: ({ data }) => {
@@ -46,6 +47,7 @@ export default function MediaUploader({
             // reset usePhotoGallery hook state
             setPhotos([]);
             setFiles([]);
+            setUploading(false);
           },
         });
       });
@@ -60,7 +62,10 @@ export default function MediaUploader({
     >
       {!photos?.length ? (
         <div
-          onClick={takePhotos}
+          onClick={() => {
+            if (uploading) return;
+            takePhotos();
+          }}
           className="flex flex-column items-center ion-justify-content-center"
         >
           <div
@@ -72,7 +77,11 @@ export default function MediaUploader({
               height: 45,
             }}
           >
-            <IonIcon icon={imagesOutline} />
+            {uploading ? (
+              <IonSpinner name="crescent" />
+            ) : (
+              <IonIcon icon={imagesOutline} />
+            )}
           </div>
           <p>Add Photos</p>
         </div>
@@ -103,6 +112,7 @@ export default function MediaUploader({
                     size="small"
                     className="absolute -top-3 -right-3"
                     onTouchStart={() => {
+                      if (isPlatform("desktop")) return;
                       deleteImage.mutate(photo.id!, {
                         onSuccess: (_, id) => {
                           setValue(
@@ -134,12 +144,16 @@ export default function MediaUploader({
               ))}
               {photos.length < 10 && (
                 <IonThumbnail className="bg-light upload-btn rounded mb-4 w-12 h-12 flex ion-justify-content-center items-center">
-                  <IonIcon
-                    icon={add}
-                    size="small"
-                    style={{ top: -7, right: -7 }}
-                    onClick={takePhotos}
-                  />
+                  {uploading ? (
+                    <IonSpinner name="crescent" />
+                  ) : (
+                    <IonIcon
+                      icon={add}
+                      size="small"
+                      style={{ top: -7, right: -7 }}
+                      onClick={takePhotos}
+                    />
+                  )}
                 </IonThumbnail>
               )}
             </ReactSortable>

@@ -41,10 +41,10 @@ export default function Confirm({ user }: { user: User }) {
     }
   }, [count, stop]);
 
-  useIonViewDidEnter(() => {
-    confirmMagicLink();
-    start();
-  });
+  // useIonViewDidEnter(() => {
+  //   confirmMagicLink();
+  //   start();
+  // });
 
   useIonViewWillLeave(() => {
     reset();
@@ -108,6 +108,7 @@ export default function Confirm({ user }: { user: User }) {
   // TODO: Log user in all devices (sockets listen and set user and tokens) after confirming email
   useEffect(() => {
     confirmMagicLink();
+    start();
   }, [secret, confirmMagicLink]);
 
   if (user) {
