@@ -1,5 +1,5 @@
 import { IonInput, IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 import useScript from "../hooks/useScript";
@@ -45,12 +45,15 @@ export default function PlacesAutocomplete({
 
   useOnClickOutside(ref, clearSuggestions);
 
+  const [selected, setSelected] = useState<string>();
+
   const renderSuggestions = () =>
     data.map(({ place_id, description }) => (
       <IonItem
         onClick={() => {
           setValue(description, false);
           onChange(description);
+          setSelected(description);
           clearSuggestions();
         }}
         button
@@ -92,11 +95,13 @@ export default function PlacesAutocomplete({
           type="text"
           value={value}
           onIonChange={(e) => {
+            if (e.detail.value === selected) return;
             setValue(e.detail.value!);
             onChange(e.detail.value!);
           }}
           onIonBlur={onBlur}
           disabled={!ready}
+          debounce={300}
         />
         <IonNote slot="error">{error}</IonNote>
       </IonItem>
