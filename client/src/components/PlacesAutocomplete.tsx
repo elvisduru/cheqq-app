@@ -9,6 +9,7 @@ type Props = {
   onBlur: () => void;
   value: any;
   error?: string;
+  country?: string;
 };
 
 // BUG: Suggestions rendering twice after selection
@@ -18,6 +19,7 @@ export default function PlacesAutocomplete({
   onBlur,
   value: formValue,
   error,
+  country = "US",
 }: Props) {
   const {
     ready,
@@ -28,6 +30,9 @@ export default function PlacesAutocomplete({
   } = usePlacesAutocomplete({
     callbackName: "initMap",
     defaultValue: formValue,
+    requestOptions: {
+      componentRestrictions: { country },
+    },
   });
 
   const scriptStatus = useScript(
@@ -39,6 +44,22 @@ export default function PlacesAutocomplete({
   const ref = useRef<HTMLIonListElement>(null);
 
   useOnClickOutside(ref, clearSuggestions);
+
+  const renderSuggestions = () =>
+    data.map(({ place_id, description }) => (
+      <IonItem
+        onClick={() => {
+          setValue(description, false);
+          onChange(description);
+          clearSuggestions();
+        }}
+        button
+        detail={false}
+        key={place_id}
+      >
+        {description}
+      </IonItem>
+    ));
 
   return scriptStatus !== "ready" ? (
     <IonItem
@@ -52,6 +73,7 @@ export default function PlacesAutocomplete({
         value={value}
         onIonChange={(e) => {
           setValue(e.detail.value!);
+          onChange(e.detail.value);
         }}
         onIonBlur={onBlur}
         disabled={!ready}
@@ -71,29 +93,14 @@ export default function PlacesAutocomplete({
           value={value}
           onIonChange={(e) => {
             setValue(e.detail.value!);
+            onChange(e.detail.value!);
           }}
           onIonBlur={onBlur}
           disabled={!ready}
         />
         <IonNote slot="error">{error}</IonNote>
       </IonItem>
-      <IonList ref={ref}>
-        {status === "OK" &&
-          data.map(({ place_id, description }) => (
-            <IonItem
-              onClick={() => {
-                setValue(description, false);
-                onChange(description);
-                clearSuggestions();
-              }}
-              button
-              detail={false}
-              key={place_id}
-            >
-              {description}
-            </IonItem>
-          ))}
-      </IonList>
+      <IonList ref={ref}>{status === "OK" && renderSuggestions()}</IonList>
     </div>
   );
 }

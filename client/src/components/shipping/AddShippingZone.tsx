@@ -37,12 +37,13 @@ export default function AddShippingZone({ dismiss }: Props) {
     const zoneType = watch("type");
     switch (zoneType) {
       case "zip":
-        break;
+        return <p>Zip selected</p>;
       case "state":
-        break;
+        return <p>State selected</p>;
       case "country":
-        break;
+        return <p>Country selected</p>;
       case "global":
+        return <p>Global selected</p>;
       default:
         return null;
     }
@@ -86,6 +87,7 @@ export default function AddShippingZone({ dismiss }: Props) {
                   type="text"
                   onIonChange={onChange}
                   onIonBlur={onBlur}
+                  placeholder="My Shipping Zone 1"
                 />
               )}
             />
@@ -126,6 +128,7 @@ export default function AddShippingZone({ dismiss }: Props) {
             </IonNote>
             <IonNote slot="error">{errors.type?.message}</IonNote>
           </IonItem>
+          <LocationsInput />
         </form>
       </IonContent>
     </>

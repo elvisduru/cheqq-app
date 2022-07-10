@@ -30,6 +30,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { RouteComponentProps, useHistory } from "react-router";
 import { StoreFormValues } from ".";
 import currencies from "../../../assets/json/countries-currencies.json";
+import countries from "../../../assets/json/country-codes.json";
 import PlacesAutocomplete from "../../../components/PlacesAutocomplete";
 import useAddStore from "../../../hooks/mutations/stores/addStore";
 import useBoolean from "../../../hooks/useBoolean";
@@ -74,6 +75,16 @@ export default function Details({ progress, user }: Props) {
   const [present] = useIonToast();
 
   const router = useIonRouter();
+
+  const country = watch("country");
+
+  const getCurrency = (country: string) => {
+    const countryName = countries.find((c) => c.id === country)?.value;
+    const currency = currencies.find(
+      (c) => c.country.toLowerCase() === countryName?.toLowerCase()
+    );
+    return `${currency?.country}-${currency?.currency_code}`;
+  };
 
   useEffect(() => {
     if (avatarFile) {
@@ -260,19 +271,69 @@ export default function Details({ progress, user }: Props) {
               Provide a short description of your store.
             </IonNote>
           </IonItem>
-          <Controller
-            name="address"
-            control={control}
-            rules={{ required: "Please enter an address for your store" }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <PlacesAutocomplete
-                onChange={onChange}
-                onBlur={onBlur}
-                value={value}
-                error={errors.address?.message}
-              />
-            )}
-          />
+          <IonItem
+            className={`input mt-4 ${errors.country ? "ion-invalid" : ""}`}
+            fill="outline"
+            mode="md"
+          >
+            <IonLabel position="floating">Country</IonLabel>
+            <Controller
+              name="country"
+              control={control}
+              rules={{ required: "Please select your country" }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <IonSelect
+                  interface="alert"
+                  interfaceOptions={
+                    {
+                      translucent: true,
+                      mode: "ios",
+                      header: "Select country",
+                    } as AlertOptions
+                  }
+                  onIonChange={(e) => {
+                    onChange(e.detail.value);
+                    // Set currency based on country
+                    setValue("currency", getCurrency(e.detail.value));
+                  }}
+                  onIonBlur={onBlur}
+                  value={value}
+                >
+                  {countries.map((country) => (
+                    <IonSelectOption key={country.id} value={country.id}>
+                      {country.value}
+                    </IonSelectOption>
+                  ))}
+                </IonSelect>
+              )}
+            />
+            <IonNote slot="helper">
+              Select the country your store is located.
+            </IonNote>
+            <IonNote slot="error">{errors.country?.message}</IonNote>
+          </IonItem>
+          {country && (
+            <Controller
+              name="address"
+              control={control}
+              rules={{
+                required: "Please enter an address for your store",
+                pattern: {
+                  value: /^[a-zA-Z0-9\s,'-]*$/,
+                  message: "Please enter a valid address",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <PlacesAutocomplete
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  error={errors.address?.message}
+                  country={country}
+                />
+              )}
+            />
+          )}
           <IonItem
             className={`input mt-4 ${errors.currency ? "ion-invalid" : ""}`}
             fill="outline"
@@ -325,10 +386,9 @@ export default function Details({ progress, user }: Props) {
               render={({ field: { onChange, onBlur, value } }) => (
                 <PhoneInput
                   containerClass="mt-4"
-                  country={"us"}
+                  country={country?.toLowerCase() || "us"}
                   value={value}
-                  onChange={(value, countryData: CountryData) => {
-                    setValue("country", countryData.name);
+                  onChange={(value) => {
                     onChange(value);
                   }}
                   onBlur={onBlur}
