@@ -14,6 +14,7 @@ import { join } from 'path';
 import { StoresModule } from './stores/stores.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ImagesModule } from './images/images.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { ImagesModule } from './images/images.module';
     StoresModule,
     CategoriesModule,
     ImagesModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [

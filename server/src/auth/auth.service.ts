@@ -1,5 +1,9 @@
 import { MailerService } from '@derech1e/mailer';
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
@@ -23,7 +27,7 @@ export class AuthService {
       where: { email: data.email },
     });
 
-    if (user) throw new ForbiddenException('User already exists');
+    if (user) throw new BadRequestException('User already exists');
 
     const hash = await this.hashData(data.password);
     const newUser = await this.prisma.user.create({

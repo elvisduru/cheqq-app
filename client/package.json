@@ -62,7 +62,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "ionic:serve": "vite"
+    "ionic:serve": "vite",
+    "ionic:build": "tsc && vite build"
   },
   "eslintConfig": {
     "extends": [

@@ -1,7 +1,7 @@
 {
 	"appId": "co.cheqq.cheqq",
 	"appName": "cheqq-app",
-	"webDir": "build",
+	"webDir": "dist",
 	"bundledWebRuntime": false,
 	"plugins": {
 		"SplashScreen": {

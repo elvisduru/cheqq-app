@@ -25,6 +25,7 @@ export default function usePhotoGallery() {
         source: CameraSource.Prompt,
         allowEditing: true,
       });
+      setUploading(true);
       setPhoto(photo);
       const file = await getFileFromPath(photo.webPath!, photo.format);
       setFile(file);
@@ -34,21 +35,24 @@ export default function usePhotoGallery() {
     }
   };
 
-  const takePhotos = async () => {
+  const takePhotos = async (uploadCount = 0) => {
     try {
-      setUploading(true);
       const newPhotos = await Camera.pickImages({
         quality: 90,
-        limit: 10 - photos.length,
+        limit: 10 - uploadCount,
       });
 
+      setUploading(true);
+
+      // trim photos to 10
+      const photosToAdd = newPhotos.photos.slice(0, 10 - uploadCount);
       setPhotos((prev) =>
-        [...prev, ...newPhotos.photos]
+        [...prev, ...photosToAdd]
           .slice(0, 10)
           .map((photo, index) => ({ ...photo, id: index }))
       );
       const files = await Promise.all(
-        newPhotos.photos.map(async (photo, index) => {
+        photosToAdd.map(async (photo, index) => {
           const file = await getFileFromPath(
             photo.webPath!,
             photo.format,
@@ -64,7 +68,6 @@ export default function usePhotoGallery() {
           return newFile as SortableFile;
         })
       );
-      setUploading(false);
     } catch (error) {
       setUploading(false);
       console.error(error);

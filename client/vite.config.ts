@@ -8,10 +8,4 @@ export default defineConfig({
     port: 8100,
     host: true,
   },
-  css: {
-    devSourcemap: true,
-  },
-  build: {
-    sourcemap: true,
-  },
 });

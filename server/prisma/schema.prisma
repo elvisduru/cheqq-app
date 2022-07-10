@@ -67,8 +67,7 @@ model Product {
   id                     Int                  @id @default(autoincrement())
   Store                  Store                @relation(fields: [storeId], references: [id])
   storeId                Int
-  collection             Collection?          @relation(fields: [collectionId], references: [id])
-  collectionId           Int?
+  collections            Collection[]
   type                   ProductType
   title                  String
   description            String
@@ -79,15 +78,14 @@ model Product {
   height                 Float?
   depth                  Float?
   dimensionUnit          DimensionUnit        @default(value: cm)
-  price                  Float
+  price                  Float?
   compareAtPrice         Float?
   costPrice              Float?
   currency               String               @default(value: "USD")
   taxable                Boolean              @default(false)
   tax                    Tax?                 @relation(fields: [taxId], references: [id])
   taxId                  Int?
-  category               Category?            @relation(fields: [categoryId], references: [id])
-  categoryId             Int?
+  categories             Category[]
   brand                  Brand?               @relation(fields: [brandId], references: [id])
   brandId                Int?
   options                ProductOption[]
@@ -95,7 +93,7 @@ model Product {
   // Inventory
   inventoryTracking      Boolean              @default(false)
   allowBackOrder         Boolean              @default(value: false)
-  inventoryLevel         Int                  @default(value: 0)
+  inventoryLevel         Int?
   inventoryWarningLevel  Int?
   sku                    String?
   gtin                   String?
@@ -308,6 +306,7 @@ model Order {
   updatedAt         DateTime    @updatedAt
 }
 
+// A line item captures the quantity, price, and other important information about a product in an order at the time of purchase.
 // model LineItem {
 //   id                Int       @id @default(autoincrement())
 //   Order             Order     @relation(fields: [orderId], references: [id])

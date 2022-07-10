@@ -252,7 +252,8 @@ export default function Checkout() {
           </>
         )}
       </IonItemGroup>
-      <IonItemGroup className="mt-4">
+      {/* TODO: Discounts feature half-way */}
+      {/* <IonItemGroup className="mt-4">
         <IonItemDivider className="pl-0">
           <IonLabel color="medium">Discounts</IonLabel>
           <IonButton
@@ -272,7 +273,7 @@ export default function Checkout() {
             Manage Settings
           </IonButton>
         </IonItemDivider>
-      </IonItemGroup>
+      </IonItemGroup> */}
       <IonItem lines="none" className="input mt-4 checkbox">
         <IonLabel>Redirect after purchase?</IonLabel>
         <IonToggle
