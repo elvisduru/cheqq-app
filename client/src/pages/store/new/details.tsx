@@ -38,7 +38,7 @@ import usePhotoGallery from "../../../hooks/usePhotoGallery";
 import api from "../../../lib/api";
 import s3Client from "../../../lib/s3Client";
 import { User } from "../../../utils/types";
-import PhoneInput, { CountryData } from "react-phone-input-2";
+import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 
 type Props = {
@@ -96,6 +96,10 @@ export default function Details({ progress, user }: Props) {
       setValue("bannerUrl", bannerPhoto?.webPath);
     }
   }, [avatarFile, avatarPhoto, bannerFile, bannerPhoto, setValue]);
+
+  const setCoordinates = (coordinates: { lat: number; lng: number }) => {
+    setValue("addressCoordinates", coordinates);
+  };
 
   const { value: isLoading, toggle } = useBoolean(false);
 
@@ -330,6 +334,7 @@ export default function Details({ progress, user }: Props) {
                   value={value}
                   error={errors.address?.message}
                   country={country}
+                  setCoordinates={setCoordinates}
                 />
               )}
             />
@@ -411,6 +416,7 @@ export default function Details({ progress, user }: Props) {
           className="bg-black bg-opacity-80 [backdrop-filter:blur(1px)] bottom-0 ion-padding-horizontal pb-4 w-full"
         >
           <IonButton
+            hidden={!isValid || !isDirty}
             onClick={async () => {
               try {
                 toggle();

@@ -93,7 +93,7 @@ export default function ShippingZones({ dismiss }: Props) {
                   presentingElement: document.querySelector(
                     "#shipping-settings"
                   ) as HTMLElement,
-                  canDismiss: true,
+                  swipeToClose: false,
                 });
               }}
             >

@@ -126,7 +126,7 @@ export default function New({ user, isLoading: isUserLoading }: Props) {
               />
             </IonItem>
             <IonButton
-              className="mt-1"
+              className="mt-8"
               expand="block"
               disabled={!watch("avatar") || !watch("name")}
               type="submit"

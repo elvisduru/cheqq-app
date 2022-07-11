@@ -1,6 +1,9 @@
 import { IonInput, IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
 import { useRef, useState } from "react";
-import usePlacesAutocomplete from "use-places-autocomplete";
+import usePlacesAutocomplete, {
+  getGeocode,
+  getLatLng,
+} from "use-places-autocomplete";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 import useScript from "../hooks/useScript";
 
@@ -10,6 +13,7 @@ type Props = {
   value: any;
   error?: string;
   country?: string;
+  setCoordinates?: (coordinates: { lat: number; lng: number }) => void;
 };
 
 // BUG: Suggestions rendering twice after selection
@@ -20,6 +24,7 @@ export default function PlacesAutocomplete({
   value: formValue,
   error,
   country = "US",
+  setCoordinates,
 }: Props) {
   const {
     ready,
@@ -54,6 +59,15 @@ export default function PlacesAutocomplete({
           setValue(description, false);
           onChange(description);
           setSelected(description);
+          if (setCoordinates) {
+            getGeocode({ address: description })
+              .then((results) => {
+                setCoordinates(getLatLng(results[0]));
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
           clearSuggestions();
         }}
         button
@@ -76,7 +90,7 @@ export default function PlacesAutocomplete({
         value={value}
         onIonChange={(e) => {
           setValue(e.detail.value!);
-          onChange(e.detail.value);
+          onChange(e.detail.value!);
         }}
         onIonBlur={onBlur}
         disabled={!ready}
@@ -101,7 +115,6 @@ export default function PlacesAutocomplete({
           }}
           onIonBlur={onBlur}
           disabled={!ready}
-          debounce={300}
         />
         <IonNote slot="error">{error}</IonNote>
       </IonItem>

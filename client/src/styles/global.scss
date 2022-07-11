@@ -268,3 +268,23 @@ ion-item-divider {
     --border-radius: 9999px;
   }
 }
+
+#map-container {
+  .leaflet-control-attribution {
+    background-color: var(--ion-color-light);
+    color: rgba(221, 221, 221, 0.3);
+    a {
+      color: rgba(221, 221, 221, 0.57);
+    }
+  }
+}
+
+// :root {
+//   --map-tiles-filter: brightness(0.6) invert(1) contrast(3) hue-rotate(0deg) saturate(0.8) brightness(0.7);
+// }
+
+// @media (prefers-color-scheme: dark) {
+//   .leaflet-tile {
+//       filter:var(--map-tiles-filter, none);
+// }
+// }

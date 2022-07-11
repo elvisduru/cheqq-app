@@ -15,6 +15,7 @@ export type StoreFormValues = {
   bannerUrl?: string;
   description: string;
   address: string;
+  addressCoordinates?: { lat: number; lng: number };
   categories: number[];
   currency: string;
   country: string;
@@ -24,7 +25,7 @@ export type StoreFormValues = {
 export default function NewStore({ user }: { user: User }) {
   const [progress, setProgress] = useState(1);
   const methods = useForm<StoreFormValues>({
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   if (!user) {

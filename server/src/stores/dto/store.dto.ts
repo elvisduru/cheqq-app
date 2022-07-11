@@ -1,12 +1,14 @@
+import { Prisma } from '@prisma/client';
 import {
   IsBoolean,
   IsEmail,
   IsFQDN,
-  IsIn,
   IsInt,
   IsLocale,
   IsLowercase,
   IsNotEmpty,
+  IsNumber,
+  IsObject,
   IsOptional,
   IsPhoneNumber,
   IsString,
@@ -66,4 +68,8 @@ export class CreateStoreDto {
 
   @IsBoolean()
   public: boolean = false;
+
+  @IsNotEmpty()
+  @IsObject()
+  addressCoordinates: Prisma.JsonObject;
 }

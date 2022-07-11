@@ -29,6 +29,8 @@ export type User = {
     tag: string;
     logo: string;
     currency: string;
+    address: string;
+    addressCoordinates: { lat: number; lng: number };
   }[];
   prefs: JsonObject;
   createdAt: Date;

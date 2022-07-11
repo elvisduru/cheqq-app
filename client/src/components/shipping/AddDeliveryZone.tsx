@@ -8,19 +8,25 @@ import {
   IonItem,
   IonLabel,
   IonNote,
-  IonSelect,
-  IonSelectOption,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { close } from "ionicons/icons";
+
+import "leaflet/dist/leaflet.css";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useStore } from "../../hooks/useStore";
+import RadiusMap from "../RadiusMap";
 
 type Props = {
   dismiss: () => void;
 };
 
 export default function AddDeliveryZone({ dismiss }: Props) {
+  const [radius, setRadius] = useState<number>(0);
+  const user = useStore((store) => store.user);
+  const selectedStore = useStore((store) => store.selectedStore);
   const {
     control,
     handleSubmit,
@@ -32,7 +38,7 @@ export default function AddDeliveryZone({ dismiss }: Props) {
   });
   const onSubmit = (data: any) => console.log(data);
   const onError = (error: any) => console.log(error);
-
+  const addressCoordinates = user?.stores[selectedStore].addressCoordinates;
   return (
     <>
       <IonHeader>
@@ -78,6 +84,17 @@ export default function AddDeliveryZone({ dismiss }: Props) {
             <IonNote slot="helper">Enter a name for this zone.</IonNote>
             <IonNote slot="error">{errors.name?.message}</IonNote>
           </IonItem>
+          <IonItem className="input mt-4">
+            <IonLabel position="floating">Distance</IonLabel>
+            <IonInput
+              type="number"
+              value={radius}
+              onIonChange={(e) => setRadius(Number(e.target.value))}
+              placeholder="e.g. 10"
+              debounce={200}
+            />
+          </IonItem>
+          <RadiusMap addressCoordinates={addressCoordinates!} radius={radius} />
         </form>
       </IonContent>
     </>

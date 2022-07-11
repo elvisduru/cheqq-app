@@ -34,6 +34,7 @@ Table Store {
   status Boolean [not null, default: true]
   domain String
   address String [not null]
+  addressCoordinates Json [not null]
   country String [not null]
   phone String [not null]
   order_email String
@@ -47,6 +48,57 @@ Table Store {
   orders Order [not null]
   products Product [not null]
   pricingRule PricingRule [not null]
+  deliveryZones DeliveryZone [not null]
+  shippingZones ShippingZone [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table DeliveryZone {
+  id Int [pk, increment]
+  store Store [not null]
+  storeId Int [not null]
+  name String [not null]
+  zipcodes String[] [not null]
+  states String[] [not null]
+  minOrderPrice Float [not null, default: 0]
+  deliveryPrice Float [not null, default: 0]
+  conditionalPricing Json[] [not null]
+  deliveryInformation String
+  price Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ShippingZone {
+  id Int [pk, increment]
+  store Store [not null]
+  storeId Int [not null]
+  name String [not null]
+  regions String[] [not null]
+  rates ShippingRate [not null]
+  description String
+  price Float [not null, default: 0]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table ShippingRate {
+  id Int [pk, increment]
+  globalZone ShippingZone [not null]
+  globalZoneId Int [not null]
+  type ShippingRateType [not null]
+  transitTime TransitTime [not null]
+  customRateName String
+  price Float [not null]
+  minimumWeight Float
+  maximumWeight Float
+  minimumPrice Float
+  maximumPrice Float
+  carrier Carrier
+  services String[] [not null]
+  handlingFeePercent Float
+  handlingFeeFlat Float
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
 }
@@ -55,8 +107,7 @@ Table Product {
   id Int [pk, increment]
   Store Store [not null]
   storeId Int [not null]
-  collection Collection
-  collectionId Int
+  collections Collection [not null]
   type ProductType [not null]
   title String [not null]
   description String [not null]
@@ -67,22 +118,21 @@ Table Product {
   height Float
   depth Float
   dimensionUnit DimensionUnit [not null, default: 'cm']
-  price Float [not null]
+  price Float
   compareAtPrice Float
   costPrice Float
   currency String [not null, default: 'USD']
   taxable Boolean [not null, default: false]
   tax Tax
   taxId Int
-  category Category
-  categoryId Int
+  categories Category [not null]
   brand Brand
   brandId Int
   options ProductOption [not null]
   variants ProductVariant [not null]
   inventoryTracking Boolean [not null, default: false]
   allowBackOrder Boolean [not null, default: false]
-  inventoryLevel Int [not null, default: 0]
+  inventoryLevel Int
   inventoryWarningLevel Int
   sku String
   gtin String
@@ -310,6 +360,16 @@ Table CategoryToStore {
   storesId Int [ref: > Store.id]
 }
 
+Table CollectionToProduct {
+  collectionsId Int [ref: > Collection.id]
+  productsId Int [ref: > Product.id]
+}
+
+Table CategoryToProduct {
+  categoriesId Int [ref: > Category.id]
+  productsId Int [ref: > Product.id]
+}
+
 Table RelatedProducts {
   relatedproductrelationId Int [ref: > Product.id]
   relatedproductsId Int [ref: > Product.id]
@@ -347,6 +407,24 @@ Enum DimensionUnit {
   in
   cm
   m
+}
+
+Enum TransitTime {
+  economy
+  standard
+  express
+  custom
+}
+
+Enum ShippingRateType {
+  custom
+  carrier
+}
+
+Enum Carrier {
+  DHL
+  UPS
+  USPS
 }
 
 Enum PriceAdjustmentType {
@@ -393,13 +471,15 @@ Enum OrderStatus {
 
 Ref: Store.ownerId > User.id [delete: Cascade]
 
+Ref: DeliveryZone.storeId > Store.id [delete: Cascade]
+
+Ref: ShippingZone.storeId > Store.id [delete: Cascade]
+
+Ref: ShippingRate.globalZoneId > ShippingZone.id [delete: Cascade]
+
 Ref: Product.storeId > Store.id
 
-Ref: Product.collectionId > Collection.id
-
 Ref: Product.taxId > Tax.id
-
-Ref: Product.categoryId > Category.id
 
 Ref: Product.brandId > Brand.id
 

@@ -57,7 +57,7 @@ export default function MediaSelector({
     >
       {!photos?.length ? (
         <div
-          onClick={takePhotos}
+          onClick={() => takePhotos()}
           className="flex flex-column items-center ion-justify-content-center"
         >
           <div
@@ -111,7 +111,7 @@ export default function MediaSelector({
                     icon={add}
                     size="small"
                     style={{ top: -7, right: -7 }}
-                    onClick={takePhotos}
+                    onClick={() => takePhotos()}
                   />
                 </IonThumbnail>
               )}

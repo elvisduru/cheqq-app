@@ -9,6 +9,7 @@ import {
   IonLabel,
   IonPage,
   IonRouterLink,
+  IonSpinner,
   IonTitle,
   IonToolbar,
   useIonRouter,
@@ -23,6 +24,7 @@ export default function Login({ user }: { user: User }) {
   const router = useIonRouter();
   const [email, setEmail] = useState<string>("");
   const [valid, setValid] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const validateEmail = (value: string) => {
     if (
       value.match(
@@ -39,10 +41,12 @@ export default function Login({ user }: { user: User }) {
     try {
       if (validateEmail(email)) {
         setValid(true);
+        setLoading(true);
         // Send request to create magic link
         await axios.post(`${import.meta.env.VITE_API_URL}/auth/magic-link`, {
           email,
         });
+        setLoading(false);
 
         router.push("/magic-link?email=" + email);
       } else {
@@ -94,6 +98,7 @@ export default function Login({ user }: { user: User }) {
             onClick={handleMagicLink}
           >
             Send Magic Link
+            {loading && <IonSpinner name="crescent" />}
           </IonButton>
         </div>
       </IonContent>

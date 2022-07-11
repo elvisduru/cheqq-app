@@ -21,7 +21,7 @@ export default function AvatarUpload({ setValue }: Props) {
   return (
     <IonThumbnail
       onClick={takePhoto}
-      className="flex items-center ion-align-self-center ion-justify-content-center border rounded-full my-2 relative w-8 h-8"
+      className="flex items-center ion-align-self-center ion-justify-content-center border rounded-full my-8 relative w-32 h-32"
     >
       {photo ? (
         <img src={photo.webPath} alt="avatar" className="rounded-full" />
@@ -31,7 +31,7 @@ export default function AvatarUpload({ setValue }: Props) {
       <IonIcon
         icon={addCircle}
         color="primary"
-        className="absolute bottom-0 right-0 text-5xl drop-shadow-2xl"
+        className="absolute bottom-0 right-0 text-4xl drop-shadow-2xl"
       />
     </IonThumbnail>
   );

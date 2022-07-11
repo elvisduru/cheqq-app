@@ -38,31 +38,32 @@ model User {
 }
 
 model Store {
-  id            Int            @id @default(autoincrement())
-  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId       Int
-  name          String
-  tag           String         @unique
-  status        Boolean        @default(true)
-  domain        String?
-  address       String
-  country       String
-  phone         String
-  order_email   String?
-  language      String
-  currency      String
-  logo          String?
-  banner        String?
-  description   String?
-  categories    Category[]
-  public        Boolean        @default(false)
-  orders        Order[]
-  products      Product[]
-  pricingRule   PricingRule[]
-  deliveryZones DeliveryZone[]
-  shippingZones ShippingZone[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id                 Int            @id @default(autoincrement())
+  owner              User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId            Int
+  name               String
+  tag                String         @unique
+  status             Boolean        @default(true)
+  domain             String?
+  address            String
+  addressCoordinates Json
+  country            String
+  phone              String
+  order_email        String?
+  language           String
+  currency           String
+  logo               String?
+  banner             String?
+  description        String?
+  categories         Category[]
+  public             Boolean        @default(false)
+  orders             Order[]
+  products           Product[]
+  pricingRule        PricingRule[]
+  deliveryZones      DeliveryZone[]
+  shippingZones      ShippingZone[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 }
 
 model DeliveryZone {
