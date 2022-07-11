@@ -1,8 +1,7 @@
 # compiled output
-/server/dist
 /client/build
-/client/dist
-/client/dev-dist
+dist
+dev-dist
 node_modules
 .pnp
 .pnp.js
