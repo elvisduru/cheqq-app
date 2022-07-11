@@ -20,7 +20,7 @@ type Props = {
   dismiss: () => void;
 };
 
-export default function AddShippingZone({ dismiss }: Props) {
+export default function AddDeliveryZone({ dismiss }: Props) {
   const {
     control,
     handleSubmit,
@@ -33,27 +33,11 @@ export default function AddShippingZone({ dismiss }: Props) {
   const onSubmit = (data: any) => console.log(data);
   const onError = (error: any) => console.log(error);
 
-  // const LocationsInput = () => {
-  //   const zoneType = watch("type");
-  //   switch (zoneType) {
-  //     case "zip":
-  //       return <p>Zip selected</p>;
-  //     case "state":
-  //       return <p>State selected</p>;
-  //     case "country":
-  //       return <p>Country selected</p>;
-  //     case "global":
-  //       return <p>Global selected</p>;
-  //     default:
-  //       return null;
-  //   }
-  // };
-
   return (
     <>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Add Shipping Zone</IonTitle>
+          <IonTitle>Add Delivery Zone</IonTitle>
           <IonButtons slot="start">
             <IonButton
               color="dark"
@@ -87,46 +71,12 @@ export default function AddShippingZone({ dismiss }: Props) {
                   type="text"
                   onIonChange={onChange}
                   onIonBlur={onBlur}
-                  placeholder="My Shipping Zone 1"
+                  placeholder="e.g. Zone 1"
                 />
               )}
             />
             <IonNote slot="helper">Enter a name for this zone.</IonNote>
             <IonNote slot="error">{errors.name?.message}</IonNote>
-          </IonItem>
-          <IonItem
-            className={`input mt-1 ${errors.type ? "ion-invalid" : ""}`}
-            fill="outline"
-            mode="md"
-          >
-            <IonLabel position="floating">Zone type</IonLabel>
-            <Controller
-              name="type"
-              control={control}
-              rules={{ required: "Please select a zone type" }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <IonSelect
-                  interface="popover"
-                  interfaceOptions={{
-                    translucent: true,
-                    mode: "ios",
-                    size: "auto",
-                  }}
-                  onIonChange={onChange}
-                  onIonBlur={onBlur}
-                  value={value}
-                >
-                  <IonSelectOption value="zip">Zip</IonSelectOption>
-                  <IonSelectOption value="state">State</IonSelectOption>
-                  <IonSelectOption value="country">Country</IonSelectOption>
-                  <IonSelectOption value="global">Global</IonSelectOption>
-                </IonSelect>
-              )}
-            />
-            <IonNote slot="helper">
-              Select zone type .i.e. zip, country, state or global.
-            </IonNote>
-            <IonNote slot="error">{errors.type?.message}</IonNote>
           </IonItem>
         </form>
       </IonContent>

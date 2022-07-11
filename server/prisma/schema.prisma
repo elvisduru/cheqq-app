@@ -38,29 +38,82 @@ model User {
 }
 
 model Store {
-  id          Int           @id @default(autoincrement())
-  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId     Int
+  id            Int            @id @default(autoincrement())
+  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId       Int
+  name          String
+  tag           String         @unique
+  status        Boolean        @default(true)
+  domain        String?
+  address       String
+  country       String
+  phone         String
+  order_email   String?
+  language      String
+  currency      String
+  logo          String?
+  banner        String?
+  description   String?
+  categories    Category[]
+  public        Boolean        @default(false)
+  orders        Order[]
+  products      Product[]
+  pricingRule   PricingRule[]
+  deliveryZones DeliveryZone[]
+  shippingZones ShippingZone[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model DeliveryZone {
+  id                  Int      @id @default(autoincrement())
+  store               Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId             Int
+  name                String
+  zipcodes            String[]
+  states              String[]
+  minOrderPrice       Float    @default(0)
+  deliveryPrice       Float    @default(0)
+  conditionalPricing  Json[]
+  deliveryInformation String?
+  price               Int
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model ShippingZone {
+  id          Int            @id @default(autoincrement())
+  store       Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId     Int
   name        String
-  tag         String        @unique
-  status      Boolean       @default(true)
-  domain      String?
-  address     String
-  country     String
-  phone       String
-  order_email String?
-  language    String
-  currency    String
-  logo        String?
-  banner      String?
+  regions     String[]
+  rates       ShippingRate[]
   description String?
-  categories  Category[]
-  public      Boolean       @default(false)
-  orders      Order[]
-  products    Product[]
-  pricingRule PricingRule[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  price       Float          @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model ShippingRate {
+  id                 Int              @id @default(autoincrement())
+  globalZone         ShippingZone     @relation(fields: [globalZoneId], references: [id], onDelete: Cascade)
+  globalZoneId       Int
+  type               ShippingRateType
+  // Custom rate fields
+  transitTime        TransitTime
+  customRateName     String? // required if transitTime is CUSTOM
+  price              Float
+  minimumWeight      Float?
+  maximumWeight      Float?
+  minimumPrice       Float?
+  maximumPrice       Float?
+  // Carrier fields
+  carrier            Carrier?
+  services           String[] // Selected services from carrier
+  handlingFeePercent Float? // Handling fee percent
+  handlingFeeFlat    Float? // Handling fee flat amount
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
 }
 
 model Product {
@@ -410,6 +463,25 @@ enum DimensionUnit {
   in
   cm
   m
+}
+
+enum TransitTime {
+  economy
+  standard
+  express
+  custom
+}
+
+enum ShippingRateType {
+  custom
+  carrier
+}
+
+// TODO: Work on integrating with Shipping Carriers
+enum Carrier {
+  DHL
+  UPS
+  USPS
 }
 
 // enum ReturnReason {

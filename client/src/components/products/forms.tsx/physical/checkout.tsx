@@ -252,6 +252,20 @@ export default function Checkout() {
           </>
         )}
       </IonItemGroup>
+      {/* TODO: If fulfillment services exist, show select options */}
+      {/* <IonItemGroup className="mt-4">
+        <IonItem lines="none" className="input checkbox w-full">
+          <IonLabel color="medium">
+            Fulfillment <br />
+            <IonNote
+              color="medium"
+              className="text-xs font-normal ion-text-wrap"
+            >
+              Choose the fulfillment service that fulfills orders for you.
+            </IonNote>
+          </IonLabel>
+        </IonItem>
+      </IonItemGroup> */}
       {/* TODO: Discounts feature half-way */}
       {/* <IonItemGroup className="mt-4">
         <IonItemDivider className="pl-0">
