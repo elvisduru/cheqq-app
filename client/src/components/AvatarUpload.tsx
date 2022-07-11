@@ -20,7 +20,7 @@ export default function AvatarUpload({ setValue }: Props) {
   }, [file, setValue]);
   return (
     <IonThumbnail
-      onClick={takePhoto}
+      onClick={() => takePhoto()}
       className="flex items-center ion-align-self-center ion-justify-content-center border rounded-full my-8 relative w-32 h-32"
     >
       {photo ? (

@@ -23,6 +23,7 @@ export default function usePhotoGallery() {
         quality: 90,
         resultType: CameraResultType.Uri,
         source: CameraSource.Prompt,
+        webUseInput: true,
         allowEditing: true,
       });
       setUploading(true);

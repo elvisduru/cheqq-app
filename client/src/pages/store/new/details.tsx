@@ -224,7 +224,7 @@ export default function Details({ progress, user }: Props) {
                     "Tag must be between 3 and 30 characters and can only contain letters, numbers, underscores and periods. It cannot start or end with a period.",
                 },
                 validate: async (value) => {
-                  if (await checkTag(value)) {
+                  if (await checkTag(value.substring(1))) {
                     return "Tag already exists";
                   }
                 },
