@@ -1,6 +1,4 @@
 import { defineCustomElements } from "@ionic/pwa-elements/loader";
-import { IonApp } from "@ionic/react";
-import { IonReactRouter } from "@ionic/react-router";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
 import App from "./App";
@@ -8,24 +6,10 @@ import reportWebVitals from "./reportWebVitals";
 
 const queryClient = new QueryClient();
 
-// queryClient.setDefaultOptions({
-//   queries: {
-//     onError: (err: any) => {
-//       if (err?.name === "AxiosError" && err?.response.status === 401) {
-//         window.location.href = "/signup";
-//       }
-//     },
-//   },
-// });
-
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   // <React.StrictMode>
   <QueryClientProvider client={queryClient}>
-    <IonApp>
-      <IonReactRouter>
-        <App />
-      </IonReactRouter>
-    </IonApp>
+    <App />
     {/* <ReactQueryDevtools initialIsOpen={false} /> */}
   </QueryClientProvider>
   // </React.StrictMode>
