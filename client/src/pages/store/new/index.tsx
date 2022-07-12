@@ -1,10 +1,10 @@
-import { IonRouterOutlet } from "@ionic/react";
-import { useState } from "react";
+import { IonLoading, IonRouterOutlet } from "@ionic/react";
+import React, { Suspense, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Redirect, Route } from "react-router-dom";
 import { User } from "../../../utils/types";
-import Categories from "./categories";
-import Details from "./details";
+const Categories = React.lazy(() => import("./categories"));
+const Details = React.lazy(() => import("./details"));
 
 export type StoreFormValues = {
   name: string;
@@ -33,28 +33,30 @@ export default function NewStore({ user }: { user: User }) {
   }
 
   return (
-    <FormProvider {...methods}>
-      <IonRouterOutlet>
-        <Route
-          path="/store/new/details"
-          render={(props) => (
-            <Details user={user!} progress={progress} {...props} />
-          )}
-          exact
-        />
-        <Route
-          path="/store/new"
-          render={(props) => (
-            <Categories
-              progress={progress}
-              setProgress={setProgress}
-              {...props}
-            />
-          )}
-          exact
-        />
-        <Route render={() => <Redirect to="/store/new" />} />
-      </IonRouterOutlet>
-    </FormProvider>
+    <Suspense fallback={<IonLoading isOpen={true} translucent />}>
+      <FormProvider {...methods}>
+        <IonRouterOutlet>
+          <Route
+            path="/store/new/details"
+            render={(props) => (
+              <Details user={user!} progress={progress} {...props} />
+            )}
+            exact
+          />
+          <Route
+            path="/store/new"
+            render={(props) => (
+              <Categories
+                progress={progress}
+                setProgress={setProgress}
+                {...props}
+              />
+            )}
+            exact
+          />
+          <Route render={() => <Redirect to="/store/new" />} />
+        </IonRouterOutlet>
+      </FormProvider>
+    </Suspense>
   );
 }

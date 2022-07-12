@@ -5,17 +5,17 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonLoading,
   IonPage,
   IonRouterLink,
   IonTitle,
   IonToolbar,
   useIonRouter,
   useIonToast,
-  useIonViewDidEnter,
   useIonViewWillLeave,
 } from "@ionic/react";
 import axios from "axios";
-import { useCallback, useEffect } from "react";
+import { Suspense, useCallback, useEffect } from "react";
 import { Redirect } from "react-router";
 import useCountdown from "../../hooks/useCountdown";
 import useQuery from "../../hooks/useQuery";
@@ -116,51 +116,53 @@ export default function Confirm({ user }: { user: User }) {
   }
 
   return (
-    <IonPage id="confirm">
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton />
-          </IonButtons>
-          <IonTitle>Confirm Email</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen>
-        <div className="flex flex-column h-full ion-padding">
-          <h2>Check your Email</h2>
-          <div className="text-gray leading-normal mt-0">
-            {email && <p>We've sent an email to {email}.</p>}
-            <p>
-              Didn't get an email? Check your spam or{" "}
-              <IonRouterLink routerLink="/login" routerDirection="back">
-                try another address.
-              </IonRouterLink>
-            </p>
-          </div>
+    <Suspense fallback={<IonLoading isOpen={true} translucent />}>
+      <IonPage id="confirm">
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons slot="start">
+              <IonBackButton />
+            </IonButtons>
+            <IonTitle>Confirm Email</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent fullscreen>
+          <div className="flex flex-column h-full ion-padding">
+            <h2>Check your Email</h2>
+            <div className="text-gray leading-normal mt-0">
+              {email && <p>We've sent an email to {email}.</p>}
+              <p>
+                Didn't get an email? Check your spam or{" "}
+                <IonRouterLink routerLink="/login" routerDirection="back">
+                  try another address.
+                </IonRouterLink>
+              </p>
+            </div>
 
-          <IonButton
-            disabled={count > 0}
-            className="mt-2"
-            expand="block"
-            onClick={async () => {
-              reset();
-              start();
-              if (email) {
-                await axios.post(
-                  `${import.meta.env.VITE_API_URL}/auth/magic-link`,
-                  {
-                    email,
-                  }
-                );
-              } else {
-                router.push("/login", "back");
-              }
-            }}
-          >
-            {count > 0 ? `Resend email in ${count}s` : "Resend email"}
-          </IonButton>
-        </div>
-      </IonContent>
-    </IonPage>
+            <IonButton
+              disabled={count > 0}
+              className="mt-2"
+              expand="block"
+              onClick={async () => {
+                reset();
+                start();
+                if (email) {
+                  await axios.post(
+                    `${import.meta.env.VITE_API_URL}/auth/magic-link`,
+                    {
+                      email,
+                    }
+                  );
+                } else {
+                  router.push("/login", "back");
+                }
+              }}
+            >
+              {count > 0 ? `Resend email in ${count}s` : "Resend email"}
+            </IonButton>
+          </div>
+        </IonContent>
+      </IonPage>
+    </Suspense>
   );
 }

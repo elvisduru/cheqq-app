@@ -1,5 +1,6 @@
 import {
   IonAvatar,
+  IonButton,
   IonButtons,
   IonContent,
   IonGrid,
@@ -43,6 +44,7 @@ const Messenger: React.FC<Props> = ({ user }) => {
           <IonRow>
             <IonTitle>See your Messenger</IonTitle>
           </IonRow>
+          <IonButton routerLink="/store/new">Create new store</IonButton>
         </IonGrid>
       </IonContent>
     </IonPage>

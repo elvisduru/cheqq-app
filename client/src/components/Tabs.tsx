@@ -1,5 +1,6 @@
 import {
   IonIcon,
+  IonLoading,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -17,6 +18,7 @@ import {
   home,
   homeOutline,
 } from "ionicons/icons";
+import { Suspense } from "react";
 import { Redirect, Route, useLocation } from "react-router-dom";
 import Home from "../pages/home";
 import Messenger from "../pages/messenger";
@@ -48,51 +50,57 @@ export default function Tabs({ user }: Props) {
   });
 
   return (
-    <IonTabs
-      onIonTabsWillChange={(e) => {
-        if (e.detail.tab === "create") {
-          present({
-            breakpoints: [0, 0.5],
-            initialBreakpoint: 0.5,
-          });
-        }
-      }}
-    >
-      <IonRouterOutlet>
-        <Route path="/home" render={() => <Home user={user} />} />
-        <Route path="/orders" render={() => <Orders user={user} />} />
-        <Route path="/products" render={() => <Products user={user} />} exact />
-        <Route path="/products/:id" render={() => <Product user={user} />} />
-        <Route
-          path="/notifications"
-          render={() => <Notifications user={user} />}
-        />
-        <Route path="/messenger" render={() => <Messenger user={user} />} />
-        <Route path="/settings" component={Settings} />
+    <Suspense fallback={<IonLoading isOpen={true} translucent />}>
+      <IonTabs
+        onIonTabsWillChange={(e) => {
+          if (e.detail.tab === "create") {
+            present({
+              breakpoints: [0, 0.5],
+              initialBreakpoint: 0.5,
+            });
+          }
+        }}
+      >
+        <IonRouterOutlet>
+          <Route path="/home" render={() => <Home user={user} />} />
+          <Route path="/orders" render={() => <Orders user={user} />} />
+          <Route
+            path="/products"
+            render={() => <Products user={user} />}
+            exact
+          />
+          <Route path="/products/:id" render={() => <Product user={user} />} />
+          <Route
+            path="/notifications"
+            render={() => <Notifications user={user} />}
+          />
+          <Route path="/messenger" render={() => <Messenger user={user} />} />
+          <Route path="/settings" component={Settings} />
 
-        <Route render={() => <Redirect to="/home" />} />
-      </IonRouterOutlet>
-      <IonTabBar slot="bottom" translucent>
-        <IonTabButton tab="home" href="/home">
-          <IonIcon icon={isSelected("home") ? home : homeOutline} />
-        </IonTabButton>
-        <IonTabButton tab="orders" href="/orders">
-          <IonIcon icon={isSelected("orders") ? checkbox : checkboxOutline} />
-        </IonTabButton>
-        <IonTabButton className="centerTab" tab="create">
-          <IonIcon color="primary" icon={addCircle} />
-        </IonTabButton>
-        <IonTabButton tab="products" href="/products">
-          <IonIcon
-            icon={isSelected("products") ? bagHandle : bagHandleOutline}
-          />
-        </IonTabButton>
-        <IonTabButton tab="messenger" href="/messenger">
-          <IonIcon
-            icon={isSelected("messenger") ? chatbubble : chatbubbleOutline}
-          />
-        </IonTabButton>
-      </IonTabBar>
-    </IonTabs>
+          <Route render={() => <Redirect to="/home" />} />
+        </IonRouterOutlet>
+        <IonTabBar slot="bottom" translucent>
+          <IonTabButton tab="home" href="/home">
+            <IonIcon icon={isSelected("home") ? home : homeOutline} />
+          </IonTabButton>
+          <IonTabButton tab="orders" href="/orders">
+            <IonIcon icon={isSelected("orders") ? checkbox : checkboxOutline} />
+          </IonTabButton>
+          <IonTabButton className="centerTab" tab="create">
+            <IonIcon color="primary" icon={addCircle} />
+          </IonTabButton>
+          <IonTabButton tab="products" href="/products">
+            <IonIcon
+              icon={isSelected("products") ? bagHandle : bagHandleOutline}
+            />
+          </IonTabButton>
+          <IonTabButton tab="messenger" href="/messenger">
+            <IonIcon
+              icon={isSelected("messenger") ? chatbubble : chatbubbleOutline}
+            />
+          </IonTabButton>
+        </IonTabBar>
+      </IonTabs>
+    </Suspense>
   );
 }

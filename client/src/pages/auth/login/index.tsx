@@ -7,6 +7,7 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonLoading,
   IonPage,
   IonRouterLink,
   IonSpinner,
@@ -15,7 +16,7 @@ import {
   useIonRouter,
 } from "@ionic/react";
 import axios from "axios";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Redirect } from "react-router";
 import { User } from "../../../utils/types";
 import "./index.scss";
@@ -62,46 +63,48 @@ export default function Login({ user }: { user: User }) {
   }
 
   return (
-    <IonPage id="login">
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton />
-          </IonButtons>
-          <IonTitle>Log in</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen>
-        <div className="flex flex-column h-full ion-padding">
-          <h2>Welcome to Cheqq</h2>
-          <div className="text-gray leading-normal mt-0">
-            <p>Cheqq is the home for all your business needs.</p>
-            <p>To sign up or log in, enter your email.</p>
-          </div>
+    <Suspense fallback={<IonLoading isOpen={true} translucent />}>
+      <IonPage id="login">
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons slot="start">
+              <IonBackButton />
+            </IonButtons>
+            <IonTitle>Log in</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent fullscreen>
+          <div className="flex flex-column h-full ion-padding">
+            <h2>Welcome to Cheqq</h2>
+            <div className="text-gray leading-normal mt-0">
+              <p>Cheqq is the home for all your business needs.</p>
+              <p>To sign up or log in, enter your email.</p>
+            </div>
 
-          <IonLabel color="danger" style={{ minHeight: 20 }} className="mt-1">
-            {!valid && "Email address not valid"}
-          </IonLabel>
-          <IonItem className="input" fill="outline" mode="md">
-            <IonInput
-              required
-              onIonChange={(e) => setEmail(e.detail.value!)}
-              type="email"
-              placeholder="Email (personal or work)"
-              value={email}
-            />
-          </IonItem>
-          <IonButton
-            disabled={!email}
-            className="mt-4"
-            expand="block"
-            onClick={handleMagicLink}
-          >
-            Send Magic Link
-            {loading && <IonSpinner name="crescent" />}
-          </IonButton>
-        </div>
-      </IonContent>
-    </IonPage>
+            <IonLabel color="danger" style={{ minHeight: 20 }} className="mt-1">
+              {!valid && "Email address not valid"}
+            </IonLabel>
+            <IonItem className="input" fill="outline" mode="md">
+              <IonInput
+                required
+                onIonChange={(e) => setEmail(e.detail.value!)}
+                type="email"
+                placeholder="Email (personal or work)"
+                value={email}
+              />
+            </IonItem>
+            <IonButton
+              disabled={!email}
+              className="mt-4"
+              expand="block"
+              onClick={handleMagicLink}
+            >
+              Send Magic Link
+              {loading && <IonSpinner name="crescent" />}
+            </IonButton>
+          </div>
+        </IonContent>
+      </IonPage>
+    </Suspense>
   );
 }

@@ -15,6 +15,7 @@ import {
   shirtOutline,
   sparklesOutline,
 } from "ionicons/icons";
+import { LatLng } from "use-places-autocomplete";
 import s3Client from "./lib/s3Client";
 import { Image, User } from "./utils/types";
 

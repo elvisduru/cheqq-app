@@ -11,6 +11,7 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonLoading,
   IonNote,
   IonPage,
   IonSelect,
@@ -24,7 +25,7 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import { imagesOutline } from "ionicons/icons";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { Controller, useFormContext } from "react-hook-form";
 import { RouteComponentProps, useHistory } from "react-router";
@@ -113,387 +114,393 @@ export default function Details({ progress, user }: Props) {
   });
 
   return (
-    <IonPage>
-      <IonHeader translucent>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton />
-          </IonButtons>
-          <IonTitle>Create your store</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen>
-        <IonItem lines="none">
-          <div slot="start">
-            <CircularProgressbar
-              value={progress}
-              maxValue={2}
-              text={`${progress}/2`}
-            />
-          </div>
-          <IonLabel>
-            <h2>Add store details</h2>
-            <p>Setup your store by entering it's details</p>
-          </IonLabel>
-        </IonItem>
-        <div className="ion-padding mb-14">
-          <div>
-            <div
-              onClick={takeBannerPhoto}
-              className="banner bg-mute rounded-t-3xl w-full h-44 relative border"
-            >
-              {watch("bannerUrl") && (
-                <img
-                  className="w-full h-full object-cover object-center rounded-t-3xl"
-                  src={watch("bannerUrl")}
-                  alt="banner"
-                />
-              )}
-              <IonButton
-                size="small"
-                color="light"
-                className="absolute bottom-1 right-1"
-              >
-                <IonIcon slot="start" icon={imagesOutline} />
-                {watch("bannerUrl") ? "Replace" : "Add"}
-              </IonButton>
+    <Suspense fallback={<IonLoading isOpen={true} translucent />}>
+      <IonPage>
+        <IonHeader translucent>
+          <IonToolbar>
+            <IonButtons slot="start">
+              <IonBackButton />
+            </IonButtons>
+            <IonTitle>Create your store</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent fullscreen>
+          <IonItem lines="none">
+            <div slot="start">
+              <CircularProgressbar
+                value={progress}
+                maxValue={2}
+                text={`${progress}/2`}
+              />
             </div>
-            <div className="rounded-b-3xl border border-t-none ion-padding">
-              <IonAvatar
-                onClick={takeAvatarPhoto}
-                className="relative bg-mute flex items-center ion-justify-content-center"
+            <IonLabel>
+              <h2>Add store details</h2>
+              <p>Setup your store by entering it's details</p>
+            </IonLabel>
+          </IonItem>
+          <div className="ion-padding mb-14">
+            <div>
+              <div
+                onClick={takeBannerPhoto}
+                className="banner bg-mute rounded-t-3xl w-full h-44 relative border"
               >
-                {watch("logoUrl") ? (
-                  <img src={watch("logoUrl")} alt="avatar" />
-                ) : (
-                  user?.name?.substring(0, 1)
-                )}
-                <div
-                  style={{ padding: 5 }}
-                  className="bg-light absolute bottom-0 right-0 rounded-full flex items-center ion-justify-content-center"
-                >
-                  <IonIcon
-                    slot="icon-only"
-                    className="text-sm"
-                    icon={imagesOutline}
+                {watch("bannerUrl") && (
+                  <img
+                    className="w-full h-full object-cover object-center rounded-t-3xl"
+                    src={watch("bannerUrl")}
+                    alt="banner"
                   />
-                </div>
-              </IonAvatar>
+                )}
+                <IonButton
+                  size="small"
+                  color="light"
+                  className="absolute bottom-1 right-1"
+                >
+                  <IonIcon slot="start" icon={imagesOutline} />
+                  {watch("bannerUrl") ? "Replace" : "Add"}
+                </IonButton>
+              </div>
+              <div className="rounded-b-3xl border border-t-none ion-padding">
+                <IonAvatar
+                  onClick={takeAvatarPhoto}
+                  className="relative bg-mute flex items-center ion-justify-content-center"
+                >
+                  {watch("logoUrl") ? (
+                    <img src={watch("logoUrl")} alt="avatar" />
+                  ) : (
+                    user?.name?.substring(0, 1)
+                  )}
+                  <div
+                    style={{ padding: 5 }}
+                    className="bg-light absolute bottom-0 right-0 rounded-full flex items-center ion-justify-content-center"
+                  >
+                    <IonIcon
+                      slot="icon-only"
+                      className="text-sm"
+                      icon={imagesOutline}
+                    />
+                  </div>
+                </IonAvatar>
+              </div>
             </div>
-          </div>
-          <IonItem
-            className={`input mt-4 ${errors.name ? "ion-invalid" : ""}`}
-            fill="outline"
-            mode="md"
-          >
-            <IonLabel position="floating">Store name</IonLabel>
-            <Controller
-              name="name"
-              control={control}
-              rules={{ required: "Please enter your store name" }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <IonInput
-                  value={value}
-                  type="text"
-                  onIonChange={onChange}
-                  onIonBlur={onBlur}
-                  maxlength={50}
-                  minlength={3}
-                />
-              )}
-            />
-            <IonNote slot="helper">
-              Give your store a short and clear name.
-            </IonNote>
-            <IonNote slot="error">{errors.name?.message}</IonNote>
-          </IonItem>
-          <IonItem
-            className={`input mt-4 ${errors.tag ? "ion-invalid" : ""}`}
-            fill="outline"
-            mode="md"
-          >
-            <IonLabel position="floating">Cheqq Tag</IonLabel>
-            <Controller
-              name="tag"
-              control={control}
-              rules={{
-                required: "Please enter a unique tag",
-                pattern: {
-                  value: /^[@\w](?!.*?\.{2})[\w.]{1,28}[\w]$/,
-                  message:
-                    "Tag must be between 3 and 30 characters and can only contain letters, numbers, underscores and periods. It cannot start or end with a period.",
-                },
-                validate: async (value) => {
-                  if (await checkTag(value.substring(1))) {
-                    return "Tag already exists";
-                  }
-                },
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <IonInput
-                  onIonBlur={onBlur}
-                  value={value}
-                  placeholder="@yourstore"
-                  onIonFocus={(e) => {
-                    if (!value) setValue("tag", "@");
-                  }}
-                  onIonChange={(e) => {
-                    let val = e.detail.value!;
-                    val = val.startsWith("@")
-                      ? "@" + val.substring(1)
-                      : "@" + val;
-                    onChange(val);
-                  }}
-                  type="text"
-                  maxlength={20}
-                />
-              )}
-            />
-            <IonNote slot="helper">Enter a unique tag for your store.</IonNote>
-            <IonNote slot="error">{errors.tag?.message}</IonNote>
-          </IonItem>
-          <IonItem className="input mt-4" fill="outline" mode="md">
-            <IonLabel position="floating">Store description</IonLabel>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <>
-                  <IonTextarea
+            <IonItem
+              className={`input mt-4 ${errors.name ? "ion-invalid" : ""}`}
+              fill="outline"
+              mode="md"
+            >
+              <IonLabel position="floating">Store name</IonLabel>
+              <Controller
+                name="name"
+                control={control}
+                rules={{ required: "Please enter your store name" }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <IonInput
+                    value={value}
+                    type="text"
+                    onIonChange={onChange}
+                    onIonBlur={onBlur}
+                    maxlength={50}
+                    minlength={3}
+                  />
+                )}
+              />
+              <IonNote slot="helper">
+                Give your store a short and clear name.
+              </IonNote>
+              <IonNote slot="error">{errors.name?.message}</IonNote>
+            </IonItem>
+            <IonItem
+              className={`input mt-4 ${errors.tag ? "ion-invalid" : ""}`}
+              fill="outline"
+              mode="md"
+            >
+              <IonLabel position="floating">Cheqq Tag</IonLabel>
+              <Controller
+                name="tag"
+                control={control}
+                rules={{
+                  required: "Please enter a unique tag",
+                  pattern: {
+                    value: /^[@\w](?!.*?\.{2})[\w.]{1,28}[\w]$/,
+                    message:
+                      "Tag must be between 3 and 30 characters and can only contain letters, numbers, underscores and periods. It cannot start or end with a period.",
+                  },
+                  validate: async (value) => {
+                    if (await checkTag(value.substring(1))) {
+                      return "Tag already exists";
+                    }
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <IonInput
+                    onIonBlur={onBlur}
+                    value={value}
+                    placeholder="@yourstore"
+                    onIonFocus={(e) => {
+                      if (!value) setValue("tag", "@");
+                    }}
+                    onIonChange={(e) => {
+                      let val = e.detail.value!;
+                      val = val.startsWith("@")
+                        ? "@" + val.substring(1)
+                        : "@" + val;
+                      onChange(val);
+                    }}
+                    type="text"
+                    maxlength={20}
+                  />
+                )}
+              />
+              <IonNote slot="helper">
+                Enter a unique tag for your store.
+              </IonNote>
+              <IonNote slot="error">{errors.tag?.message}</IonNote>
+            </IonItem>
+            <IonItem className="input mt-4" fill="outline" mode="md">
+              <IonLabel position="floating">Store description</IonLabel>
+              <Controller
+                name="description"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <>
+                    <IonTextarea
+                      onIonChange={onChange}
+                      onIonBlur={onBlur}
+                      value={value}
+                      maxlength={200}
+                    />
+                    <IonNote className="ml-auto" style={{ paddingBottom: 4 }}>
+                      {value?.length || 0}/200
+                    </IonNote>
+                  </>
+                )}
+              />
+              <IonNote slot="helper">
+                Provide a short description of your store.
+              </IonNote>
+            </IonItem>
+            <IonItem
+              className={`input mt-4 ${errors.country ? "ion-invalid" : ""}`}
+              fill="outline"
+              mode="md"
+            >
+              <IonLabel position="floating">Country</IonLabel>
+              <Controller
+                name="country"
+                control={control}
+                rules={{ required: "Please select your country" }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <IonSelect
+                    interface="alert"
+                    interfaceOptions={
+                      {
+                        translucent: true,
+                        mode: "ios",
+                        header: "Select country",
+                      } as AlertOptions
+                    }
+                    onIonChange={(e) => {
+                      onChange(e.detail.value);
+                      // Set currency based on country
+                      setValue("currency", getCurrency(e.detail.value));
+                    }}
+                    onIonBlur={onBlur}
+                    value={value}
+                  >
+                    {countries.map((country) => (
+                      <IonSelectOption key={country.id} value={country.id}>
+                        {country.value}
+                      </IonSelectOption>
+                    ))}
+                  </IonSelect>
+                )}
+              />
+              <IonNote slot="helper">
+                Select the country your store is located.
+              </IonNote>
+              <IonNote slot="error">{errors.country?.message}</IonNote>
+            </IonItem>
+            {country && (
+              <Controller
+                name="address"
+                control={control}
+                rules={{
+                  required: "Please enter an address for your store",
+                  pattern: {
+                    value: /^[a-zA-Z0-9\s,'-]*$/,
+                    message: "Please enter a valid address",
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <PlacesAutocomplete
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                    error={errors.address?.message}
+                    country={country}
+                    setCoordinates={setCoordinates}
+                  />
+                )}
+              />
+            )}
+            <IonItem
+              className={`input mt-4 ${errors.currency ? "ion-invalid" : ""}`}
+              fill="outline"
+              mode="md"
+            >
+              <IonLabel position="floating">Currency</IonLabel>
+              <Controller
+                name="currency"
+                control={control}
+                rules={{ required: "Please select a currency for your store" }}
+                render={({ field: { onBlur, onChange, value } }) => (
+                  <IonSelect
+                    interface="alert"
+                    interfaceOptions={
+                      {
+                        translucent: true,
+                        mode: "ios",
+                        header: "Select currency",
+                      } as AlertOptions
+                    }
                     onIonChange={onChange}
                     onIonBlur={onBlur}
                     value={value}
-                    maxlength={200}
+                  >
+                    {currencies.map((currency) => (
+                      <IonSelectOption
+                        key={currency.country}
+                        value={`${currency.country}-${currency.currency_code}`}
+                      >
+                        {`${currency.country} - ${currency.currency_code}`}
+                      </IonSelectOption>
+                    ))}
+                  </IonSelect>
+                )}
+              />
+              <IonNote slot="helper">
+                Select the currency for your store.
+              </IonNote>
+              <IonNote slot="error">{errors.currency?.message}</IonNote>
+            </IonItem>
+            <div>
+              <Controller
+                name="phone"
+                control={control}
+                rules={{
+                  required: "Please enter a phone number",
+                  pattern: {
+                    value: /^\+?[0-9]{10,15}$/,
+                    message: "Please enter a valid phone number",
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <PhoneInput
+                    containerClass="mt-4"
+                    country={country?.toLowerCase() || "us"}
+                    value={value}
+                    onChange={(value) => {
+                      onChange(value);
+                    }}
+                    onBlur={onBlur}
                   />
-                  <IonNote className="ml-auto" style={{ paddingBottom: 4 }}>
-                    {value?.length || 0}/200
-                  </IonNote>
-                </>
+                )}
+              />
+              {!errors.phone ? (
+                <IonNote slot="helper" className="ml-1 text-xs text-helper">
+                  Enter your store's phone number
+                </IonNote>
+              ) : (
+                <IonNote slot="error" className="ml-1 text-xs" color="danger">
+                  {errors.phone?.message}
+                </IonNote>
               )}
-            />
-            <IonNote slot="helper">
-              Provide a short description of your store.
-            </IonNote>
-          </IonItem>
-          <IonItem
-            className={`input mt-4 ${errors.country ? "ion-invalid" : ""}`}
-            fill="outline"
-            mode="md"
-          >
-            <IonLabel position="floating">Country</IonLabel>
-            <Controller
-              name="country"
-              control={control}
-              rules={{ required: "Please select your country" }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <IonSelect
-                  interface="alert"
-                  interfaceOptions={
-                    {
-                      translucent: true,
-                      mode: "ios",
-                      header: "Select country",
-                    } as AlertOptions
-                  }
-                  onIonChange={(e) => {
-                    onChange(e.detail.value);
-                    // Set currency based on country
-                    setValue("currency", getCurrency(e.detail.value));
-                  }}
-                  onIonBlur={onBlur}
-                  value={value}
-                >
-                  {countries.map((country) => (
-                    <IonSelectOption key={country.id} value={country.id}>
-                      {country.value}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
-              )}
-            />
-            <IonNote slot="helper">
-              Select the country your store is located.
-            </IonNote>
-            <IonNote slot="error">{errors.country?.message}</IonNote>
-          </IonItem>
-          {country && (
-            <Controller
-              name="address"
-              control={control}
-              rules={{
-                required: "Please enter an address for your store",
-                pattern: {
-                  value: /^[a-zA-Z0-9\s,'-]*$/,
-                  message: "Please enter a valid address",
-                },
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <PlacesAutocomplete
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                  error={errors.address?.message}
-                  country={country}
-                  setCoordinates={setCoordinates}
-                />
-              )}
-            />
-          )}
-          <IonItem
-            className={`input mt-4 ${errors.currency ? "ion-invalid" : ""}`}
-            fill="outline"
-            mode="md"
-          >
-            <IonLabel position="floating">Currency</IonLabel>
-            <Controller
-              name="currency"
-              control={control}
-              rules={{ required: "Please select a currency for your store" }}
-              render={({ field: { onBlur, onChange, value } }) => (
-                <IonSelect
-                  interface="alert"
-                  interfaceOptions={
-                    {
-                      translucent: true,
-                      mode: "ios",
-                      header: "Select currency",
-                    } as AlertOptions
-                  }
-                  onIonChange={onChange}
-                  onIonBlur={onBlur}
-                  value={value}
-                >
-                  {currencies.map((currency) => (
-                    <IonSelectOption
-                      key={currency.country}
-                      value={`${currency.country}-${currency.currency_code}`}
-                    >
-                      {`${currency.country} - ${currency.currency_code}`}
-                    </IonSelectOption>
-                  ))}
-                </IonSelect>
-              )}
-            />
-            <IonNote slot="helper">Select the currency for your store.</IonNote>
-            <IonNote slot="error">{errors.currency?.message}</IonNote>
-          </IonItem>
-          <div>
-            <Controller
-              name="phone"
-              control={control}
-              rules={{
-                required: "Please enter a phone number",
-                pattern: {
-                  value: /^\+?[0-9]{10,15}$/,
-                  message: "Please enter a valid phone number",
-                },
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <PhoneInput
-                  containerClass="mt-4"
-                  country={country?.toLowerCase() || "us"}
-                  value={value}
-                  onChange={(value) => {
-                    onChange(value);
-                  }}
-                  onBlur={onBlur}
-                />
-              )}
-            />
-            {!errors.phone ? (
-              <IonNote slot="helper" className="ml-1 text-xs text-helper">
-                Enter your store's phone number
-              </IonNote>
-            ) : (
-              <IonNote slot="error" className="ml-1 text-xs" color="danger">
-                {errors.phone?.message}
-              </IonNote>
-            )}
+            </div>
           </div>
-        </div>
-        <div
-          slot="fixed"
-          className="bg-black bg-opacity-80 [backdrop-filter:blur(1px)] bottom-0 ion-padding-horizontal pb-4 w-full"
-        >
-          <IonButton
-            hidden={!isValid || !isDirty}
-            onClick={async () => {
-              try {
-                toggle();
-                const values = getValues();
-                if (!values.categories) {
-                  present("Please select a categories", 2000);
-                  return router.push("/store/new", "back");
-                }
-
-                if (!isValid || !isDirty) {
-                  trigger(["name", "tag", "address", "currency", "phone"]);
-                  toggle();
-                  return present("Please fill out all required fields", 2000);
-                }
-
-                // prepare data
-                delete values.logoUrl;
-                delete values.bannerUrl;
-                values.tag = values.tag.substring(1);
-                values.currency = values.currency.split("-")[1];
-
-                // store files to cloud storage
-                const logoFilePath = `users/${user?.id}/${values.logo.name}`;
-                const bannerFilePath = `users/${user?.id}/${values.banner.name}`;
-                const logoParams: PutObjectCommandInput = {
-                  Bucket: import.meta.env.VITE_SPACES_BUCKET,
-                  Key: logoFilePath,
-                  Body: values.logo,
-                  ACL: "public-read",
-                  ContentType: values.logo.type,
-                };
-
-                const bannerParams: PutObjectCommandInput = {
-                  Bucket: import.meta.env.VITE_SPACES_BUCKET,
-                  Key: bannerFilePath,
-                  Body: values.logo,
-                  ACL: "public-read",
-                  ContentType: values.logo.type,
-                };
-
-                await Promise.all([
-                  s3Client.putObject(logoParams),
-                  s3Client.putObject(bannerParams),
-                ]);
-
-                // Create Store
-                await addStore.mutateAsync({
-                  ...values,
-                  logo: `${import.meta.env.VITE_CDN_URL}/${logoFilePath}`,
-                  banner: `${import.meta.env.VITE_CDN_URL}/${bannerFilePath}`,
-                  ownerId: user.id,
-                  language: navigator.language || "en-US",
-                  phone: `+${values.phone}`,
-                });
-
-                window.location.href = "/";
-
-                toggle();
-              } catch (e: any) {
-                console.log(e);
-                if (e.response) {
-                  if (typeof e.response.data.message === "string") {
-                    present(e.response.data.message, 2000);
-                  } else {
-                    present(e.response.data.message.join(", "), 3000);
-                  }
-                }
-                toggle();
-              }
-            }}
-            expand="block"
+          <div
+            slot="fixed"
+            className="bg-black bg-opacity-80 [backdrop-filter:blur(1px)] bottom-0 ion-padding-horizontal pb-4 w-full"
           >
-            Complete &nbsp;
-            {isLoading && <IonSpinner name="crescent" />}
-          </IonButton>
-        </div>
-      </IonContent>
-    </IonPage>
+            <IonButton
+              hidden={!isValid || !isDirty}
+              onClick={async () => {
+                try {
+                  toggle();
+                  const values = getValues();
+                  if (!values.categories) {
+                    present("Please select a categories", 2000);
+                    return router.push("/store/new", "back");
+                  }
+
+                  if (!isValid || !isDirty) {
+                    trigger(["name", "tag", "address", "currency", "phone"]);
+                    toggle();
+                    return present("Please fill out all required fields", 2000);
+                  }
+
+                  // prepare data
+                  delete values.logoUrl;
+                  delete values.bannerUrl;
+                  values.tag = values.tag.substring(1);
+                  values.currency = values.currency.split("-")[1];
+
+                  // store files to cloud storage
+                  const logoFilePath = `users/${user?.id}/${values.logo.name}`;
+                  const bannerFilePath = `users/${user?.id}/${values.banner.name}`;
+                  const logoParams: PutObjectCommandInput = {
+                    Bucket: import.meta.env.VITE_SPACES_BUCKET,
+                    Key: logoFilePath,
+                    Body: values.logo,
+                    ACL: "public-read",
+                    ContentType: values.logo.type,
+                  };
+
+                  const bannerParams: PutObjectCommandInput = {
+                    Bucket: import.meta.env.VITE_SPACES_BUCKET,
+                    Key: bannerFilePath,
+                    Body: values.logo,
+                    ACL: "public-read",
+                    ContentType: values.logo.type,
+                  };
+
+                  await Promise.all([
+                    s3Client.putObject(logoParams),
+                    s3Client.putObject(bannerParams),
+                  ]);
+
+                  // Create Store
+                  await addStore.mutateAsync({
+                    ...values,
+                    logo: `${import.meta.env.VITE_CDN_URL}/${logoFilePath}`,
+                    banner: `${import.meta.env.VITE_CDN_URL}/${bannerFilePath}`,
+                    ownerId: user.id,
+                    language: navigator.language || "en-US",
+                    phone: `+${values.phone}`,
+                  });
+
+                  window.location.href = "/";
+
+                  toggle();
+                } catch (e: any) {
+                  console.log(e);
+                  if (e.response) {
+                    if (typeof e.response.data.message === "string") {
+                      present(e.response.data.message, 2000);
+                    } else {
+                      present(e.response.data.message.join(", "), 3000);
+                    }
+                  }
+                  toggle();
+                }
+              }}
+              expand="block"
+            >
+              Complete &nbsp;
+              {isLoading && <IonSpinner name="crescent" />}
+            </IonButton>
+          </div>
+        </IonContent>
+      </IonPage>
+    </Suspense>
   );
 }

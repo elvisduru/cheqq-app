@@ -22,23 +22,23 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
-import { Suspense, useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import React, { Suspense, useEffect } from "react";
 import { Redirect, Route } from "react-router-dom";
 import "./App.css";
 import AppUrlListener from "./components/AppUrlListener";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SideMenu from "./components/SideMenu";
-import Tabs from "./components/Tabs";
 import useUser from "./hooks/queries/users/useUser";
-import Confirm from "./pages/auth/confirm";
-import Login from "./pages/auth/login";
-import New from "./pages/auth/new";
-import SignUp from "./pages/auth/signup";
-import NewStore from "./pages/store/new";
 import "./styles/global.scss";
 /* Theme variables */
 import "./theme/variables.css";
+
+const Tabs = React.lazy(() => import("./components/Tabs"));
+const Confirm = React.lazy(() => import("./pages/auth/confirm"));
+const Login = React.lazy(() => import("./pages/auth/login"));
+const New = React.lazy(() => import("./pages/auth/new"));
+const SignUp = React.lazy(() => import("./pages/auth/signup"));
+const NewStore = React.lazy(() => import("./pages/store/new"));
 
 setupIonicReact({
   mode: "ios",
