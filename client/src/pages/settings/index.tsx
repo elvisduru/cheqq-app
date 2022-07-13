@@ -10,6 +10,7 @@ import {
 } from "@ionic/react";
 import React from "react";
 import { useQueryClient } from "react-query";
+import { Storage } from "@capacitor/storage";
 
 type Props = {};
 
@@ -34,14 +35,9 @@ const Settings: React.FC = (props: Props) => {
         <div>Product Details</div>
         <IonButton
           onClick={async () => {
-            try {
-              // await appwrite.account.deleteSession("current");
-              await queryClient.invalidateQueries("user");
-              window.location.href = "/signup";
-            } catch (e) {
-              console.log(e);
-              window.location.href = "/signup";
-            }
+            await Storage.clear();
+            queryClient.clear();
+            window.location.reload();
           }}
         >
           Logout

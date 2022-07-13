@@ -27,17 +27,20 @@ import {
 } from "ionicons/icons";
 import { useRef } from "react";
 import { useStore } from "../hooks/useStore";
-import { User } from "../utils/types";
 import "./SideMenu.scss";
 
 type Props = {
-  user: User;
   contentId: string;
 };
 
-export default function SideMenu({ user, contentId }: Props) {
+export default function SideMenu({ contentId }: Props) {
   const menuRef = useRef<HTMLIonMenuElement>(null);
-  const { selectedStore } = useStore();
+  const user = useStore((store) => store.user);
+  const selectedStore = useStore((store) => store.selectedStore);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <IonMenu

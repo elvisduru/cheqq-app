@@ -2,7 +2,6 @@ import { App as NativeApp } from "@capacitor/app";
 import {
   BackButtonEvent,
   IonApp,
-  IonLoading,
   IonRouterOutlet,
   IonSplitPane,
   setupIonicReact,
@@ -22,30 +21,31 @@ import "@ionic/react/css/structure.css";
 import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
-import React, { Suspense, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Redirect, Route } from "react-router-dom";
 import "./App.css";
 import AppUrlListener from "./components/AppUrlListener";
-import ProtectedRoute from "./components/ProtectedRoute";
+import withSuspense from "./components/hoc/withSuspense";
 import SideMenu from "./components/SideMenu";
-import useUser from "./hooks/queries/users/useUser";
-import "./styles/global.scss";
+import New from "./pages/auth/new";
+import StoreRouterOutlet from "./pages/store";
+// import Login from "./pages/auth/login";
+// import New from "./pages/auth/new";
+// import SignUp from "./pages/auth/signup";
 /* Theme variables */
+import "./styles/global.scss";
 import "./theme/variables.css";
 
-const Tabs = React.lazy(() => import("./components/Tabs"));
-const Confirm = React.lazy(() => import("./pages/auth/confirm"));
-const Login = React.lazy(() => import("./pages/auth/login"));
-const New = React.lazy(() => import("./pages/auth/new"));
-const SignUp = React.lazy(() => import("./pages/auth/signup"));
-const NewStore = React.lazy(() => import("./pages/store/new"));
+const Tabs = withSuspense(React.lazy(() => import("./components/Tabs")));
+const Confirm = withSuspense(React.lazy(() => import("./pages/auth/confirm")));
+const Login = withSuspense(React.lazy(() => import("./pages/auth/login")));
+const SignUp = withSuspense(React.lazy(() => import("./pages/auth/signup")));
 
 setupIonicReact({
   mode: "ios",
 });
 
 const App: React.FC = () => {
-  const { data: user, isLoading } = useUser();
   const ionRouter = useIonRouter();
   useEffect(() => {
     document.addEventListener("ionBackButton", (ev) => {
@@ -65,56 +65,35 @@ const App: React.FC = () => {
 
   return (
     <IonApp>
-      <Suspense fallback={<IonLoading isOpen={true} translucent />}>
-        <IonReactRouter>
-          <AppUrlListener />
-          {isLoading ? (
-            <IonLoading isOpen={true} translucent />
-          ) : (
-            <IonSplitPane contentId="main">
-              {user && <SideMenu user={user!} contentId="main" />}
-              <IonRouterOutlet id="main">
-                <Route
-                  path="/"
-                  exact={!user}
-                  render={() => (
-                    <ProtectedRoute redirectPath="/signup" user={user!}>
-                      <Tabs user={user!} />
-                    </ProtectedRoute>
-                  )}
-                />
-                <Route path="/signup" render={() => <SignUp user={user!} />} />
-                <Route path="/login" render={() => <Login user={user!} />} />
-                <Route
-                  path="/magic-link"
-                  render={() => <Confirm user={user!} />}
-                />
-                <Route
-                  path="/new"
-                  render={() => <New user={user} isLoading={isLoading} />}
-                />
-                <Route
-                  path="/store/new"
-                  render={() => (
-                    <ProtectedRoute
-                      redirectPath="/signup"
-                      user={user!}
-                      disableExtraRedirect
-                    >
-                      <NewStore user={user!} />
-                    </ProtectedRoute>
-                  )}
-                />
-                {user ? (
-                  <Route render={() => <Redirect to="/home" />} />
-                ) : (
-                  <Redirect to="/signup" />
-                )}
-              </IonRouterOutlet>
-            </IonSplitPane>
-          )}
-        </IonReactRouter>
-      </Suspense>
+      <IonReactRouter>
+        <AppUrlListener />
+        <IonSplitPane contentId="main">
+          <SideMenu contentId="main" />
+          <IonRouterOutlet id="main">
+            <Route path="/(home|orders|products|notifications|messenger|settings)">
+              <Tabs />
+            </Route>
+            <Route exact path="/signup">
+              <SignUp />
+            </Route>
+            <Route exact path="/login">
+              <Login />
+            </Route>
+            <Route exact path="/magic-link">
+              <Confirm />
+            </Route>
+            <Route exact path="/new">
+              <New />
+            </Route>
+            <Route path="/store">
+              <StoreRouterOutlet />
+            </Route>
+            <Route path="/" exact>
+              <Redirect to="/home" />
+            </Route>
+          </IonRouterOutlet>
+        </IonSplitPane>
+      </IonReactRouter>
     </IonApp>
   );
 };

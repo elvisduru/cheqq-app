@@ -7,28 +7,24 @@ import {
   IonHeader,
   IonInput,
   IonItem,
-  IonLoading,
   IonPage,
   IonSpinner,
   IonTitle,
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import { Suspense } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Redirect } from "react-router-dom";
 import AvatarUpload from "../../components/AvatarUpload";
+import withAuth from "../../components/hoc/withAuth";
 import useUpdateUser from "../../hooks/mutations/user/updateUser";
 import useBoolean from "../../hooks/useBoolean";
+import { useStore } from "../../hooks/useStore";
 import s3Client from "../../lib/s3Client";
 import { User } from "../../utils/types";
 
-type Props = {
-  user?: User;
-  isLoading: boolean;
-};
-
-export default function New({ user, isLoading: isUserLoading }: Props) {
+function New() {
+  const user = useStore((store) => store.user);
   const [present] = useIonToast();
   const updateUser = useUpdateUser();
 
@@ -85,61 +81,53 @@ export default function New({ user, isLoading: isUserLoading }: Props) {
     console.log(error);
   };
 
-  if (isUserLoading) {
-    return <IonLoading isOpen={true} translucent />;
-  }
-
-  if (!user) {
-    return <Redirect to="/signup" />;
-  }
-
   if (user?.name) {
     return <Redirect to="/" />;
   }
 
   return (
-    <Suspense fallback={<IonLoading isOpen={true} translucent />}>
-      <IonPage id="new">
-        <IonHeader>
-          <IonToolbar>
-            <IonButtons slot="start">
-              <IonBackButton />
-            </IonButtons>
-            <IonTitle>Create profile</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent fullscreen>
-          <form onSubmit={handleSubmit(onSubmit, onError)}>
-            <div className="flex flex-column h-full ion-padding">
-              <h2>Create a profile</h2>
-              <div className="text-gray leading-normal mt-0">
-                <p>
-                  It looks like you're new here. Add your name and a profile
-                  picture to introduce yourself.
-                </p>
-              </div>
-              <AvatarUpload setValue={setValue} />
-              <IonItem className="input" fill="outline" mode="md">
-                <IonInput
-                  required
-                  onIonChange={(e) => setValue("name", e.detail.value!)}
-                  type="text"
-                  placeholder="Full name"
-                />
-              </IonItem>
-              <IonButton
-                className="mt-8"
-                expand="block"
-                disabled={!watch("avatar") || !watch("name")}
-                type="submit"
-              >
-                Done &nbsp;
-                {isLoading && <IonSpinner name="crescent" />}
-              </IonButton>
+    <IonPage id="new">
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton />
+          </IonButtons>
+          <IonTitle>Create profile</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
+        <form onSubmit={handleSubmit(onSubmit, onError)}>
+          <div className="flex flex-column h-full ion-padding">
+            <h2>Create a profile</h2>
+            <div className="text-gray leading-normal mt-0">
+              <p>
+                It looks like you're new here. Add your name and a profile
+                picture to introduce yourself.
+              </p>
             </div>
-          </form>
-        </IonContent>
-      </IonPage>
-    </Suspense>
+            <AvatarUpload setValue={setValue} />
+            <IonItem className="input" fill="outline" mode="md">
+              <IonInput
+                required
+                onIonChange={(e) => setValue("name", e.detail.value!)}
+                type="text"
+                placeholder="Full name"
+              />
+            </IonItem>
+            <IonButton
+              className="mt-8"
+              expand="block"
+              disabled={!watch("avatar") || !watch("name")}
+              type="submit"
+            >
+              Done &nbsp;
+              {isLoading && <IonSpinner name="crescent" />}
+            </IonButton>
+          </div>
+        </form>
+      </IonContent>
+    </IonPage>
   );
 }
+
+export default New;

@@ -5,7 +5,6 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonLoading,
   IonPage,
   IonRouterLink,
   IonTitle,
@@ -15,13 +14,11 @@ import {
   useIonViewWillLeave,
 } from "@ionic/react";
 import axios from "axios";
-import { Suspense, useCallback, useEffect } from "react";
-import { Redirect } from "react-router";
+import { useCallback, useEffect } from "react";
 import useCountdown from "../../hooks/useCountdown";
 import useQuery from "../../hooks/useQuery";
-import { User } from "../../utils/types";
 
-export default function Confirm({ user }: { user: User }) {
+export default function Confirm() {
   const query = useQuery();
   const email = query.get("email");
   const secret = query.get("secret");
@@ -52,7 +49,6 @@ export default function Confirm({ user }: { user: User }) {
 
   const confirmMagicLink = useCallback(async () => {
     try {
-      if (user) return;
       if (secret) {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/auth/magic-link/${secret}`
@@ -111,58 +107,52 @@ export default function Confirm({ user }: { user: User }) {
     start();
   }, [secret, confirmMagicLink]);
 
-  if (user) {
-    return <Redirect to="/" />;
-  }
-
   return (
-    <Suspense fallback={<IonLoading isOpen={true} translucent />}>
-      <IonPage id="confirm">
-        <IonHeader>
-          <IonToolbar>
-            <IonButtons slot="start">
-              <IonBackButton />
-            </IonButtons>
-            <IonTitle>Confirm Email</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent fullscreen>
-          <div className="flex flex-column h-full ion-padding">
-            <h2>Check your Email</h2>
-            <div className="text-gray leading-normal mt-0">
-              {email && <p>We've sent an email to {email}.</p>}
-              <p>
-                Didn't get an email? Check your spam or{" "}
-                <IonRouterLink routerLink="/login" routerDirection="back">
-                  try another address.
-                </IonRouterLink>
-              </p>
-            </div>
-
-            <IonButton
-              disabled={count > 0}
-              className="mt-2"
-              expand="block"
-              onClick={async () => {
-                reset();
-                start();
-                if (email) {
-                  await axios.post(
-                    `${import.meta.env.VITE_API_URL}/auth/magic-link`,
-                    {
-                      email,
-                    }
-                  );
-                } else {
-                  router.push("/login", "back");
-                }
-              }}
-            >
-              {count > 0 ? `Resend email in ${count}s` : "Resend email"}
-            </IonButton>
+    <IonPage id="confirm">
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton />
+          </IonButtons>
+          <IonTitle>Confirm Email</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
+        <div className="flex flex-column h-full ion-padding">
+          <h2>Check your Email</h2>
+          <div className="text-gray leading-normal mt-0">
+            {email && <p>We've sent an email to {email}.</p>}
+            <p>
+              Didn't get an email? Check your spam or{" "}
+              <IonRouterLink routerLink="/login" routerDirection="back">
+                try another address.
+              </IonRouterLink>
+            </p>
           </div>
-        </IonContent>
-      </IonPage>
-    </Suspense>
+
+          <IonButton
+            disabled={count > 0}
+            className="mt-2"
+            expand="block"
+            onClick={async () => {
+              reset();
+              start();
+              if (email) {
+                await axios.post(
+                  `${import.meta.env.VITE_API_URL}/auth/magic-link`,
+                  {
+                    email,
+                  }
+                );
+              } else {
+                router.push("/login", "back");
+              }
+            }}
+          >
+            {count > 0 ? `Resend email in ${count}s` : "Resend email"}
+          </IonButton>
+        </div>
+      </IonContent>
+    </IonPage>
   );
 }

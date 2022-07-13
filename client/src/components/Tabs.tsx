@@ -1,6 +1,5 @@
 import {
   IonIcon,
-  IonLoading,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -18,28 +17,31 @@ import {
   home,
   homeOutline,
 } from "ionicons/icons";
-import { Suspense } from "react";
-import { Redirect, Route, useLocation } from "react-router-dom";
+import { Route, useLocation } from "react-router-dom";
+import { useStore } from "../hooks/useStore";
+import New from "../pages/auth/new";
 import Home from "../pages/home";
 import Messenger from "../pages/messenger";
 import Notifications from "../pages/notifications";
 import Orders from "../pages/orders";
-import Products from "../pages/products";
-import Product from "../pages/products/product";
+import ProductsRouterOutlet from "../pages/products";
+import StoreRouterOutlet from "../pages/store";
 import Settings from "../pages/settings";
 import { User } from "../utils/types";
 import ChooseProduct from "./ChooseProduct";
+import withAuth from "./hoc/withAuth";
 import "./Tabs.scss";
 
 type Props = {
   user: User;
 };
 
-export default function Tabs({ user }: Props) {
-  const location = useLocation();
+function Tabs({ user }: Props) {
+  const { pathname } = useLocation();
+  const hideTabBar = useStore((store) => store.hideTabBar);
   const isSelected = (tab: string) => {
-    if (tab === "home" && location.pathname === "/") return true;
-    return tab === location.pathname.split("/")[1];
+    if (tab === "home" && pathname === "/") return true;
+    return tab === pathname.split("/")[1];
   };
 
   // present add modal
@@ -50,57 +52,64 @@ export default function Tabs({ user }: Props) {
   });
 
   return (
-    <Suspense fallback={<IonLoading isOpen={true} translucent />}>
-      <IonTabs
-        onIonTabsWillChange={(e) => {
-          if (e.detail.tab === "create") {
-            present({
-              breakpoints: [0, 0.5],
-              initialBreakpoint: 0.5,
-            });
-          }
-        }}
-      >
-        <IonRouterOutlet>
-          <Route path="/home" render={() => <Home user={user} />} />
-          <Route path="/orders" render={() => <Orders user={user} />} />
-          <Route
-            path="/products"
-            render={() => <Products user={user} />}
-            exact
-          />
-          <Route path="/products/:id" render={() => <Product user={user} />} />
-          <Route
-            path="/notifications"
-            render={() => <Notifications user={user} />}
-          />
-          <Route path="/messenger" render={() => <Messenger user={user} />} />
-          <Route path="/settings" component={Settings} />
+    <IonTabs
+      onIonTabsWillChange={(e) => {
+        if (e.detail.tab === "create") {
+          present({
+            breakpoints: [0, 0.5],
+            initialBreakpoint: 0.5,
+          });
+        }
+      }}
+    >
+      <IonRouterOutlet>
+        <Route exact path="/home">
+          <Home user={user} />
+        </Route>
+        <Route exact path="/orders">
+          <Orders user={user} />
+        </Route>
+        <Route path="/products">
+          <ProductsRouterOutlet user={user} />
+        </Route>
+        <Route exact path="/notifications">
+          <Notifications user={user} />
+        </Route>
 
-          <Route render={() => <Redirect to="/home" />} />
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom" translucent>
-          <IonTabButton tab="home" href="/home">
-            <IonIcon icon={isSelected("home") ? home : homeOutline} />
-          </IonTabButton>
-          <IonTabButton tab="orders" href="/orders">
-            <IonIcon icon={isSelected("orders") ? checkbox : checkboxOutline} />
-          </IonTabButton>
-          <IonTabButton className="centerTab" tab="create">
-            <IonIcon color="primary" icon={addCircle} />
-          </IonTabButton>
-          <IonTabButton tab="products" href="/products">
-            <IonIcon
-              icon={isSelected("products") ? bagHandle : bagHandleOutline}
-            />
-          </IonTabButton>
-          <IonTabButton tab="messenger" href="/messenger">
-            <IonIcon
-              icon={isSelected("messenger") ? chatbubble : chatbubbleOutline}
-            />
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </Suspense>
+        <Route exact path="/messenger">
+          <Messenger user={user} />
+        </Route>
+        <Route exact path="/settings">
+          <Settings />
+        </Route>
+      </IonRouterOutlet>
+      <IonTabBar
+        className={hideTabBar ? "hidden" : ""}
+        slot="bottom"
+        translucent
+      >
+        <IonTabButton tab="home" href="/home">
+          <IonIcon icon={isSelected("home") ? home : homeOutline} />
+        </IonTabButton>
+        <IonTabButton tab="orders" href="/orders">
+          <IonIcon icon={isSelected("orders") ? checkbox : checkboxOutline} />
+        </IonTabButton>
+        <IonTabButton className="centerTab" tab="create">
+          <IonIcon color="primary" icon={addCircle} />
+        </IonTabButton>
+        <IonTabButton tab="products" href="/products">
+          <IonIcon
+            icon={isSelected("products") ? bagHandle : bagHandleOutline}
+          />
+        </IonTabButton>
+        <IonTabButton tab="messenger" href="/messenger">
+          <IonIcon
+            icon={isSelected("messenger") ? chatbubble : chatbubbleOutline}
+          />
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
   );
 }
+
+export default withAuth(Tabs);

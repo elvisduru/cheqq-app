@@ -52,6 +52,8 @@ export type AppState = {
   setPhysicalModalState: (modalState: ModalState | undefined) => void;
   deleteForm: boolean;
   setDeleteForm: (deleteForm: boolean) => void;
+  hideTabBar: boolean;
+  toggleHideTabBar: (value: boolean) => void;
 };
 
 export const useStore = create(
@@ -70,10 +72,16 @@ export const useStore = create(
         set(() => ({ physicalModalState })),
       deleteForm: false,
       setDeleteForm: (deleteForm: boolean) => set(() => ({ deleteForm })),
+      hideTabBar: false,
+      toggleHideTabBar: (value: boolean) => set(() => ({ hideTabBar: value })),
     }),
     {
       name: "cheqq-storage",
       getStorage: () => storage,
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.entries(state).filter(([key]) => !["hideTabBar"].includes(key))
+        ),
     }
   )
 );
