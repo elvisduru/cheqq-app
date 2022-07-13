@@ -20,10 +20,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { Image } from "../../../../../utils/types";
 import withSuspense from "../../../../hoc/withSuspense";
+import TagInput from "../../../../TagInput";
 import Step from "../../Step";
-const TagInput = withSuspense<any>(
-  React.lazy(() => import("../../../../TagInput"))
-);
+
 const ChooseImage = withSuspense(React.lazy(() => import("./choose-image")));
 const EditVariant = withSuspense(React.lazy(() => import("./editVariant")));
 

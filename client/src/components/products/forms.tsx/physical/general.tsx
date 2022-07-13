@@ -17,15 +17,12 @@ import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { useStore } from "../../../../hooks/useStore";
 import withSuspense from "../../../hoc/withSuspense";
+import MediaUploader from "../../../MediaUploader";
+import TagInput from "../../../TagInput";
 import Step from "../Step";
-const MediaUploader = withSuspense<any>(
-  React.lazy(() => import("../../../MediaUploader"))
-);
+
 const SelectCategory = withSuspense<any>(
   React.lazy(() => import("../../../SelectCategory"))
-);
-const TagInput = withSuspense<any>(
-  React.lazy(() => import("../../../TagInput"))
 );
 
 export default function General() {

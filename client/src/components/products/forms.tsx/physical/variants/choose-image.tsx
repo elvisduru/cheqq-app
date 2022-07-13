@@ -12,9 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormSetValue } from "react-hook-form";
 import { Variant } from ".";
 import withSuspense from "../../../../hoc/withSuspense";
-const MediaSelector = withSuspense<any>(
-  React.lazy(() => import("../../../../MediaSelector"))
-);
+import MediaSelector from "../../../../MediaSelector";
 
 type Props = {
   dismiss: () => void;
