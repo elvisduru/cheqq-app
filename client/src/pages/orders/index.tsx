@@ -15,14 +15,10 @@ import LottieWrapper from "../../components/lottieWrapper";
 import OrdersSkeleton from "../../components/skeletons/orders";
 import useOrders from "../../hooks/queries/orders/useOrders";
 import { useStore } from "../../hooks/useStore";
-import { User } from "../../utils/types";
 
-type Props = {
-  user: User;
-};
-
-const Orders: React.FC<Props> = ({ user }) => {
-  const { selectedStore } = useStore();
+const Orders = () => {
+  const user = useStore((store) => store.user);
+  const selectedStore = useStore((store) => store.selectedStore);
   const { data, isLoading } = useOrders();
 
   const [present, dismiss] = useIonModal(ChooseProduct, {
@@ -38,7 +34,7 @@ const Orders: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user.stores[selectedStore]?.logo} alt="avatar" />
+                <img src={user?.stores[selectedStore]?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

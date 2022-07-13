@@ -21,14 +21,11 @@ import { Link } from "react-router-dom";
 import ChartCard from "../../components/ChartCard";
 import { useStore } from "../../hooks/useStore";
 import { getCurrentDayPeriod } from "../../utils";
-import { User } from "../../utils/types";
 
-type Props = {
-  user: User;
-};
+const Home = () => {
+  const user = useStore((store) => store.user);
+  const selectedStore = useStore((store) => store.selectedStore);
 
-const Home: React.FC<Props> = ({ user }) => {
-  const { selectedStore } = useStore();
   const orders = [
     {
       orderId: "#774312",
@@ -157,7 +154,7 @@ const Home: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user.stores[selectedStore]?.logo} alt="avatar" />
+                <img src={user?.stores[selectedStore]?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

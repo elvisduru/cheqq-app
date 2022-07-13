@@ -12,14 +12,10 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useStore } from "../../hooks/useStore";
-import { User } from "../../utils/types";
 
-type Props = {
-  user: User;
-};
-
-const Messenger: React.FC<Props> = ({ user }) => {
-  const { selectedStore } = useStore();
+const Messenger = () => {
+  const user = useStore((store) => store.user);
+  const selectedStore = useStore((store) => store.selectedStore);
   return (
     <IonPage id="messenger">
       <IonHeader collapse="fade" translucent>
@@ -27,7 +23,7 @@ const Messenger: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user.stores[selectedStore]?.logo} alt="avatar" />
+                <img src={user?.stores[selectedStore]?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

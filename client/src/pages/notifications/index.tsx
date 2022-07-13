@@ -10,13 +10,11 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { User } from "../../utils/types";
+import { useStore } from "../../hooks/useStore";
 
-type Props = {
-  user: User;
-};
-
-const Notifications: React.FC<Props> = ({ user }) => {
+const Notifications = () => {
+  const user = useStore((store) => store.user);
+  const selectedStore = useStore((store) => store.selectedStore);
   return (
     <IonPage id="notifications">
       <IonHeader collapse="fade" translucent>
@@ -24,16 +22,7 @@ const Notifications: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img
-                  src={`${
-                    import.meta.env.VITE_APPWRITE_ENDPOINT
-                  }/storage/buckets/${user?.id}/files/${
-                    user?.prefs.avatar
-                  }/preview?width=65&height=65&project=${
-                    import.meta.env.VITE_APPWRITE_PROJECT_ID
-                  }`}
-                  alt="avatar"
-                />
+                <img src={user?.stores[selectedStore]?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

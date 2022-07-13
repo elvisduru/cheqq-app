@@ -17,20 +17,23 @@ import {
   home,
   homeOutline,
 } from "ionicons/icons";
-import { Route, useLocation } from "react-router-dom";
+import React from "react";
+import { Route, useLocation, withRouter } from "react-router-dom";
 import { useStore } from "../hooks/useStore";
-import New from "../pages/auth/new";
-import Home from "../pages/home";
-import Messenger from "../pages/messenger";
-import Notifications from "../pages/notifications";
-import Orders from "../pages/orders";
 import ProductsRouterOutlet from "../pages/products";
-import StoreRouterOutlet from "../pages/store";
-import Settings from "../pages/settings";
+
 import { User } from "../utils/types";
 import ChooseProduct from "./ChooseProduct";
 import withAuth from "./hoc/withAuth";
 import "./Tabs.scss";
+
+const Home = withRouter(React.lazy(() => import("../pages/home")));
+const Messenger = withRouter(React.lazy(() => import("../pages/messenger")));
+const Notifications = withRouter(
+  React.lazy(() => import("../pages/notifications"))
+);
+const Orders = withRouter(React.lazy(() => import("../pages/orders")));
+const Settings = withRouter(React.lazy(() => import("../pages/settings")));
 
 type Props = {
   user: User;
@@ -64,20 +67,20 @@ function Tabs({ user }: Props) {
     >
       <IonRouterOutlet>
         <Route exact path="/home">
-          <Home user={user} />
+          <Home />
         </Route>
         <Route exact path="/orders">
-          <Orders user={user} />
+          <Orders />
         </Route>
         <Route path="/products">
-          <ProductsRouterOutlet user={user} />
+          <ProductsRouterOutlet />
         </Route>
         <Route exact path="/notifications">
-          <Notifications user={user} />
+          <Notifications />
         </Route>
 
         <Route exact path="/messenger">
-          <Messenger user={user} />
+          <Messenger />
         </Route>
         <Route exact path="/settings">
           <Settings />
