@@ -10,8 +10,7 @@ import { Redirect, Route } from "react-router-dom";
 import withSuspense from "../../components/hoc/withSuspense";
 import { useStore } from "../../hooks/useStore";
 import { User } from "../../utils/types";
-// import Categories from "./categories";
-// import Details from "./details";
+
 const Categories = withSuspense<{
   progress: number;
   setProgress: (progress: number) => void;

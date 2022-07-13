@@ -1,3 +1,5 @@
+import L, { Map } from "leaflet";
+import { useEffect } from "react";
 import {
   Circle,
   MapContainer,
@@ -7,11 +9,6 @@ import {
   useMap,
 } from "react-leaflet";
 import locationIcon from "../assets/images/location-sharp.svg";
-import L, { circle, LatLngBounds, Map } from "leaflet";
-import { getGeocode, getLatLng } from "use-places-autocomplete";
-import { IonNote, IonSpinner } from "@ionic/react";
-import { RefObject, useEffect, useRef, useState } from "react";
-import useScript from "../hooks/useScript";
 
 type Props = {
   addressCoordinates: { lat: number; lng: number };

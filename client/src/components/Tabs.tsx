@@ -18,28 +18,24 @@ import {
   homeOutline,
 } from "ionicons/icons";
 import React from "react";
-import { Route, useLocation, withRouter } from "react-router-dom";
+import { Route, useLocation } from "react-router-dom";
 import { useStore } from "../hooks/useStore";
 import ProductsRouterOutlet from "../pages/products";
 
-import { User } from "../utils/types";
-import ChooseProduct from "./ChooseProduct";
 import withAuth from "./hoc/withAuth";
+import withSuspense from "./hoc/withSuspense";
 import "./Tabs.scss";
 
-const Home = withRouter(React.lazy(() => import("../pages/home")));
-const Messenger = withRouter(React.lazy(() => import("../pages/messenger")));
-const Notifications = withRouter(
+const ChooseProduct = withSuspense(React.lazy(() => import("./ChooseProduct")));
+const Home = withSuspense(React.lazy(() => import("../pages/home")));
+const Messenger = withSuspense(React.lazy(() => import("../pages/messenger")));
+const Notifications = withSuspense(
   React.lazy(() => import("../pages/notifications"))
 );
-const Orders = withRouter(React.lazy(() => import("../pages/orders")));
-const Settings = withRouter(React.lazy(() => import("../pages/settings")));
+const Orders = withSuspense(React.lazy(() => import("../pages/orders")));
+const Settings = withSuspense(React.lazy(() => import("../pages/settings")));
 
-type Props = {
-  user: User;
-};
-
-function Tabs({ user }: Props) {
+function Tabs() {
   const { pathname } = useLocation();
   const hideTabBar = useStore((store) => store.hideTabBar);
   const isSelected = (tab: string) => {

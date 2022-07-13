@@ -1,6 +1,10 @@
 import { IonInput, useIonModal } from "@ionic/react";
+import React from "react";
 import { FieldValues, Noop, UseFormSetValue } from "react-hook-form";
-import ChooseCategory from "./ChooseCategory";
+import withSuspense from "./hoc/withSuspense";
+const ChooseCategory = withSuspense(
+  React.lazy(() => import("./ChooseCategory"))
+);
 
 type Props = {
   onChange: (...event: any[]) => void;

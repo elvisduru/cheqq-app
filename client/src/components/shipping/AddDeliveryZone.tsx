@@ -14,10 +14,11 @@ import {
 import { close } from "ionicons/icons";
 
 import "leaflet/dist/leaflet.css";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useStore } from "../../hooks/useStore";
-import RadiusMap from "../RadiusMap";
+import withSuspense from "../hoc/withSuspense";
+const RadiusMap = withSuspense<any>(React.lazy(() => import("../RadiusMap")));
 
 type Props = {
   dismiss: () => void;

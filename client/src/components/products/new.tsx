@@ -8,7 +8,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { close } from "ionicons/icons";
-import PhysicalProductForm from "./forms.tsx/physical";
+import React from "react";
+import withSuspense from "../hoc/withSuspense";
+
+const PhysicalProductForm = withSuspense(
+  React.lazy(() => import("./forms.tsx/physical"))
+);
 
 type Props = {
   productType: string;

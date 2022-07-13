@@ -10,10 +10,14 @@ import {
 } from "@ionic/react";
 import "@ionic/react/css/ionic-swiper.css";
 import { close } from "ionicons/icons";
+import React from "react";
 import "swiper/scss";
-import LottieWrapper from "../lottieWrapper";
 import discountAnimation from "../../assets/json/discounts.json";
-import DiscountOptions from "./discountOptions";
+import withSuspense from "../hoc/withSuspense";
+import LottieWrapper from "../lottieWrapper";
+const DiscountOptions = withSuspense(
+  React.lazy(() => import("./discountOptions"))
+);
 
 type Props = {
   dismiss: () => void;

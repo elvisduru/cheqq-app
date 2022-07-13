@@ -16,13 +16,13 @@ import {
   sparklesOutline,
 } from "ionicons/icons";
 import { LatLng } from "use-places-autocomplete";
-import s3Client from "./lib/s3Client";
 import { Image, User } from "./utils/types";
 
 export const uploadFiles = async (
   user: User,
   files: File[]
 ): Promise<Image[]> => {
+  const { s3Client } = await import("./lib/s3Client");
   return await Promise.all(
     files.map(async (file, index): Promise<Image> => {
       const filePath = `users/${user?.id}/${file.name}`;
@@ -33,6 +33,7 @@ export const uploadFiles = async (
         ACL: "public-read",
         ContentType: file.type,
       };
+
       await s3Client.putObject(params);
 
       return {

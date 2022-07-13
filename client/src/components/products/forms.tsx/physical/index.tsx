@@ -8,7 +8,7 @@ import {
   IonSegmentButton,
 } from "@ionic/react";
 import { chevronBack } from "ionicons/icons";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,9 +17,10 @@ import shallow from "zustand/shallow";
 import { useDeleteImages } from "../../../../hooks/mutations/images/deleteImages";
 import useUser from "../../../../hooks/queries/users/useUser";
 import { AppState, ModalState, useStore } from "../../../../hooks/useStore";
-import Checkout from "./checkout";
-import General from "./general";
-import Variants from "./variants";
+import withSuspense from "../../../hoc/withSuspense";
+const Checkout = withSuspense(React.lazy(() => import("./checkout")));
+const General = withSuspense(React.lazy(() => import("./general")));
+const Variants = withSuspense(React.lazy(() => import("./variants")));
 
 const selector = ({
   setPhysicalFormData,
@@ -87,10 +88,11 @@ export default function PhysicalProductForm() {
           onSlideChange={(swiper) => {
             setTabIndex(swiper.realIndex);
           }}
-          className="h-[calc(100%-8.45rem)] [overflow:unset]"
+          className="h-[calc(100%-0.5rem)] [overflow:unset]"
+          // className="h-[calc(100%-8.45rem)] [overflow:unset]"
         >
           <SwiperSlide>
-            <General user={user!} />
+            <General />
           </SwiperSlide>
           <SwiperSlide>
             <Variants />

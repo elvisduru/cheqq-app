@@ -7,7 +7,6 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonLoading,
   IonPage,
   IonSpinner,
   IonTitle,
@@ -15,7 +14,7 @@ import {
   useIonRouter,
 } from "@ionic/react";
 import axios from "axios";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import "./index.scss";
 
 export default function Login() {

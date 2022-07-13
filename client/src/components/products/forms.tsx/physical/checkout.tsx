@@ -12,12 +12,16 @@ import {
   IonToggle,
   useIonModal,
 } from "@ionic/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import useToggle from "../../../../hooks/useToggle";
-import Discounts from "../../../discounts";
-import ShippingZones from "../../../shipping/Shipping";
+import withSuspense from "../../../hoc/withSuspense";
 import Step from "../Step";
+
+const Discounts = withSuspense(React.lazy(() => import("../../../discounts")));
+const ShippingZones = withSuspense(
+  React.lazy(() => import("../../../shipping/Shipping"))
+);
 
 export default function Checkout() {
   const {

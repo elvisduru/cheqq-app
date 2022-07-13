@@ -15,9 +15,15 @@ import {
 } from "@ionic/react";
 import "@ionic/react/css/ionic-swiper.css";
 import { add, close } from "ionicons/icons";
+import React from "react";
 import "swiper/scss";
-import AddDeliveryZone from "./AddDeliveryZone";
-import AddShippingZone from "./AddShippingZone";
+import withSuspense from "../hoc/withSuspense";
+const AddDeliveryZone = withSuspense(
+  React.lazy(() => import("./AddDeliveryZone"))
+);
+const AddShippingZone = withSuspense(
+  React.lazy(() => import("./AddShippingZone"))
+);
 
 type Props = {
   dismiss: () => void;

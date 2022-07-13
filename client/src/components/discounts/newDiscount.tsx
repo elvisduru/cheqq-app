@@ -19,12 +19,13 @@ import {
   useIonModal,
 } from "@ionic/react";
 import { close } from "ionicons/icons";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useStore } from "../../hooks/useStore";
 import useToggle from "../../hooks/useToggle";
 import { generateId } from "../../utils";
-import SelectItems from "../SelectItems";
+import withSuspense from "../hoc/withSuspense";
+const SelectItems = withSuspense(React.lazy(() => import("../SelectItems")));
 
 type Props = {
   dismiss: () => void;

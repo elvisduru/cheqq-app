@@ -8,15 +8,13 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { close } from "ionicons/icons";
-import { useEffect, useState } from "react";
-import {
-  Control,
-  FieldValues,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { Control, FieldValues, UseFormSetValue } from "react-hook-form";
 import { Variant } from ".";
-import MediaSelector from "../../../../MediaSelector";
+import withSuspense from "../../../../hoc/withSuspense";
+const MediaSelector = withSuspense<any>(
+  React.lazy(() => import("../../../../MediaSelector"))
+);
 
 type Props = {
   dismiss: () => void;

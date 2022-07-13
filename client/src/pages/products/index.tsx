@@ -1,8 +1,15 @@
 import { IonPage, IonRouterOutlet } from "@ionic/react";
+import React from "react";
 import { Route } from "react-router-dom";
+import withSuspense from "../../components/hoc/withSuspense";
 import { useStore } from "../../hooks/useStore";
-import ProductDetails from "./details";
-import Products from "./product";
+import { User } from "../../utils/types";
+const ProductDetails = withSuspense<{ user: User }>(
+  React.lazy(() => import("./details"))
+);
+const Products = withSuspense<{ user: User }>(
+  React.lazy(() => import("./product"))
+);
 
 const ProductsRouterOutlet = () => {
   const user = useStore((store) => store.user);

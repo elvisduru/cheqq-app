@@ -7,15 +7,29 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  useIonViewWillEnter,
+  useIonViewWillLeave,
 } from "@ionic/react";
 import React from "react";
 import { useQueryClient } from "react-query";
 import { Storage } from "@capacitor/storage";
+import { useStore } from "../../hooks/useStore";
 
 type Props = {};
 
 const Settings: React.FC = (props: Props) => {
+  const toggleHideTabBar = useStore((store) => store.toggleHideTabBar);
+
+  useIonViewWillEnter(() => {
+    toggleHideTabBar(true);
+  });
+
+  useIonViewWillLeave(() => {
+    toggleHideTabBar(false);
+  });
+
   const queryClient = useQueryClient();
+
   return (
     <IonPage>
       <IonHeader>

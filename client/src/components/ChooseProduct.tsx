@@ -18,11 +18,13 @@ import {
   downloadOutline,
   reloadOutline,
 } from "ionicons/icons";
-import { useState } from "react";
+import React, { useState } from "react";
 import shallow from "zustand/shallow";
 import useCanDismiss from "../hooks/useCanDismiss";
 import { AppState, useStore } from "../hooks/useStore";
-import NewProduct from "./products/new";
+import withSuspense from "./hoc/withSuspense";
+
+const NewProduct = withSuspense(React.lazy(() => import("./products/new")));
 
 type Props = {
   dismiss: () => void;

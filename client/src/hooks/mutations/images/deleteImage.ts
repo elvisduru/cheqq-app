@@ -1,7 +1,6 @@
 import { DeleteObjectCommandInput } from "@aws-sdk/client-s3";
 import { useMutation, useQueryClient } from "react-query";
 import api from "../../../lib/api";
-import s3Client from "../../../lib/s3Client";
 import { Image } from "../../../utils/types";
 
 export function useDeleteImage() {
@@ -14,7 +13,9 @@ export function useDeleteImage() {
         Bucket: import.meta.env.VITE_SPACES_BUCKET,
         Key: data.url.substring(data.url.indexOf("users")),
       };
-      s3Client.deleteObject(params);
+      import("../../../lib/s3Client").then(({ s3Client }) => {
+        s3Client.deleteObject(params);
+      });
     },
   });
 }

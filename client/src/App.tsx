@@ -23,18 +23,21 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/typography.css";
 import React, { useEffect } from "react";
 import { Redirect, Route } from "react-router-dom";
-import "./App.css";
-import AppUrlListener from "./components/AppUrlListener";
-import withSuspense from "./components/hoc/withSuspense";
-import SideMenu from "./components/SideMenu";
-import New from "./pages/auth/new";
-import StoreRouterOutlet from "./pages/store";
-// import Login from "./pages/auth/login";
-// import New from "./pages/auth/new";
-// import SignUp from "./pages/auth/signup";
 /* Theme variables */
-import "./styles/global.scss";
 import "./theme/variables.css";
+
+import "./App.css";
+import "./styles/global.scss";
+
+import withSuspense from "./components/hoc/withSuspense";
+import StoreRouterOutlet from "./pages/store";
+const AppUrlListener = withSuspense(
+  React.lazy(() => import("./components/AppUrlListener"))
+);
+const SideMenu = withSuspense<any>(
+  React.lazy(() => import("./components/SideMenu"))
+);
+const New = withSuspense(React.lazy(() => import("./pages/auth/new")));
 
 const Tabs = withSuspense(React.lazy(() => import("./components/Tabs")));
 const Confirm = withSuspense(React.lazy(() => import("./pages/auth/confirm")));

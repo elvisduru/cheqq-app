@@ -16,13 +16,16 @@ import {
   useIonModal,
 } from "@ionic/react";
 import { ellipsisHorizontal, image, trash } from "ionicons/icons";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { Image } from "../../../../../utils/types";
-import TagInput from "../../../../TagInput";
+import withSuspense from "../../../../hoc/withSuspense";
 import Step from "../../Step";
-import ChooseImage from "./choose-image";
-import EditVariant from "./editVariant";
+const TagInput = withSuspense<any>(
+  React.lazy(() => import("../../../../TagInput"))
+);
+const ChooseImage = withSuspense(React.lazy(() => import("./choose-image")));
+const EditVariant = withSuspense(React.lazy(() => import("./editVariant")));
 
 export type Variant = {
   name: string;
@@ -147,7 +150,7 @@ export default function Variants() {
   }, [generateVariants, options, setValue, variantsLength]);
 
   const handleEditVariant = useCallback(
-    (index) => {
+    (index: number) => {
       const variant = variants[index];
       setVariant(variant);
       setVariantIndex(index);

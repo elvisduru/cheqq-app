@@ -13,18 +13,23 @@ import {
   IonToggle,
 } from "@ionic/react";
 import { caretDown } from "ionicons/icons";
+import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { User } from "../../../../utils/types";
-import MediaUploader from "../../../MediaUploader";
-import SelectCategory from "../../../SelectCategory";
-import TagInput from "../../../TagInput";
+import { useStore } from "../../../../hooks/useStore";
+import withSuspense from "../../../hoc/withSuspense";
 import Step from "../Step";
+const MediaUploader = withSuspense<any>(
+  React.lazy(() => import("../../../MediaUploader"))
+);
+const SelectCategory = withSuspense<any>(
+  React.lazy(() => import("../../../SelectCategory"))
+);
+const TagInput = withSuspense<any>(
+  React.lazy(() => import("../../../TagInput"))
+);
 
-type Props = {
-  user: User;
-};
-
-export default function General({ user }: Props) {
+export default function General() {
+  const user = useStore((state) => state.user);
   const {
     formState: { errors },
     control,
@@ -148,7 +153,7 @@ export default function General({ user }: Props) {
         label="Product Tags"
         name="tags"
         control={control}
-        setValue={(tags) => {
+        setValue={(tags: string[]) => {
           setValue("tags", tags);
         }}
         note="Optional. Enter tags separated by commas. Limit 20."

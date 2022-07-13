@@ -16,12 +16,9 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Redirect } from "react-router-dom";
 import AvatarUpload from "../../components/AvatarUpload";
-import withAuth from "../../components/hoc/withAuth";
 import useUpdateUser from "../../hooks/mutations/user/updateUser";
 import useBoolean from "../../hooks/useBoolean";
 import { useStore } from "../../hooks/useStore";
-import s3Client from "../../lib/s3Client";
-import { User } from "../../utils/types";
 
 function New() {
   const user = useStore((store) => store.user);
@@ -48,7 +45,7 @@ function New() {
         ACL: "public-read",
         ContentType: data.avatar.type,
       };
-
+      const { s3Client } = await import("../../lib/s3Client");
       await s3Client.putObject(params);
 
       // Update user

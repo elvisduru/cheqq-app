@@ -9,8 +9,13 @@ import {
 } from "@ionic/react";
 import { close } from "ionicons/icons";
 import React from "react";
-import SelectCollections from "./collections/SelectCollections";
-import SelectProducts from "./products/SelectProducts";
+import withSuspense from "./hoc/withSuspense";
+const SelectCollections = withSuspense<any>(
+  React.lazy(() => import("./collections/SelectCollections"))
+);
+const SelectProducts = withSuspense<any>(
+  React.lazy(() => import("./products/SelectProducts"))
+);
 
 type Props = {
   dismiss: () => void;

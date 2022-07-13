@@ -38,7 +38,6 @@ import useAddStore from "../../hooks/mutations/stores/addStore";
 import useBoolean from "../../hooks/useBoolean";
 import usePhotoGallery from "../../hooks/usePhotoGallery";
 import api from "../../lib/api";
-import s3Client from "../../lib/s3Client";
 import { User } from "../../utils/types";
 
 type Props = {
@@ -456,7 +455,7 @@ export default function Details({ progress, user }: Props) {
                   ACL: "public-read",
                   ContentType: values.logo.type,
                 };
-
+                const { s3Client } = await import("../../lib/s3Client");
                 await Promise.all([
                   s3Client.putObject(logoParams),
                   s3Client.putObject(bannerParams),

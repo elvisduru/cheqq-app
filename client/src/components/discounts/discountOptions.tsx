@@ -13,7 +13,6 @@ import {
 } from "@ionic/react";
 import {
   bagAddOutline,
-  bagCheckOutline,
   bagHandleOutline,
   cartOutline,
   close,
@@ -21,7 +20,8 @@ import {
 } from "ionicons/icons";
 import React, { useState } from "react";
 import useCanDismiss from "../../hooks/useCanDismiss";
-import NewDiscount from "./newDiscount";
+import withSuspense from "../hoc/withSuspense";
+const NewDiscount = withSuspense(React.lazy(() => import("./newDiscount")));
 
 type Props = {
   dismiss: () => void;
