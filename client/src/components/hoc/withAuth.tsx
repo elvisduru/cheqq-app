@@ -9,7 +9,6 @@ import useUser from "../../hooks/queries/users/useUser";
 export default function withAuth(Component: React.ComponentType & any) {
   return function WithAuth(props: any) {
     const { data: user, isLoading } = useUser();
-    const { pathname } = useLocation();
     if (isLoading) {
       return <IonLoading isOpen={true} translucent />;
     }
