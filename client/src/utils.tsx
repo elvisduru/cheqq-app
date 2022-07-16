@@ -1,4 +1,4 @@
-import { PutObjectCommandInput } from "@aws-sdk/client-s3";
+import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import {
   barbellOutline,
   carOutline,
@@ -33,8 +33,8 @@ export const uploadFiles = async (
         ACL: "public-read",
         ContentType: file.type,
       };
-
-      await s3Client.putObject(params);
+      const command = new PutObjectCommand(params);
+      await s3Client.send(command);
 
       return {
         url: `${import.meta.env.VITE_CDN_URL}/${filePath}`,

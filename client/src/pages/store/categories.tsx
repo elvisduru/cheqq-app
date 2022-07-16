@@ -19,7 +19,6 @@ import { useEffect, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useFormContext } from "react-hook-form";
-import { RouteComponentProps } from "react-router";
 import useCategories from "../../hooks/queries/categories/useCategories";
 import { categoryIcons } from "../../utils";
 import "./categories.scss";

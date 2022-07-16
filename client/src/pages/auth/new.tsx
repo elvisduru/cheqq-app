@@ -1,4 +1,4 @@
-import { PutObjectCommandInput } from "@aws-sdk/client-s3";
+import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import {
   IonBackButton,
   IonButton,
@@ -46,7 +46,8 @@ function New() {
         ContentType: data.avatar.type,
       };
       const { s3Client } = await import("../../lib/s3Client");
-      await s3Client.putObject(params);
+      const command = new PutObjectCommand(params);
+      await s3Client.send(command);
 
       // Update user
       updateUser.mutate(

@@ -1,4 +1,7 @@
-import { DeleteObjectCommandInput } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  DeleteObjectCommandInput,
+} from "@aws-sdk/client-s3";
 import { useMutation, useQueryClient } from "react-query";
 import api from "../../../lib/api";
 import { Image } from "../../../utils/types";
@@ -17,7 +20,8 @@ export function useDeleteImages() {
             Key: image.url.substring(image.url.indexOf("users")),
           };
           import("../../../lib/s3Client").then(({ s3Client }) => {
-            s3Client.deleteObject(params);
+            const command = new DeleteObjectCommand(params);
+            s3Client.send(command);
           });
         });
       },

@@ -1,4 +1,4 @@
-import { PutObjectCommandInput } from "@aws-sdk/client-s3";
+import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import {
   AlertOptions,
   IonAvatar,
@@ -29,7 +29,7 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import { Controller, useFormContext } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
-import { RouteComponentProps, useHistory } from "react-router";
+import { useHistory } from "react-router";
 import { StoreFormValues } from ".";
 import currencies from "../../assets/json/countries-currencies.json";
 import countries from "../../assets/json/country-codes.json";
@@ -456,9 +456,11 @@ export default function Details({ progress, user }: Props) {
                   ContentType: values.logo.type,
                 };
                 const { s3Client } = await import("../../lib/s3Client");
+                const logoCommand = new PutObjectCommand(logoParams);
+                const bannerCommand = new PutObjectCommand(bannerParams);
                 await Promise.all([
-                  s3Client.putObject(logoParams),
-                  s3Client.putObject(bannerParams),
+                  s3Client.send(logoCommand),
+                  s3Client.send(bannerCommand),
                 ]);
 
                 // Create Store
