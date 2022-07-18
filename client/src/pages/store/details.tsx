@@ -412,7 +412,9 @@ export default function Details({ progress, user }: Props) {
         </div>
         <div
           slot="fixed"
-          className="bg-black bg-opacity-80 [backdrop-filter:blur(1px)] bottom-0 ion-padding-horizontal pb-4 w-full"
+          className={`${
+            !isValid || !isDirty ? "opacity-0" : "opacity-100"
+          } transition-opacity backdrop-filter backdrop-blur-lg bg-opacity-30 bottom-0 ion-padding-horizontal pb-4 w-full`}
         >
           <IonButton
             hidden={!isValid || !isDirty}

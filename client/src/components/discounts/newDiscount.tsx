@@ -248,6 +248,7 @@ export default function NewDiscount({ dismiss, title }: Props) {
               </IonItem>
             </IonRadioGroup>
             <IonSearchbar
+              animated
               className="!px-0"
               onClick={() => {
                 present({

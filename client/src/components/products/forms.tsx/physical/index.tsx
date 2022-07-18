@@ -18,8 +18,8 @@ import { useDeleteImages } from "../../../../hooks/mutations/images/deleteImages
 import useUser from "../../../../hooks/queries/users/useUser";
 import { AppState, ModalState, useStore } from "../../../../hooks/useStore";
 import withSuspense from "../../../hoc/withSuspense";
+import General from "./general";
 const Checkout = withSuspense(React.lazy(() => import("./checkout")));
-const General = withSuspense(React.lazy(() => import("./general")));
 const Variants = withSuspense(React.lazy(() => import("./variants")));
 
 const selector = ({
@@ -77,6 +77,24 @@ export default function PhysicalProductForm() {
 
   return (
     <FormProvider {...methods}>
+      <div
+        slot="fixed"
+        className="w-full backdrop-filter backdrop-blur-lg bg-opacity-30 ion-padding-horizontal py-4"
+      >
+        <IonSegment
+          onIonChange={(e) => {
+            const index = parseFloat(e.detail.value!);
+            setTabIndex(index);
+            swiper?.slideTo(index);
+          }}
+          value={tabIndex.toString()}
+        >
+          <IonSegmentButton value="0">General</IonSegmentButton>
+          <IonSegmentButton value="1">Variants</IonSegmentButton>
+          <IonSegmentButton value="2">Checkout</IonSegmentButton>
+          <IonSegmentButton value="3">Preview</IonSegmentButton>
+        </IonSegment>
+      </div>
       <form
         ref={ref}
         onSubmit={methods.handleSubmit(onSubmit, onError)}
@@ -84,12 +102,13 @@ export default function PhysicalProductForm() {
       >
         <Swiper
           initialSlide={tabIndex}
-          onSwiper={(swiper) => setSwiper(swiper)}
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
           onSlideChange={(swiper) => {
             setTabIndex(swiper.realIndex);
           }}
-          className="h-[calc(100%-0.5rem)] [overflow:unset]"
-          // className="h-[calc(100%-8.45rem)] [overflow:unset]"
+          className="h-full"
         >
           <SwiperSlide>
             <General />
@@ -100,63 +119,50 @@ export default function PhysicalProductForm() {
           <SwiperSlide>
             <Checkout />
           </SwiperSlide>
-          <div slot="container-start" className="ion-padding-horizontal py-4">
-            <IonSegment
-              onIonChange={(e) => {
-                const index = parseFloat(e.detail.value!);
-                setTabIndex(index);
-                swiper?.slideTo(index);
-              }}
-              value={tabIndex.toString()}
-            >
-              <IonSegmentButton value="0">General</IonSegmentButton>
-              <IonSegmentButton value="1">Variants</IonSegmentButton>
-              <IonSegmentButton value="2">Checkout</IonSegmentButton>
-              <IonSegmentButton value="3">Preview</IonSegmentButton>
-            </IonSegment>
-          </div>
-          <div
-            slot="container-end"
-            className="ion-padding-horizontal py-1 bg-neutral-850"
-          >
-            <IonGrid className="p-0">
-              <IonRow>
-                <IonCol size="3" className="px-0">
-                  <IonButton
-                    onClick={() => {
-                      if (tabIndex === 0) {
-                        const modal = document.querySelector(
-                          "#new-physical-product"
-                        ) as HTMLIonModalElement;
-                        modal.dismiss();
-                      } else {
-                        swiper?.slidePrev();
-                      }
-                    }}
-                    expand="block"
-                    color="light"
-                    size="default"
-                  >
-                    <IonIcon slot="icon-only" icon={chevronBack} />
-                    {tabIndex === 0 ? "Cancel" : "Back"}
-                  </IonButton>
-                </IonCol>
-                <IonCol className="px-1">
-                  <IonButton
-                    onClick={() => {
-                      swiper?.slideNext();
-                    }}
-                    expand="block"
-                    size="default"
-                  >
-                    Continue
-                  </IonButton>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-          </div>
         </Swiper>
       </form>
+      <div
+        slot="fixed"
+        className="bottom-0 w-full ion-padding-horizontal py-1 bg-neutral-850"
+      >
+        <IonGrid className="p-0">
+          <IonRow>
+            <IonCol size="3" className="px-0">
+              <IonButton
+                className="drop-shadow"
+                onClick={() => {
+                  if (tabIndex === 0) {
+                    const modal = document.querySelector(
+                      "#new-physical-product"
+                    ) as HTMLIonModalElement;
+                    modal.dismiss();
+                  } else {
+                    swiper?.slidePrev();
+                  }
+                }}
+                expand="block"
+                color="light"
+                size="default"
+              >
+                <IonIcon slot="icon-only" icon={chevronBack} />
+                {tabIndex === 0 ? "Cancel" : "Back"}
+              </IonButton>
+            </IonCol>
+            <IonCol className="px-1">
+              <IonButton
+                className="drop-shadow"
+                onClick={() => {
+                  swiper?.slideNext();
+                }}
+                expand="block"
+                size="default"
+              >
+                Continue
+              </IonButton>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+      </div>
     </FormProvider>
   );
 }

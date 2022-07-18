@@ -36,7 +36,7 @@ export default function General() {
   return (
     <Step>
       <IonItem
-        className={`input mt-4 ${errors.title ? "ion-invalid" : ""}`}
+        className={`input mt-1 ${errors.title ? "ion-invalid" : ""}`}
         fill="outline"
         mode="md"
       >

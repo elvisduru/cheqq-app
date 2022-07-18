@@ -101,13 +101,15 @@ export default function Categories({ progress, setProgress }: Props) {
         </div>
         <div
           slot="fixed"
-          className="bg-black bg-opacity-80 bottom-0 ion-padding-horizontal pb-4 w-full"
+          className={`${
+            selected.length ? "opacity-100" : "opacity-0"
+          } transition-opacity backdrop-filter backdrop-blur-lg bg-opacity-30 bottom-0 ion-padding-horizontal pb-4 w-full`}
         >
           <IonButton
             expand="block"
             routerLink="/store/new/details"
             onClick={() => setProgress(2)}
-            hidden={!selected.length}
+            disabled={!selected.length}
             className="bottom-0 w-full"
           >
             Continue

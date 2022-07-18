@@ -141,6 +141,7 @@ export default function ShippingZones({ dismiss }: Props) {
                     "#shipping-settings"
                   ) as HTMLElement,
                   canDismiss: true,
+                  id: "add-shipping-zone",
                 });
               }}
             >

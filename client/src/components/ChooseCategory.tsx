@@ -7,6 +7,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonLoading,
   IonText,
   IonTitle,
   IonToolbar,
@@ -27,7 +28,7 @@ export default function ChooseCategory({ dismiss, handleSelect }: Props) {
   });
 
   if (isLoading) {
-    return <IonText>Loading...</IonText>;
+    return <IonLoading isOpen={true} translucent />;
   }
 
   return (

@@ -7,7 +7,7 @@ type Props = {
 export default function SelectProducts({ handleSelection }: Props) {
   return (
     <div>
-      <IonSearchbar className="!px-0" placeholder="Search Products" />
+      <IonSearchbar animated className="!px-0" placeholder="Search Products" />
     </div>
   );
 }
