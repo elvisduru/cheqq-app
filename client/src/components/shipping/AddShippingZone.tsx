@@ -33,21 +33,21 @@ export default function AddShippingZone({ dismiss }: Props) {
   const onSubmit = (data: any) => console.log(data);
   const onError = (error: any) => console.log(error);
 
-  // const LocationsInput = () => {
-  //   const zoneType = watch("type");
-  //   switch (zoneType) {
-  //     case "zip":
-  //       return <p>Zip selected</p>;
-  //     case "state":
-  //       return <p>State selected</p>;
-  //     case "country":
-  //       return <p>Country selected</p>;
-  //     case "global":
-  //       return <p>Global selected</p>;
-  //     default:
-  //       return null;
-  //   }
-  // };
+  const LocationsInput = () => {
+    const zoneType = watch("type");
+    switch (zoneType) {
+      case "zip":
+        return <p>Zip selected</p>;
+      case "state":
+        return <p>State selected</p>;
+      case "country":
+        return <p>Country selected</p>;
+      case "global":
+        return <p>Global selected</p>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -72,7 +72,7 @@ export default function AddShippingZone({ dismiss }: Props) {
           className="ion-padding-top ion-padding-horizontal flex flex-column modal-form"
         >
           <IonItem
-            className={`input mt-1 ${errors.name ? "ion-invalid" : ""}`}
+            className={`input mt-4 ${errors.name ? "ion-invalid" : ""}`}
             fill="outline"
             mode="md"
           >
@@ -95,7 +95,7 @@ export default function AddShippingZone({ dismiss }: Props) {
             <IonNote slot="error">{errors.name?.message}</IonNote>
           </IonItem>
           <IonItem
-            className={`input mt-1 ${errors.type ? "ion-invalid" : ""}`}
+            className={`input mt-4 ${errors.type ? "ion-invalid" : ""}`}
             fill="outline"
             mode="md"
           >

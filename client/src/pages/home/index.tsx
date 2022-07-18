@@ -17,10 +17,15 @@ import {
 } from "@ionic/react";
 import { format } from "date-fns";
 import { notifications } from "ionicons/icons";
+import React from "react";
 import { Link } from "react-router-dom";
-import ChartCard from "../../components/ChartCard";
+import withSuspense from "../../components/hoc/withSuspense";
 import { useStore } from "../../hooks/useStore";
 import { getCurrentDayPeriod } from "../../utils";
+
+const ChartCard = withSuspense<{ title: string }>(
+  React.lazy(() => import("../../components/ChartCard"))
+);
 
 const Home = () => {
   const user = useStore((store) => store.user);

@@ -70,6 +70,22 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports:
+      - 5050:5050
+    env_file:
+      - ./server/.env
+    volumes:
+      - pgadmin:/var/lib/pgadmin4
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pgadmin.rule=Host(`pgadmin.localhost`)"
+      - "traefik.http.routers.pgadmin.entrypoints=web"
+
 volumes:
   postgres:
     name: postgres
+  pgadmin:
+    name: pgadmin

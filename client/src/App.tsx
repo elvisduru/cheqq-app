@@ -31,6 +31,7 @@ import "./styles/global.scss";
 
 import withSuspense from "./components/hoc/withSuspense";
 import StoreRouterOutlet from "./pages/store";
+
 const AppUrlListener = withSuspense(
   React.lazy(() => import("./components/AppUrlListener"))
 );
@@ -67,37 +68,35 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <IonApp>
-      <IonReactRouter>
-        <AppUrlListener />
-        <IonSplitPane contentId="main">
-          <SideMenu contentId="main" />
-          <IonRouterOutlet id="main">
-            <Route path="/(home|orders|products|notifications|messenger|settings)">
-              <Tabs />
-            </Route>
-            <Route exact path="/signup">
-              <SignUp />
-            </Route>
-            <Route exact path="/login">
-              <Login />
-            </Route>
-            <Route exact path="/magic-link">
-              <Confirm />
-            </Route>
-            <Route exact path="/new">
-              <New />
-            </Route>
-            <Route path="/store">
-              <StoreRouterOutlet />
-            </Route>
-            <Route path="/" exact>
-              <Redirect to="/home" />
-            </Route>
-          </IonRouterOutlet>
-        </IonSplitPane>
-      </IonReactRouter>
-    </IonApp>
+    <>
+      <AppUrlListener />
+      <IonSplitPane contentId="main">
+        <SideMenu contentId="main" />
+        <IonRouterOutlet id="main">
+          <Route path="/(home|orders|products|notifications|messenger|settings)">
+            <Tabs />
+          </Route>
+          <Route exact path="/signup">
+            <SignUp />
+          </Route>
+          <Route exact path="/login">
+            <Login />
+          </Route>
+          <Route exact path="/magic-link">
+            <Confirm />
+          </Route>
+          <Route exact path="/new">
+            <New />
+          </Route>
+          <Route path="/store">
+            <StoreRouterOutlet />
+          </Route>
+          <Route path="/" exact>
+            <Redirect to="/home" />
+          </Route>
+        </IonRouterOutlet>
+      </IonSplitPane>
+    </>
   );
 };
 

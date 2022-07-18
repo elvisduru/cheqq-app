@@ -80,6 +80,8 @@ export type Image = {
   updatedAt?: Date;
 };
 
+export type ImageWithRequiredId = Image & { id: number };
+
 export type Video = {
   id?: number;
   userId?: number;

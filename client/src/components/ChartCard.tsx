@@ -2,11 +2,13 @@ import {
   IonButton,
   IonCard,
   IonCardHeader,
+  IonContent,
   IonIcon,
   IonItem,
   IonList,
   IonNote,
   IonPopover,
+  useIonPopover,
 } from "@ionic/react";
 import { ellipsisVerticalSharp } from "ionicons/icons";
 import { useState } from "react";
@@ -24,8 +26,28 @@ enum TimeFrame {
   Month = "month",
 }
 
+const Popover = () => (
+  <IonContent>
+    <IonList lines="none">
+      <IonItem button detail={false}>
+        Today
+      </IonItem>
+      <IonItem button detail={false}>
+        Yesterday
+      </IonItem>
+      <IonItem button detail={false}>
+        This Week
+      </IonItem>
+      <IonItem button detail={false}>
+        Last 30 Days
+      </IonItem>
+    </IonList>
+  </IonContent>
+);
+
 export default function GraphCard({ title }: Props) {
   const [selected] = useState<string | undefined>(TimeFrame.Week);
+  const [present, dismiss] = useIonPopover(Popover);
   return (
     <IonCard>
       <IonCardHeader>
@@ -46,25 +68,24 @@ export default function GraphCard({ title }: Props) {
                 .toFixed(2)}
             </span>
           </div>
-          <IonButton size="small" fill="default" id="chart-more">
+          <IonButton
+            size="small"
+            fill="default"
+            id="chart-more"
+            onClick={() => {
+              present({
+                translucent: true,
+                trigger: "chart-more",
+              });
+            }}
+          >
             <IonIcon slot="icon-only" icon={ellipsisVerticalSharp} />
           </IonButton>
-          <IonPopover translucent trigger="chart-more">
-            <IonList lines="none">
-              <IonItem button detail={false}>
-                Today
-              </IonItem>
-              <IonItem button detail={false}>
-                Yesterday
-              </IonItem>
-              <IonItem button detail={false}>
-                This Week
-              </IonItem>
-              <IonItem button detail={false}>
-                Last 30 Days
-              </IonItem>
-            </IonList>
-          </IonPopover>
+          {/* <IonPopover
+            translucent
+            trigger="chart-more"
+            triggerAction="click"
+          ></IonPopover> */}
         </div>
       </IonCardHeader>
       <LineChart data={salesData} />

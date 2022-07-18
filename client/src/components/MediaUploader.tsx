@@ -1,19 +1,31 @@
 import {
-  IonIcon,
-  IonLoading,
-  IonSpinner,
-  IonThumbnail,
-  isPlatform,
-} from "@ionic/react";
-import { add, closeCircle, imagesOutline } from "ionicons/icons";
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  arraySwap,
+  rectSwappingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
+import { IonIcon, IonLoading, IonSpinner, IonThumbnail } from "@ionic/react";
+import { add, imagesOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { FieldValues, UseFormSetValue, useWatch } from "react-hook-form";
-import { ReactSortable } from "react-sortablejs";
 import useAddImages from "../hooks/mutations/images/addImages";
 import { useDeleteImage } from "../hooks/mutations/images/deleteImage";
 import usePhotoGallery from "../hooks/usePhotoGallery";
 import { uploadFiles } from "../utils";
-import { Image, User } from "../utils/types";
+import { ImageWithRequiredId, User } from "../utils/types";
+import SortableImage from "./SortableImage";
 
 type Props = {
   setValue: UseFormSetValue<FieldValues>;
@@ -21,8 +33,6 @@ type Props = {
   name: string;
   control: any;
 };
-
-type ImageWithRequiredId = Image & { id: number };
 
 export default function MediaUploader({
   name,
@@ -32,14 +42,42 @@ export default function MediaUploader({
 }: Props) {
   const { takePhotos, files, setPhotos, setFiles, uploading, setUploading } =
     usePhotoGallery();
-  const [isSorting, setIsSorting] = useState(false);
   const deleteImage = useDeleteImage();
   const addImages = useAddImages();
 
-  const photos: Image[] = useWatch({
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const photos: ImageWithRequiredId[] = useWatch({
     control,
     name,
   });
+
+  const sensors = useSensors(
+    useSensor(TouchSensor),
+    useSensor(MouseSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = ({ ...props }) => {
+    const { active, over } = props;
+
+    if (active.id !== over?.id) {
+      const oldIndex = photos.findIndex((photo) => photo.id === active.id);
+      const newIndex = photos.findIndex((photo) => photo.id === over?.id);
+      const sortedPhotos = arraySwap(photos, oldIndex, newIndex);
+      setValue("photos", sortedPhotos);
+    }
+
+    setActiveIndex(null);
+  };
+
+  const handleDragStart = ({ ...props }) => {
+    const { active } = props;
+    const index = photos.findIndex((photo) => photo.id === active.id);
+    setActiveIndex(index);
+  };
 
   useEffect(() => {
     if (files.length) {
@@ -63,6 +101,23 @@ export default function MediaUploader({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files.length, setValue]);
+
+  const handleDelete = (id: number) => {
+    deleteImage.mutate(id, {
+      onSuccess: (_, id) => {
+        setValue(
+          "photos",
+          photos.filter((photo) => photo.id !== id)
+        );
+      },
+      onError: (_, id) => {
+        setValue(
+          "photos",
+          photos.filter((photo) => photo.id !== id)
+        );
+      },
+    });
+  };
 
   return (
     <>
@@ -95,90 +150,44 @@ export default function MediaUploader({
         ) : (
           <div className="flex ion-wrap swiper-no-swiping">
             {photos?.length ? (
-              <ReactSortable
-                className="flex ion-wrap"
-                onUpdate={() => setIsSorting(true)}
-                list={photos as ImageWithRequiredId[]}
-                setList={(newState) => {
-                  if (!isSorting) return;
-                  setIsSorting(false);
-                  // Update images sort order
-                  setValue("photos", newState);
-                }}
-                animation={150}
-                filter=".upload-btn"
-                preventOnFilter
-              >
-                {photos.map((photo) => (
-                  <IonThumbnail
-                    key={photo.id}
-                    className="rounded mr-4 mb-4 relative w-16 h-16"
-                  >
-                    <IonIcon
-                      icon={closeCircle}
-                      size="small"
-                      className="absolute -top-3 -right-3"
-                      onTouchStart={() => {
-                        if (!isPlatform("hybrid")) return;
-                        deleteImage.mutate(photo.id!, {
-                          onSuccess: (_, id) => {
-                            setValue(
-                              "photos",
-                              photos.filter((photo) => photo.id !== id)
-                            );
-                          },
-                          onError: (_, id) => {
-                            setValue(
-                              "photos",
-                              photos.filter((photo) => photo.id !== id)
-                            );
-                          },
-                        });
-                      }}
-                      onClick={() => {
-                        if (isPlatform("hybrid")) return;
-                        // delete photo from server update form state
-
-                        deleteImage.mutate(photo.id!, {
-                          onSuccess: (_, id) => {
-                            setValue(
-                              "photos",
-                              photos.filter((photo) => photo.id !== id)
-                            );
-                          },
-                          onError: (_, id) => {
-                            setValue(
-                              "photos",
-                              photos.filter((photo) => photo.id !== id)
-                            );
-                          },
-                        });
-                      }}
-                    />
-                    <img
-                      src={photo.url}
-                      alt=""
-                      className="object-center object-cover"
-                    />
-                  </IonThumbnail>
-                ))}
-                <IonThumbnail
-                  className={`${
-                    photos.length < 10 ? "" : "hidden"
-                  } bg-light upload-btn rounded mb-4 w-12 h-12 flex ion-justify-content-center items-center`}
+              <div className="flex flex-wrap">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
                 >
-                  {uploading ? (
-                    <IonSpinner name="crescent" />
-                  ) : (
-                    <IonIcon
-                      icon={add}
-                      size="small"
-                      style={{ top: -7, right: -7 }}
-                      onClick={() => takePhotos(photos?.length || 0)}
-                    />
-                  )}
-                </IonThumbnail>
-              </ReactSortable>
+                  <SortableContext
+                    items={photos}
+                    strategy={rectSwappingStrategy}
+                  >
+                    {photos.map((photo, index) => (
+                      <SortableImage
+                        styles={activeIndex === index ? { opacity: 0.4 } : {}}
+                        key={photo.id}
+                        photo={photo}
+                        handleDelete={handleDelete}
+                      />
+                    ))}
+                    <IonThumbnail
+                      className={`${
+                        photos.length < 10 ? "" : "hidden"
+                      } bg-light upload-btn rounded mb-4 w-12 h-12 flex ion-justify-content-center items-center`}
+                    >
+                      {uploading ? (
+                        <IonSpinner name="crescent" />
+                      ) : (
+                        <IonIcon
+                          icon={add}
+                          size="small"
+                          style={{ top: -7, right: -7 }}
+                          onClick={() => takePhotos(photos?.length || 0)}
+                        />
+                      )}
+                    </IonThumbnail>
+                  </SortableContext>
+                </DndContext>
+              </div>
             ) : null}
           </div>
         )}

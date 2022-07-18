@@ -83,16 +83,26 @@ model DeliveryZone {
 }
 
 model ShippingZone {
-  id          Int            @id @default(autoincrement())
-  store       Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  id          Int                @id @default(autoincrement())
+  store       Store              @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId     Int
   name        String
-  regions     String[]
+  type        ShippingZoneType
+  locations   ShippingLocation[]
   rates       ShippingRate[]
   description String?
-  price       Float          @default(0)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  price       Float              @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model ShippingLocation {
+  id             Int          @id @default(autoincrement())
+  zip            String?
+  state_iso2     String?
+  country_iso2   String?
+  shippingZone   ShippingZone @relation(fields: [shippingZoneId], references: [id])
+  shippingZoneId Int
 }
 
 model ShippingRate {
@@ -104,17 +114,14 @@ model ShippingRate {
   transitTime        TransitTime
   customRateName     String? // required if transitTime is CUSTOM
   price              Float
-  minimumWeight      Float?
-  maximumWeight      Float?
-  minimumPrice       Float?
-  maximumPrice       Float?
+  rateCondition      RateCondition?
+  rateConditionMin   Float?
+  rateConditionMax   Float?
   // Carrier fields
   carrier            Carrier?
   services           String[] // Selected services from carrier
   handlingFeePercent Float? // Handling fee percent
   handlingFeeFlat    Float? // Handling fee flat amount
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
 }
 
 model Product {
@@ -478,11 +485,23 @@ enum ShippingRateType {
   carrier
 }
 
+enum ShippingZoneType {
+  zip
+  state
+  country
+  global
+}
+
 // TODO: Work on integrating with Shipping Carriers
 enum Carrier {
   DHL
   UPS
   USPS
+}
+
+enum RateCondition {
+  itemWeight
+  orderPrice
 }
 
 // enum ReturnReason {

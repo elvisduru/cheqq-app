@@ -18,9 +18,9 @@ import { add, close } from "ionicons/icons";
 import React from "react";
 import "swiper/scss";
 import withSuspense from "../hoc/withSuspense";
-const AddDeliveryZone = withSuspense(
-  React.lazy(() => import("./AddDeliveryZone"))
-);
+// const AddDeliveryZone = withSuspense(
+//   React.lazy(() => import("./AddDeliveryZone"))
+// );
 const AddShippingZone = withSuspense(
   React.lazy(() => import("./AddShippingZone"))
 );
@@ -35,14 +35,14 @@ export default function ShippingZones({ dismiss }: Props) {
       dismissAddZone();
     },
   });
-  const [presentDeliveryZone, dismissAddDeliveryZone] = useIonModal(
-    AddDeliveryZone,
-    {
-      dismiss: () => {
-        dismissAddDeliveryZone();
-      },
-    }
-  );
+  // const [presentDeliveryZone, dismissAddDeliveryZone] = useIonModal(
+  //   AddDeliveryZone,
+  //   {
+  //     dismiss: () => {
+  //       dismissAddDeliveryZone();
+  //     },
+  //   }
+  // );
 
   return (
     <>
@@ -72,7 +72,7 @@ export default function ShippingZones({ dismiss }: Props) {
             </IonLabel>
             <IonToggle color="primary" />
           </IonItem>
-          <IonItemGroup className="mt-4">
+          {/* <IonItemGroup className="mt-4"> // TODO: Complete Local Delivery feature
             <IonItem lines="none" className="input checkbox w-full">
               <IonLabel color="medium">
                 Local Delivery <br />
@@ -80,8 +80,15 @@ export default function ShippingZones({ dismiss }: Props) {
                   color="medium"
                   className="text-xs font-normal ion-text-wrap"
                 >
-                  Choose where you ship and how much you charge for shipping at
-                  checkout.
+                  Deliver orders directly to local customers.{" "}
+                  <IonRouterLink
+                    onClick={async () => {
+                      // TODO: Add correct link to help guide
+                      await Browser.open({ url: "https://elvisduru.com" });
+                    }}
+                  >
+                    Learn more
+                  </IonRouterLink>
                 </IonNote>
               </IonLabel>
             </IonItem>
@@ -105,7 +112,7 @@ export default function ShippingZones({ dismiss }: Props) {
             >
               <IonIcon slot="start" icon={add} /> Add Delivery Zone
             </IonButton>
-          </div>
+          </div> */}
           <IonItemGroup className="mt-4">
             <IonItem lines="none" className="input checkbox w-full">
               <IonLabel color="medium">
