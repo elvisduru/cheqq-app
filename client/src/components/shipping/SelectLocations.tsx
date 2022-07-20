@@ -45,12 +45,66 @@ export default function SelectLocations({ dismiss }: Props) {
 
   const accordionGroup = useRef<null | HTMLIonAccordionGroupElement>(null);
 
+  const handleSelection = useCallback(
+    (selected: string, type: string = "state", stateId?: number) => {
+      if (type === "country") {
+        // check if country is already selected and remove it
+        const index = selectedLocations.findIndex(
+          (location) =>
+            location.iso2 === selected && location.type === "country"
+        );
+        if (index > -1) {
+          setSelectedLocations(
+            selectedLocations.filter((loc) => loc.iso2 !== selected)
+          );
+        } else {
+          const states =
+            locations
+              ?.find((location) => location.iso2 === selected)
+              ?.states.map((state) => {
+                return {
+                  type: "state",
+                  iso2: selected,
+                  name: state.name,
+                  stateId: state.id,
+                };
+              })
+              .filter((state) => {
+                return !selectedLocations.some(
+                  (loc) =>
+                    loc.name === state.name && loc.stateId === state.stateId
+                );
+              }) ?? [];
+
+          setSelectedLocations([
+            ...selectedLocations,
+            ...states!,
+            { type: "country", iso2: selected },
+          ]);
+        }
+      } else {
+        // check if state is already selected and remove it
+        const index = selectedLocations.findIndex(
+          (location) => location.name === selected
+        );
+        if (index > -1) {
+          setSelectedLocations(selectedLocations.filter((_, i) => i !== index));
+        } else {
+          setSelectedLocations([
+            ...selectedLocations,
+            { type: "state", name: selected, stateId },
+          ]);
+        }
+      }
+    },
+    [selectedLocations, locations]
+  );
+
   useEffect(() => {
     // get all checkboxes with the class accordion-checkbox
     const checkboxes = document.querySelectorAll(".accordion-checkbox");
     const handlePropagation = (e: Event) => {
       e.stopPropagation();
-      console.log("checkbox clicked");
       handleSelection((e.target as HTMLInputElement).value, "country");
     };
     // loop through all checkboxes and add the event listener
@@ -62,7 +116,7 @@ export default function SelectLocations({ dismiss }: Props) {
         checkbox.removeEventListener("click", handlePropagation);
       });
     };
-  });
+  }, [handleSelection]);
 
   const filteredLocations = useMemo(() => {
     if (filtered) {
@@ -127,61 +181,6 @@ export default function SelectLocations({ dismiss }: Props) {
       });
   }, [searchString, filtered]);
 
-  const handleSelection = useCallback(
-    (selected: string, type: string = "state", stateId?: number) => {
-      if (type === "country") {
-        // check if country is already selected and remove it
-        const index = selectedLocations.findIndex(
-          (location) =>
-            location.iso2 === selected && location.type === "country"
-        );
-        if (index > -1) {
-          setSelectedLocations(
-            selectedLocations.filter((loc) => loc.iso2 !== selected)
-          );
-        } else {
-          const states =
-            locations
-              ?.find((location) => location.iso2 === selected)
-              ?.states.map((state) => {
-                return {
-                  type: "state",
-                  iso2: selected,
-                  name: state.name,
-                  stateId: state.id,
-                };
-              })
-              .filter((state) => {
-                return !selectedLocations.some(
-                  (loc) =>
-                    loc.name === state.name && loc.stateId === state.stateId
-                );
-              }) ?? [];
-
-          setSelectedLocations([
-            ...selectedLocations,
-            ...states!,
-            { type: "country", iso2: selected },
-          ]);
-        }
-      } else {
-        // check if state is already selected and remove it
-        const index = selectedLocations.findIndex(
-          (location) => location.name === selected
-        );
-        if (index > -1) {
-          setSelectedLocations(selectedLocations.filter((_, i) => i !== index));
-        } else {
-          setSelectedLocations([
-            ...selectedLocations,
-            { type: "state", name: selected, stateId },
-          ]);
-        }
-      }
-    },
-    [selectedLocations]
-  );
-
   if (isLoading) {
     return <IonLoading isOpen={true} translucent />;
   }
@@ -204,21 +203,24 @@ export default function SelectLocations({ dismiss }: Props) {
               <IonIcon slot="icon-only" icon={close} />
             </IonButton>
           </IonButtons>
-          <IonButtons slot="end">
-            <IonButton
-              color="dark"
-              onClick={() => {
-                setFiltered(!filtered);
-              }}
-            >
-              <IonIcon
-                slot="icon-only"
-                color={filtered ? "primary" : ""}
-                icon={filter}
-              />{" "}
-              &nbsp; <IonText color={filtered ? "primary" : ""}>Filter</IonText>
-            </IonButton>
-          </IonButtons>
+          {selectedLocations.length ? (
+            <IonButtons slot="end">
+              <IonButton
+                color="dark"
+                onClick={() => {
+                  setFiltered(!filtered);
+                }}
+              >
+                <IonIcon
+                  slot="icon-only"
+                  color={filtered ? "primary" : ""}
+                  icon={filter}
+                />{" "}
+                &nbsp;{" "}
+                <IonText color={filtered ? "primary" : ""}>Filter</IonText>
+              </IonButton>
+            </IonButtons>
+          ) : null}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding-vertical">
