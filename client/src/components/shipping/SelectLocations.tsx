@@ -21,6 +21,7 @@ import { close, filter } from "ionicons/icons";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import useCountries from "../../hooks/queries/useCountries";
+import { CountryStates } from "../../utils/types";
 
 polyfillCountryFlagEmojis();
 
@@ -28,72 +29,58 @@ type Props = {
   dismiss: () => void;
 };
 
-type SelectedLocation = {
-  type: string;
-  iso2?: string;
-  name?: string;
-  stateId?: number;
-};
-
 export default function SelectLocations({ dismiss }: Props) {
   const { data: locations, isLoading, isError } = useCountries();
-  const [selectedLocations, setSelectedLocations] = useState<
-    SelectedLocation[]
-  >([]);
+  const [selectedLocations, setSelectedLocations] = useState<CountryStates[]>(
+    []
+  );
   const [searchString, setSearchString] = useState("");
   const [filtered, setFiltered] = useState<boolean>(false);
 
   const accordionGroup = useRef<null | HTMLIonAccordionGroupElement>(null);
 
   const handleSelection = useCallback(
-    (selected: string, type: string = "state", stateId?: number) => {
-      if (type === "country") {
-        // check if country is already selected and remove it
-        const index = selectedLocations.findIndex(
-          (location) =>
-            location.iso2 === selected && location.type === "country"
-        );
-        if (index > -1) {
-          setSelectedLocations(
-            selectedLocations.filter((loc) => loc.iso2 !== selected)
-          );
-        } else {
-          const states =
-            locations
-              ?.find((location) => location.iso2 === selected)
-              ?.states.map((state) => {
-                return {
-                  type: "state",
-                  iso2: selected,
-                  name: state.name,
-                  stateId: state.id,
-                };
-              })
-              .filter((state) => {
-                return !selectedLocations.some(
-                  (loc) =>
-                    loc.name === state.name && loc.stateId === state.stateId
-                );
-              }) ?? [];
-
-          setSelectedLocations([
-            ...selectedLocations,
-            ...states!,
-            { type: "country", iso2: selected },
+    (location: CountryStates, state?: CountryStates["states"][0]) => {
+      const index = selectedLocations.findIndex(
+        (loc) => loc.iso2 === location.iso2
+      );
+      if (state) {
+        if (index === -1) {
+          setSelectedLocations((prev) => [
+            ...prev,
+            { ...location, states: [state] },
           ]);
+        } else {
+          // check if state is already selected and remove it
+          const foundState = selectedLocations[index].states.find(
+            (s) => s.id === state.id
+          );
+          if (foundState) {
+            setSelectedLocations((prev) => {
+              const newLocations = [...prev];
+              newLocations[index].states = newLocations[index].states.filter(
+                (s) => s.id !== state.id
+              );
+              // if no states left, remove country
+              if (newLocations[index].states.length === 0) {
+                newLocations.splice(index, 1);
+              }
+              return newLocations;
+            });
+          } else {
+            setSelectedLocations((prev) => {
+              const newLocations = [...prev];
+              const oldStates = newLocations[index].states;
+              newLocations[index].states = [...oldStates, state];
+              return newLocations;
+            });
+          }
         }
       } else {
-        // check if state is already selected and remove it
-        const index = selectedLocations.findIndex(
-          (location) => location.name === selected
-        );
         if (index > -1) {
           setSelectedLocations(selectedLocations.filter((_, i) => i !== index));
         } else {
-          setSelectedLocations([
-            ...selectedLocations,
-            { type: "state", name: selected, stateId },
-          ]);
+          setSelectedLocations([...selectedLocations, location]);
         }
       }
     },
@@ -101,51 +88,38 @@ export default function SelectLocations({ dismiss }: Props) {
   );
 
   useEffect(() => {
-    // get all checkboxes with the class accordion-checkbox
-    const checkboxes = document.querySelectorAll(".accordion-checkbox");
-    const handlePropagation = (e: Event) => {
-      e.stopPropagation();
-      handleSelection((e.target as HTMLInputElement).value, "country");
-    };
-    // loop through all checkboxes and add the event listener
-    checkboxes.forEach((checkbox) => {
-      checkbox.addEventListener("click", handlePropagation);
-    });
-    return () => {
+    if (locations) {
+      // get all checkboxes with the class accordion-checkbox
+      const checkboxes = document.querySelectorAll(".accordion-checkbox");
+      const handlePropagation = (e: Event) => {
+        e.stopPropagation();
+        // fetch locations for the selected country
+        const location = locations.find(
+          (loc) => loc.iso2 === (e.target as HTMLInputElement).value
+        );
+        handleSelection(location!);
+      };
+      // loop through all checkboxes and add the event listener
       checkboxes.forEach((checkbox) => {
-        checkbox.removeEventListener("click", handlePropagation);
+        checkbox.addEventListener("click", handlePropagation);
       });
-    };
-  }, [handleSelection]);
+      return () => {
+        checkboxes.forEach((checkbox) => {
+          checkbox.removeEventListener("click", handlePropagation);
+        });
+      };
+    }
+  }, [handleSelection, locations]);
+
+  useEffect(() => {
+    if (!selectedLocations.length) {
+      setFiltered(false);
+    }
+  }, [selectedLocations.length]);
 
   const filteredLocations = useMemo(() => {
     if (filtered) {
-      return locations
-        ?.filter((location) => {
-          //return selected locations
-          return selectedLocations.some(
-            (selectedLocation) =>
-              selectedLocation.iso2 === location.iso2 ||
-              location.states.some(
-                (state) =>
-                  selectedLocation.name === state.name &&
-                  selectedLocation.stateId === state.id
-              )
-          );
-        })
-        .map((location) => {
-          const filteredStates = location.states.filter((state) =>
-            selectedLocations.some(
-              (selectedLocation) =>
-                selectedLocation.name === state.name &&
-                selectedLocation.stateId === state.id
-            )
-          );
-          return {
-            ...location,
-            states: filteredStates.length ? filteredStates : location.states,
-          };
-        });
+      return selectedLocations;
     }
     const toggleAccordion = (value: string) => {
       if (!accordionGroup.current) return;
@@ -246,7 +220,7 @@ export default function SelectLocations({ dismiss }: Props) {
                     slot="start"
                     className="accordion-checkbox mr-3"
                     onClick={() => {
-                      handleSelection(location.iso2, "country");
+                      handleSelection(location);
                     }}
                     checked={selectedLocations.some(
                       (loc) => loc.iso2 === location.iso2
@@ -257,6 +231,15 @@ export default function SelectLocations({ dismiss }: Props) {
                     <div className="flex items-center">
                       <span className="font-sans mr-2">{location.emoji}</span>
                       <span>{location.name}</span>
+
+                      {location.states.length ? (
+                        <span className="ml-auto text-gray-500">
+                          {selectedLocations.find(
+                            (loc) => loc.iso2 === location.iso2
+                          )?.states.length ?? 0}{" "}
+                          of {location.states.length}
+                        </span>
+                      ) : null}
                     </div>
                   </IonLabel>
                 </IonItem>
@@ -265,11 +248,10 @@ export default function SelectLocations({ dismiss }: Props) {
                     <IonItem key={state.id}>
                       <IonCheckbox
                         onClick={() => {
-                          handleSelection(state.name, "state", state.id);
+                          handleSelection(location, state);
                         }}
-                        checked={selectedLocations.some(
-                          (loc) =>
-                            loc.name === state.name && loc.stateId === state.id
+                        checked={selectedLocations.some((loc) =>
+                          loc.states.some((s) => s.id === state.id)
                         )}
                         slot="start"
                         className="mr-3"
