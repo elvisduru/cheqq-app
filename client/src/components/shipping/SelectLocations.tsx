@@ -273,7 +273,7 @@ export default function SelectLocations({ dismiss }: Props) {
             expand="block"
             className="drop-shadow"
           >
-            Continue ({selectedLocations.length} selected)
+            Continue
           </IonButton>
         </div>
       </IonContent>
