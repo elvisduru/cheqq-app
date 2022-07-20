@@ -92,3 +92,41 @@ export type Video = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+export type CountryStates = {
+  name: string;
+  iso3: string;
+  iso2: string;
+  numeric_code: string;
+  phone_code: string;
+  capital: string;
+  currency: string;
+  currency_name: string;
+  currency_symbol: string;
+  tld: string;
+  native: string;
+  region: string;
+  subregion: string;
+  timezones: [
+    {
+      zoneName: string;
+      gmtOffset: number;
+      gmtOffsetName: string;
+      abbreviation: string;
+      tzName: string;
+    }
+  ];
+  translations: { [x: string]: string };
+  latitude: string;
+  longitude: string;
+  emoji: string;
+  emojiU: string;
+  states: {
+    id: number;
+    name: string;
+    state_code: string;
+    latitude: string;
+    longitude: string;
+    type: string | null;
+  }[];
+};

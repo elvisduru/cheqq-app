@@ -15,7 +15,6 @@ import {
   shirtOutline,
   sparklesOutline,
 } from "ionicons/icons";
-import { LatLng } from "use-places-autocomplete";
 import { Image, User } from "./utils/types";
 
 export const uploadFiles = async (

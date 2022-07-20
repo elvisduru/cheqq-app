@@ -187,6 +187,10 @@ ion-list.bg-transparent {
   }
 }
 
+.accordion-header ion-checkbox {
+  --background: var(--ion-color-step-50);
+}
+
 // Circular progress bar
 .CircularProgressbar {
   height: 45px;
