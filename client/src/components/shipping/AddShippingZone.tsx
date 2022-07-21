@@ -6,15 +6,25 @@ import {
   IonIcon,
   IonInput,
   IonItem,
+  IonItemDivider,
+  IonItemGroup,
   IonLabel,
   IonNote,
   IonTitle,
   IonToolbar,
+  useIonActionSheet,
   useIonModal,
 } from "@ionic/react";
-import { add, close } from "ionicons/icons";
+import {
+  add,
+  close,
+  earthOutline,
+  ellipseSharp,
+  ellipsisHorizontal,
+} from "ionicons/icons";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { CountryStates } from "../../utils/types";
 import withSuspense from "../hoc/withSuspense";
 
 const SelectLocations = withSuspense(
@@ -25,6 +35,12 @@ type Props = {
   dismiss: () => void;
 };
 
+export type LocationFormData = {
+  name: string;
+  locations: CountryStates[];
+  rates: { [x: string]: any }[];
+};
+
 export default function AddShippingZone({ dismiss }: Props) {
   const {
     control,
@@ -32,9 +48,13 @@ export default function AddShippingZone({ dismiss }: Props) {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<LocationFormData>({
     mode: "onBlur",
   });
+
+  const locations = watch("locations");
+  const rates = watch("rates");
+
   const onSubmit = (data: any) => console.log(data);
   const onError = (error: any) => console.log(error);
 
@@ -43,7 +63,10 @@ export default function AddShippingZone({ dismiss }: Props) {
       dismissModal();
     },
     setValue,
+    locations,
   });
+
+  const [presentSheet] = useIonActionSheet();
 
   return (
     <>
@@ -90,21 +113,100 @@ export default function AddShippingZone({ dismiss }: Props) {
             <IonNote slot="helper">Enter a name for this zone.</IonNote>
             <IonNote slot="error">{errors.name?.message}</IonNote>
           </IonItem>
-          <div
-            className="border rounded-xl p-1 mt-4"
-            style={{ borderStyle: "dashed" }}
-          >
-            <IonButton
-              fill="clear"
-              expand="block"
-              color="medium"
-              onClick={() => {
-                present();
-              }}
-            >
-              <IonIcon slot="start" icon={add} /> Add countries and regions
-            </IonButton>
-          </div>
+          <IonItemGroup className="mt-8">
+            <IonItemDivider className="pl-0">
+              <IonLabel color="medium">Locations</IonLabel>
+            </IonItemDivider>
+            {locations?.length ? (
+              <IonItem lines="none" className="px-0 mt-2">
+                <IonIcon slot="start" icon={earthOutline} />
+                <IonLabel className="ion-text-wrap">
+                  <span className="line-clamp-2">
+                    {locations
+                      .map(
+                        (location) =>
+                          location.name +
+                          " " +
+                          (location.states.length
+                            ? ` (${location.states.length})`
+                            : "")
+                      )
+                      .join(", ")}
+                  </span>
+                </IonLabel>
+                <IonButton
+                  onClick={() => {
+                    presentSheet({
+                      buttons: [
+                        {
+                          text: "Delete",
+                          role: "destructive",
+                          handler() {
+                            setValue("locations", []);
+                          },
+                        },
+                        {
+                          text: "Edit Locations",
+                          handler() {
+                            present();
+                          },
+                        },
+                        {
+                          text: "Cancel",
+                          role: "cancel",
+                        },
+                      ],
+                    });
+                  }}
+                  slot="end"
+                  fill="clear"
+                  color="dark"
+                >
+                  <IonIcon icon={ellipsisHorizontal} />
+                </IonButton>
+              </IonItem>
+            ) : (
+              <div
+                className="border rounded-xl p-1 mt-4"
+                style={{ borderStyle: "dashed" }}
+              >
+                <IonButton
+                  fill="clear"
+                  expand="block"
+                  color="medium"
+                  onClick={() => {
+                    present();
+                  }}
+                >
+                  <IonIcon slot="start" icon={add} /> Add countries and regions
+                </IonButton>
+              </div>
+            )}
+          </IonItemGroup>
+          <IonItemGroup className="mt-8">
+            <IonItemDivider className="pl-0">
+              <IonLabel color="medium">Rates</IonLabel>
+            </IonItemDivider>
+            {rates?.length ? (
+              <div>Rates</div>
+            ) : (
+              <div
+                className="border rounded-xl p-1 mt-4"
+                style={{ borderStyle: "dashed" }}
+              >
+                <IonButton
+                  fill="clear"
+                  expand="block"
+                  color="medium"
+                  onClick={() => {
+                    present();
+                  }}
+                >
+                  <IonIcon slot="start" icon={add} /> Add Shipping Rate
+                </IonButton>
+              </div>
+            )}
+          </IonItemGroup>
         </form>
       </IonContent>
     </>

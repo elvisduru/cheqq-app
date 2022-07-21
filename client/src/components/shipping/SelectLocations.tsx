@@ -19,20 +19,28 @@ import {
 import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
 import { close, filter } from "ionicons/icons";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { UseFormSetValue } from "react-hook-form";
 import { Virtuoso } from "react-virtuoso";
 import useCountries from "../../hooks/queries/useCountries";
 import { CountryStates } from "../../utils/types";
+import { LocationFormData } from "./AddShippingZone";
 
 polyfillCountryFlagEmojis();
 
 type Props = {
   dismiss: () => void;
+  setValue: UseFormSetValue<LocationFormData>;
+  locations?: CountryStates[];
 };
 
-export default function SelectLocations({ dismiss }: Props) {
+export default function SelectLocations({
+  dismiss,
+  setValue,
+  locations: initialLocations,
+}: Props) {
   const { data: locations, isLoading, isError } = useCountries();
   const [selectedLocations, setSelectedLocations] = useState<CountryStates[]>(
-    []
+    initialLocations || []
   );
   const [searchString, setSearchString] = useState("");
   const [filtered, setFiltered] = useState<boolean>(false);
@@ -116,6 +124,12 @@ export default function SelectLocations({ dismiss }: Props) {
       setFiltered(false);
     }
   }, [selectedLocations.length]);
+
+  useEffect(() => {
+    if (initialLocations) {
+      setFiltered(true);
+    }
+  }, [initialLocations]);
 
   const filteredLocations = useMemo(() => {
     if (filtered) {
@@ -272,6 +286,10 @@ export default function SelectLocations({ dismiss }: Props) {
             disabled={selectedLocations.length === 0}
             expand="block"
             className="drop-shadow"
+            onClick={() => {
+              setValue("locations", selectedLocations);
+              dismiss();
+            }}
           >
             Continue
           </IonButton>
