@@ -202,7 +202,7 @@ export default function AddShippingZone({ dismiss }: Props) {
                     present();
                   }}
                 >
-                  <IonIcon slot="start" icon={add} /> Add Shipping Rate
+                  <IonIcon slot="start" icon={add} /> Add shipping rate
                 </IonButton>
               </div>
             )}

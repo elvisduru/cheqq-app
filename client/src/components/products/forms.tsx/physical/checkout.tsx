@@ -7,6 +7,7 @@ import {
   IonItemGroup,
   IonLabel,
   IonNote,
+  IonRouterLink,
   IonSelect,
   IonSelectOption,
   IonToggle,
@@ -30,6 +31,7 @@ export default function Checkout() {
     formState: { errors },
   } = useFormContext();
   const [redirect, setRedirect] = useState(false);
+  const [flatShipping, setFlatShipping] = useState(false);
 
   // Shipping Zones
   const [present, dismiss] = useIonModal(ShippingZones, {
@@ -65,51 +67,11 @@ export default function Checkout() {
               });
             }}
           >
-            Manage Settings
+            Manage settings
           </IonButton>
         </IonItemDivider>
-        <IonItem lines="none" className="input mt-2 checkbox">
-          <IonLabel>Enable Free Shipping</IonLabel>
-          <Controller
-            control={control}
-            name="isFreeShipping"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <IonToggle
-                slot="end"
-                checked={value}
-                color="primary"
-                onIonChange={(e) => {
-                  onChange(e.detail.checked);
-                }}
-                onIonBlur={onBlur}
-                value={value}
-              />
-            )}
-          />
-        </IonItem>
-        {!watch("isFreeShipping") && (
-          <IonItem className="input mt-2" fill="outline" mode="md">
-            <IonLabel position="floating">Fixed Shipping Rate</IonLabel>
-            <Controller
-              name="fixedShippingRate"
-              control={control}
-              shouldUnregister
-              render={({ field: { onChange, onBlur, value } }) => (
-                <IonInput
-                  value={value}
-                  type="number"
-                  onIonChange={onChange}
-                  onIonBlur={onBlur}
-                />
-              )}
-            />
-            <IonNote slot="helper">
-              Optional. This will override your default shipping rate settings.
-            </IonNote>
-          </IonItem>
-        )}
         <IonItem lines="none" className="input mt-4 checkbox">
-          <IonLabel>Add Shipping Information</IonLabel>
+          <IonLabel>Add shipping information</IonLabel>
           <IonCheckbox
             onIonChange={(e) => {
               toggleShippingInfo();
@@ -254,6 +216,72 @@ export default function Checkout() {
               </>
             )}
           </>
+        )}
+        <IonItem lines="none" className="input mt-2 checkbox">
+          <IonLabel>Enable free shipping</IonLabel>
+          <Controller
+            control={control}
+            name="isFreeShipping"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <IonToggle
+                slot="end"
+                checked={value}
+                color="primary"
+                onIonChange={(e) => {
+                  onChange(e.detail.checked);
+                }}
+                onIonBlur={onBlur}
+                value={value}
+              />
+            )}
+          />
+        </IonItem>
+        <IonItem lines="none" className="input mt-2 checkbox">
+          <IonLabel>Enable flat shipping rate</IonLabel>
+          <IonToggle
+            slot="end"
+            checked={flatShipping}
+            color="primary"
+            onIonChange={(e) => {
+              setFlatShipping(e.detail.checked);
+            }}
+          />
+        </IonItem>
+
+        {flatShipping && (
+          <IonItem className="input mt-2" fill="outline" mode="md">
+            <IonLabel position="floating">Fixed Shipping Rate</IonLabel>
+            <Controller
+              name="fixedShippingRate"
+              control={control}
+              shouldUnregister
+              render={({ field: { onChange, onBlur, value } }) => (
+                <IonInput
+                  value={value}
+                  type="number"
+                  onIonChange={onChange}
+                  onIonBlur={onBlur}
+                />
+              )}
+            />
+            <IonNote slot="helper">
+              Warning. This will override your default{" "}
+              <IonRouterLink
+                onClick={() => {
+                  present({
+                    presentingElement: document.querySelector(
+                      "#new-physical-product"
+                    ) as HTMLElement,
+                    canDismiss: true,
+                    id: "shipping-settings",
+                  });
+                }}
+              >
+                shipping settings
+              </IonRouterLink>
+              .
+            </IonNote>
+          </IonItem>
         )}
       </IonItemGroup>
       {/* TODO: If fulfillment services exist, show select options */}

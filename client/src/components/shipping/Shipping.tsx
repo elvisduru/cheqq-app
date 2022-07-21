@@ -116,7 +116,7 @@ export default function ShippingZones({ dismiss }: Props) {
           <IonItemGroup className="mt-4">
             <IonItem lines="none" className="input checkbox w-full">
               <IonLabel color="medium">
-                Shipping Zones <br />
+                Shipping zones <br />
                 <IonNote
                   color="medium"
                   className="text-xs font-normal ion-text-wrap"
@@ -145,7 +145,7 @@ export default function ShippingZones({ dismiss }: Props) {
                 });
               }}
             >
-              <IonIcon slot="start" icon={add} /> Add Shipping Zone
+              <IonIcon slot="start" icon={add} /> Add shipping zone
             </IonButton>
           </div>
         </div>
