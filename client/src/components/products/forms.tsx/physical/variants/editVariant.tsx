@@ -52,7 +52,7 @@ export default function EditVariant({
     if (enabledTracking) {
       modal.setCurrentBreakpoint(1);
     } else {
-      modal.setCurrentBreakpoint(0.5);
+      modal.setCurrentBreakpoint(0.65);
     }
   }, [enabledTracking]);
 
@@ -78,7 +78,7 @@ export default function EditVariant({
                 dismiss();
               }}
             >
-              Save
+              Done
             </IonButton>
           </IonButtons>
         </IonToolbar>
@@ -242,8 +242,9 @@ export default function EditVariant({
                       message: "Quantity must be greater than 0",
                     },
                     max: {
-                      value: watch("inventoryLevel") || 1,
-                      message: "Warning level must be less than quantity",
+                      value:
+                        watch(`variants.${variantIndex}.inventoryLevel`) || 1,
+                      message: "Warning level can't be greater than quantity",
                     },
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (

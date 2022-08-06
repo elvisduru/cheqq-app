@@ -155,8 +155,8 @@ export default function Variants() {
       setVariantIndex(index);
       present({
         id: "edit-variant",
-        breakpoints: [0, 0.5, 1],
-        initialBreakpoint: variants[index].inventoryTracking ? 1 : 0.5,
+        breakpoints: [0, 0.65, 1],
+        initialBreakpoint: variants[index].inventoryTracking ? 1 : 0.65,
       });
     },
     [variants, present]

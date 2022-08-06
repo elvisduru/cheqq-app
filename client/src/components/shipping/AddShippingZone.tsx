@@ -17,15 +17,17 @@ import {
 } from "@ionic/react";
 import {
   add,
+  cashOutline,
   close,
   earthOutline,
-  ellipseSharp,
   ellipsisHorizontal,
 } from "ionicons/icons";
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useStore } from "../../hooks/useStore";
 import { CountryStates } from "../../utils/types";
 import withSuspense from "../hoc/withSuspense";
+import AddShippingRate from "./AddShippingRate";
 
 const SelectLocations = withSuspense(
   React.lazy(() => import("./SelectLocations"))
@@ -35,29 +37,65 @@ type Props = {
   dismiss: () => void;
 };
 
-export type LocationFormData = {
+export type Rate = {
+  id?: number;
+  shippingZoneId: number;
+  type: "custom" | "carrier";
+  transitTime:
+    | "economy"
+    | "standard"
+    | "express"
+    | "economyInternational"
+    | "standardInternational"
+    | "expressInternational"
+    | "custom";
+  customRateName: string;
+  price: number;
+  rateCondition?: "weight" | "price";
+  rateConditionMin?: number;
+  rateConditionMax?: number;
+  carrier?: string; // TODO: Carrier enum
+  services?: string[];
+  handlingFeePercent?: number;
+  handlingFeeFlat?: number;
+};
+
+export type ShippingZoneData = {
   name: string;
   locations: CountryStates[];
-  rates: { [x: string]: any }[];
+  rates: Rate[];
 };
 
 export default function AddShippingZone({ dismiss }: Props) {
+  const user = useStore((store) => store.user);
+  const selectedStore = useStore((store) => store.selectedStore);
   const {
     control,
     handleSubmit,
     setValue,
     watch,
     formState: { errors },
-  } = useForm<LocationFormData>({
+  } = useForm<ShippingZoneData>({
     mode: "onBlur",
+    defaultValues: {
+      name: "",
+      locations: [],
+      rates: [],
+    },
   });
+
+  const { update, append } = useFieldArray({ control, name: "rates" });
 
   const locations = watch("locations");
   const rates = watch("rates");
 
+  const domestic =
+    locations.length === 1 &&
+    locations?.[0]?.iso2 === user?.stores[selectedStore]?.country;
   const onSubmit = (data: any) => console.log(data);
   const onError = (error: any) => console.log(error);
 
+  const [rateIndex, setRateIndex] = useState<number>();
   const [present, dismissModal] = useIonModal(SelectLocations, {
     dismiss: () => {
       dismissModal();
@@ -66,7 +104,55 @@ export default function AddShippingZone({ dismiss }: Props) {
     locations,
   });
 
+  const handleRateForm = (rate: Rate, index?: number) => {
+    if (isNaN(index!)) {
+      append(rate);
+    } else {
+      update(index!, rate);
+    }
+  };
+
+  const [presentRate, dismissRate] = useIonModal(AddShippingRate, {
+    dismiss: () => {
+      dismissRate();
+    },
+    rate: rates[rateIndex!],
+    index: rateIndex,
+    handleRateForm,
+    domestic,
+  });
+
   const [presentSheet] = useIonActionSheet();
+
+  // TODO: Write blog post about transition times. Mention this in the blog post.
+  // Update transit time for each rate when location lenght changes
+  useEffect(() => {
+    if (domestic) {
+      rates.forEach((rate, index) => {
+        if (rate.transitTime.includes("International")) {
+          update(index, {
+            ...rate,
+            transitTime: `${rate.transitTime.replace(
+              "International",
+              ""
+            )}` as any,
+          });
+        }
+      });
+    } else {
+      rates.forEach((rate, index) => {
+        if (
+          rate.transitTime !== "custom" &&
+          !rate.transitTime.includes("International")
+        ) {
+          update(index, {
+            ...rate,
+            transitTime: `${rate.transitTime}International` as any,
+          });
+        }
+      });
+    }
+  }, [domestic]);
 
   return (
     <>
@@ -113,7 +199,7 @@ export default function AddShippingZone({ dismiss }: Props) {
             <IonNote slot="helper">Enter a name for this zone.</IonNote>
             <IonNote slot="error">{errors.name?.message}</IonNote>
           </IonItem>
-          <IonItemGroup className="mt-8">
+          <IonItemGroup className="mt-4">
             <IonItemDivider className="pl-0">
               <IonLabel color="medium">Locations</IonLabel>
             </IonItemDivider>
@@ -137,6 +223,7 @@ export default function AddShippingZone({ dismiss }: Props) {
                 <IonButton
                   onClick={() => {
                     presentSheet({
+                      translucent: true,
                       buttons: [
                         {
                           text: "Delete",
@@ -183,29 +270,143 @@ export default function AddShippingZone({ dismiss }: Props) {
               </div>
             )}
           </IonItemGroup>
-          <IonItemGroup className="mt-8">
+          <IonItemGroup className="mt-4">
             <IonItemDivider className="pl-0">
               <IonLabel color="medium">Rates</IonLabel>
             </IonItemDivider>
-            {rates?.length ? (
-              <div>Rates</div>
-            ) : (
-              <div
-                className="border rounded-xl p-1 mt-4"
-                style={{ borderStyle: "dashed" }}
+            <div>
+              {rates.map((rate, index) => {
+                let time = "";
+                switch (rate.transitTime) {
+                  case "economy":
+                    time = "5 to 8 business days";
+                    break;
+                  case "standard":
+                    time = "3 to 4 business days";
+                    break;
+                  case "express":
+                    time = "1 to 2 business days";
+                    break;
+                  case "economyInternational":
+                    time = "6 to 18 business days";
+                    break;
+                  case "standardInternational":
+                    time = "6 to 12 business days";
+                    break;
+                  case "expressInternational":
+                    time = "1 to 5 business days";
+                    break;
+                  default:
+                    time = "";
+                    break;
+                }
+
+                let transitName = "";
+                switch (rate.transitTime) {
+                  case "economyInternational":
+                    transitName = "Economy International";
+                    break;
+                  case "standardInternational":
+                    transitName = "Standard International";
+                    break;
+                  case "expressInternational":
+                    transitName = "Express International";
+                    break;
+                  default:
+                    transitName = rate.transitTime;
+                    break;
+                }
+                return (
+                  <IonItem key={index} lines="none" className="px-0 mt-2">
+                    <IonIcon slot="start" icon={cashOutline} />
+                    <IonLabel>
+                      <div>
+                        <div className="flex justify-between items-center">
+                          <span className="capitalize truncate">
+                            {rate.transitTime === "custom"
+                              ? rate.customRateName
+                              : transitName}
+                          </span>
+                          <span className="ml-2">
+                            {rate.price == 0
+                              ? "Free"
+                              : new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency:
+                                    user?.stores[selectedStore].currency,
+                                }).format(rate.price)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm font-light text-gray-300">
+                          <span className="truncate">
+                            {time || "No transit time"}
+                          </span>
+                          <span className="ml-2">
+                            {rate.rateCondition === "weight"
+                              ? `${rate.rateConditionMin} — ${
+                                  rate.rateConditionMax || "∞"
+                                } kg`
+                              : rate.rateCondition === "price"
+                              ? `${new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency:
+                                    user?.stores[selectedStore].currency,
+                                }).format(rate.rateConditionMin!)} — ${
+                                  (rate.rateConditionMax &&
+                                    Number(rate.rateConditionMax).toFixed(2)) ||
+                                  "∞"
+                                }`
+                              : null}
+                          </span>
+                        </div>
+                      </div>
+                    </IonLabel>
+                    <IonButton
+                      slot="end"
+                      fill="clear"
+                      color="dark"
+                      onClick={() => {
+                        setRateIndex(index);
+                        presentRate({
+                          id: "add-shipping-rate",
+                          breakpoints: [0, 0.6, 1],
+                          initialBreakpoint: rates[rateIndex!]?.rateCondition
+                            ? 1
+                            : 0.6,
+                          onDidDismiss() {
+                            setRateIndex(undefined);
+                          },
+                        });
+                      }}
+                    >
+                      <IonIcon icon={ellipsisHorizontal} />
+                    </IonButton>
+                  </IonItem>
+                );
+              })}
+            </div>
+            <div
+              className="border rounded-xl p-1 mt-4"
+              style={{ borderStyle: "dashed" }}
+            >
+              <IonButton
+                fill="clear"
+                expand="block"
+                color="medium"
+                onClick={() => {
+                  presentRate({
+                    id: "add-shipping-rate",
+                    breakpoints: [0, 0.6, 1],
+                    initialBreakpoint: 0.6,
+                    onDidDismiss() {
+                      setRateIndex(undefined);
+                    },
+                  });
+                }}
               >
-                <IonButton
-                  fill="clear"
-                  expand="block"
-                  color="medium"
-                  onClick={() => {
-                    present();
-                  }}
-                >
-                  <IonIcon slot="start" icon={add} /> Add shipping rate
-                </IonButton>
-              </div>
-            )}
+                <IonIcon slot="start" icon={add} /> Add shipping rate
+              </IonButton>
+            </div>
           </IonItemGroup>
         </form>
       </IonContent>

@@ -2,6 +2,7 @@ import { App as NativeApp } from "@capacitor/app";
 import {
   BackButtonEvent,
   IonApp,
+  IonContent,
   IonRouterOutlet,
   IonSplitPane,
   setupIonicReact,
@@ -31,13 +32,14 @@ import "./styles/global.scss";
 
 import withSuspense from "./components/hoc/withSuspense";
 import StoreRouterOutlet from "./pages/store";
+import SideMenu from "./components/SideMenu";
 
 const AppUrlListener = withSuspense(
   React.lazy(() => import("./components/AppUrlListener"))
 );
-const SideMenu = withSuspense<any>(
-  React.lazy(() => import("./components/SideMenu"))
-);
+// const SideMenu = withSuspense<any>(
+//   React.lazy(() => import("./components/SideMenu"))
+// );
 const New = withSuspense(React.lazy(() => import("./pages/auth/new")));
 
 const Tabs = withSuspense(React.lazy(() => import("./components/Tabs")));
@@ -68,7 +70,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <>
+    <IonContent>
       <AppUrlListener />
       <IonSplitPane contentId="main">
         <SideMenu contentId="main" />
@@ -96,7 +98,7 @@ const App: React.FC = () => {
           </Route>
         </IonRouterOutlet>
       </IonSplitPane>
-    </>
+    </IonContent>
   );
 };
 

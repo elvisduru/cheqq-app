@@ -34,6 +34,7 @@ type Props = {
   control: any;
 };
 
+// TODO: 1.Camera and 2.Upload Media buttons instead of just Upload
 export default function MediaUploader({
   name,
   control,

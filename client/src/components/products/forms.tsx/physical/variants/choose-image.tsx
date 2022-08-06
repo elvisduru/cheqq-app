@@ -59,7 +59,7 @@ export default function ChooseImage({
                   dismiss();
                 }}
               >
-                Save
+                Done
               </IonButton>
             </IonButtons>
           )}

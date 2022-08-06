@@ -23,6 +23,7 @@ type User = Prisma.UserGetPayload<{
         name: true;
         tag: true;
         logo: true;
+        country: true;
       };
     };
   };
@@ -48,6 +49,7 @@ export class UsersService {
             currency: true,
             address: true,
             addressCoordinates: true,
+            country: true,
           },
         },
       },
@@ -68,6 +70,7 @@ export class UsersService {
             currency: true,
             address: true,
             addressCoordinates: true,
+            country: true,
           },
         },
       },
@@ -86,6 +89,7 @@ export class UsersService {
             currency: true,
             address: true,
             addressCoordinates: true,
+            country: true,
           },
         },
       },
@@ -108,6 +112,7 @@ export class UsersService {
             currency: true,
             address: true,
             addressCoordinates: true,
+            country: true,
           },
         },
       },

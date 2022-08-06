@@ -23,15 +23,17 @@ import { UseFormSetValue } from "react-hook-form";
 import { Virtuoso } from "react-virtuoso";
 import useCountries from "../../hooks/queries/useCountries";
 import { CountryStates } from "../../utils/types";
-import { LocationFormData } from "./AddShippingZone";
+import { ShippingZoneData } from "./AddShippingZone";
 
 polyfillCountryFlagEmojis();
 
 type Props = {
   dismiss: () => void;
-  setValue: UseFormSetValue<LocationFormData>;
+  setValue: UseFormSetValue<ShippingZoneData>;
   locations?: CountryStates[];
 };
+
+// FIXME: When filtered in on. Total count is not correct.
 
 export default function SelectLocations({
   dismiss,
@@ -126,10 +128,10 @@ export default function SelectLocations({
   }, [selectedLocations.length]);
 
   useEffect(() => {
-    if (initialLocations) {
+    if (initialLocations?.length) {
       setFiltered(true);
     }
-  }, [initialLocations]);
+  }, [initialLocations?.length]);
 
   const filteredLocations = useMemo(() => {
     if (filtered) {
@@ -205,7 +207,7 @@ export default function SelectLocations({
                   icon={filter}
                 />{" "}
                 &nbsp;{" "}
-                <IonText color={filtered ? "primary" : ""}>Filter</IonText>
+                {/* <IonText color={filtered ? "primary" : ""}>Filter</IonText> */}
               </IonButton>
             </IonButtons>
           ) : null}

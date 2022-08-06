@@ -31,6 +31,7 @@ export type User = {
     currency: string;
     address: string;
     addressCoordinates: { lat: number; lng: number };
+    country: string;
   }[];
   prefs: JsonObject;
   createdAt: Date;

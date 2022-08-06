@@ -328,7 +328,7 @@ export default function General() {
                   },
                   max: {
                     value: watch("inventoryLevel") || 1,
-                    message: "Warning level must be less than quantity",
+                    message: "Warning level can't be greater than quantity",
                   },
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (

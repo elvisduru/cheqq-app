@@ -21,12 +21,13 @@ import React from "react";
 import { Route, useLocation } from "react-router-dom";
 import { useStore } from "../hooks/useStore";
 import ProductsRouterOutlet from "../pages/products";
+import ChooseProduct from "./ChooseProduct";
 
 import withAuth from "./hoc/withAuth";
 import withSuspense from "./hoc/withSuspense";
 import "./Tabs.scss";
 
-const ChooseProduct = withSuspense(React.lazy(() => import("./ChooseProduct")));
+// const ChooseProduct = withSuspense(React.lazy(() => import("./ChooseProduct")));
 const Home = withSuspense(React.lazy(() => import("../pages/home")));
 const Messenger = withSuspense(React.lazy(() => import("../pages/messenger")));
 const Notifications = withSuspense(
@@ -83,7 +84,7 @@ function Tabs() {
         </Route>
       </IonRouterOutlet>
       <IonTabBar
-        className={hideTabBar ? "hidden" : ""}
+        className={`${hideTabBar ? "hidden" : ""} lg:px-36`}
         slot="bottom"
         translucent
       >

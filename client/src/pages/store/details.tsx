@@ -475,6 +475,8 @@ export default function Details({ progress, user }: Props) {
                   phone: `+${values.phone}`,
                 });
 
+                // TODO: Initialize store with defaults, e.g "Domestic" shipping zone
+
                 window.location.href = "/";
 
                 toggle();

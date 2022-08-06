@@ -107,8 +107,8 @@ model ShippingLocation {
 
 model ShippingRate {
   id                 Int              @id @default(autoincrement())
-  globalZone         ShippingZone     @relation(fields: [globalZoneId], references: [id], onDelete: Cascade)
-  globalZoneId       Int
+  shippingZone       ShippingZone     @relation(fields: [shippingZoneId], references: [id], onDelete: Cascade)
+  shippingZoneId     Int
   type               ShippingRateType
   // Custom rate fields
   transitTime        TransitTime
@@ -203,7 +203,6 @@ model Product {
   subscriptionPrice      Float
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
-
 }
 
 model ProductOption {
@@ -477,6 +476,9 @@ enum TransitTime {
   economy
   standard
   express
+  economyInternational
+  standardInternational
+  expressInternational
   custom
 }
 
@@ -500,8 +502,8 @@ enum Carrier {
 }
 
 enum RateCondition {
-  itemWeight
-  orderPrice
+  weight
+  price
 }
 
 // enum ReturnReason {
