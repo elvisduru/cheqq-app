@@ -1,4 +1,5 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+import axios from 'axios';
 
 const prisma = new PrismaClient();
 
@@ -194,7 +195,16 @@ async function main() {
       options: ['Miscellaneous'],
     },
   ];
-  await Promise.all(
+
+  // Fetch countries, states and cities from API
+  const { data: countries } = await axios.get(
+    'https://raw.githubusercontent.com/elvisduru/countries-states-cities-database/master/countries.json',
+  );
+  const { data: states } = await axios.get(
+    'https://raw.githubusercontent.com/elvisduru/countries-states-cities-database/master/states.json',
+  );
+
+  const categoriesSeed = Promise.all(
     categories.map(async (category) => {
       await prisma.category.create({
         data: {
@@ -210,6 +220,24 @@ async function main() {
       });
     }),
   );
+
+  await Promise.all([
+    categoriesSeed,
+    await prisma.country.createMany({
+      data: countries.map((country: any) => {
+        country.latitude = parseFloat(country.latitude);
+        country.longitude = parseFloat(country.longitude);
+        return country;
+      }),
+    }),
+    await prisma.state.createMany({
+      data: states.map((state: any) => {
+        state.latitude = parseFloat(state.latitude);
+        state.longitude = parseFloat(state.longitude);
+        return state;
+      }),
+    }),
+  ]);
 }
 
 main()

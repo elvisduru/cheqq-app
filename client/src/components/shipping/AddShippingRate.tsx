@@ -20,7 +20,7 @@ import { close } from "ionicons/icons";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import useToggle from "../../hooks/useToggle";
-import { Rate } from "./AddShippingZone";
+import { Rate } from "../../utils/types";
 
 type Props = {
   dismiss: () => void;
@@ -76,6 +76,10 @@ export default function AddShippingRate({
       if (!data.rateConditionMax) delete data.rateConditionMax;
       if (!data.rateConditionMin && !data.rateConditionMax)
         delete data.rateCondition;
+      // Convert string values to number
+      if (data.rateConditionMin) data.rateConditionMin = +data.rateConditionMin;
+      if (data.rateConditionMax) data.rateConditionMax = +data.rateConditionMax;
+      data.price = +data.price;
       handleRateForm(data, index);
       dismiss();
     } catch (e) {

@@ -25,6 +25,7 @@ export type User = {
   passwordUpdatedAt: Date | null;
   plan: Plan;
   stores: {
+    id: number;
     name: string;
     tag: string;
     logo: string;
@@ -130,4 +131,34 @@ export type CountryStates = {
     longitude: string;
     type: string | null;
   }[];
+};
+
+export type Rate = {
+  id?: number;
+  shippingZoneId: number;
+  type: "custom" | "carrier";
+  transitTime:
+    | "economy"
+    | "standard"
+    | "express"
+    | "economyInternational"
+    | "standardInternational"
+    | "expressInternational"
+    | "custom";
+  customRateName: string;
+  price: number;
+  rateCondition?: "weight" | "price";
+  rateConditionMin?: number;
+  rateConditionMax?: number;
+  carrier?: string; // TODO: Carrier enum
+  services?: string[];
+  handlingFeePercent?: number;
+  handlingFeeFlat?: number;
+};
+
+export type ShippingZone = {
+  storeId?: number;
+  name: string;
+  locations: CountryStates[];
+  rates: Rate[];
 };

@@ -75,32 +75,78 @@ Table ShippingZone {
   store Store [not null]
   storeId Int [not null]
   name String [not null]
-  regions String[] [not null]
+  locations Location [not null]
   rates ShippingRate [not null]
-  description String
-  price Float [not null, default: 0]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
 }
 
+Table Location {
+  id Int [pk, increment]
+  country Country [not null]
+  countryId Int [not null]
+  states State [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  shippingZone ShippingZone
+  shippingZoneId Int
+}
+
+Table Country {
+  id Int [pk, increment]
+  name String [not null]
+  iso3 String
+  numeric_code String
+  iso2 String
+  phone_code String
+  capital String
+  currency String
+  currency_name String
+  currency_symbol String
+  tld String
+  native String
+  region String
+  subregion String
+  timezones Json[] [not null]
+  translations Json
+  latitude Float
+  longitude Float
+  emoji String
+  emojiU String
+  states State [not null]
+  location Location [not null]
+}
+
+Table State {
+  id Int [pk, increment]
+  name String [not null]
+  country Country [not null]
+  country_id Int [not null]
+  country_code String [not null]
+  country_name String [not null]
+  state_code String [not null]
+  type String
+  latitude Float
+  longitude Float
+  location Location
+  locationId Int
+}
+
 Table ShippingRate {
   id Int [pk, increment]
-  globalZone ShippingZone [not null]
-  globalZoneId Int [not null]
-  type ShippingRateType [not null]
+  shippingZone ShippingZone [not null]
+  shippingZoneId Int [not null]
+  type ShippingRateType [not null, default: 'custom']
   transitTime TransitTime [not null]
   customRateName String
   price Float [not null]
-  minimumWeight Float
-  maximumWeight Float
-  minimumPrice Float
-  maximumPrice Float
+  rateCondition RateCondition
+  rateConditionMin Float
+  rateConditionMax Float
   carrier Carrier
   services String[] [not null]
   handlingFeePercent Float
   handlingFeeFlat Float
-  createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
 }
 
 Table Product {
@@ -413,6 +459,9 @@ Enum TransitTime {
   economy
   standard
   express
+  economyInternational
+  standardInternational
+  expressInternational
   custom
 }
 
@@ -425,6 +474,11 @@ Enum Carrier {
   DHL
   UPS
   USPS
+}
+
+Enum RateCondition {
+  weight
+  price
 }
 
 Enum PriceAdjustmentType {
@@ -475,7 +529,15 @@ Ref: DeliveryZone.storeId > Store.id [delete: Cascade]
 
 Ref: ShippingZone.storeId > Store.id [delete: Cascade]
 
-Ref: ShippingRate.globalZoneId > ShippingZone.id [delete: Cascade]
+Ref: Location.countryId > Country.id
+
+Ref: Location.shippingZoneId > ShippingZone.id
+
+Ref: State.country_id > Country.id [delete: Cascade]
+
+Ref: State.locationId > Location.id
+
+Ref: ShippingRate.shippingZoneId > ShippingZone.id [delete: Cascade]
 
 Ref: Product.storeId > Store.id
 

@@ -15,6 +15,7 @@ import { StoresModule } from './stores/stores.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ImagesModule } from './images/images.module';
 import { ProductsModule } from './products/products.module';
+import { ShippingModule } from './shipping/shipping.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { ProductsModule } from './products/products.module';
     CategoriesModule,
     ImagesModule,
     ProductsModule,
+    ShippingModule,
   ],
   controllers: [AppController],
   providers: [

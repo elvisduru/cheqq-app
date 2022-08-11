@@ -12,7 +12,6 @@ import {
   IonList,
   IonLoading,
   IonSearchbar,
-  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -22,14 +21,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UseFormSetValue } from "react-hook-form";
 import { Virtuoso } from "react-virtuoso";
 import useCountries from "../../hooks/queries/useCountries";
-import { CountryStates } from "../../utils/types";
-import { ShippingZoneData } from "./AddShippingZone";
+import { CountryStates, ShippingZone } from "../../utils/types";
 
 polyfillCountryFlagEmojis();
 
 type Props = {
   dismiss: () => void;
-  setValue: UseFormSetValue<ShippingZoneData>;
+  setValue: UseFormSetValue<ShippingZone>;
   locations?: CountryStates[];
 };
 

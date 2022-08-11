@@ -83,33 +83,73 @@ model DeliveryZone {
 }
 
 model ShippingZone {
-  id          Int                @id @default(autoincrement())
-  store       Store              @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  storeId     Int
-  name        String
-  type        ShippingZoneType
-  locations   ShippingLocation[]
-  rates       ShippingRate[]
-  description String?
-  price       Float              @default(0)
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  id        Int            @id @default(autoincrement())
+  store     Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId   Int
+  name      String
+  locations Location[]
+  rates     ShippingRate[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
-model ShippingLocation {
-  id             Int          @id @default(autoincrement())
-  zip            String?
-  state_iso2     String?
-  country_iso2   String?
-  shippingZone   ShippingZone @relation(fields: [shippingZoneId], references: [id])
-  shippingZoneId Int
+model Location {
+  id             Int           @id @default(autoincrement())
+  country        Country       @relation(fields: [countryId], references: [id])
+  countryId      Int
+  states         State[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  shippingZone   ShippingZone? @relation(fields: [shippingZoneId], references: [id])
+  shippingZoneId Int?
+}
+
+// TODO: Create endpoints for fetching countries, states or both.
+model Country {
+  id              Int        @id @default(autoincrement())
+  name            String
+  iso3            String?
+  numeric_code    String?
+  iso2            String?
+  phone_code      String?
+  capital         String?
+  currency        String?
+  currency_name   String?
+  currency_symbol String?
+  tld             String?
+  native          String?
+  region          String?
+  subregion       String?
+  timezones       Json[]
+  translations    Json?
+  latitude        Float?
+  longitude       Float?
+  emoji           String?
+  emojiU          String?
+  states          State[]
+  location        Location[]
+}
+
+model State {
+  id           Int       @id @default(autoincrement())
+  name         String
+  country      Country   @relation(fields: [country_id], references: [id], onDelete: Cascade)
+  country_id   Int
+  country_code String
+  country_name String
+  state_code   String
+  type         String?
+  latitude     Float?
+  longitude    Float?
+  location     Location? @relation(fields: [locationId], references: [id])
+  locationId   Int?
 }
 
 model ShippingRate {
   id                 Int              @id @default(autoincrement())
   shippingZone       ShippingZone     @relation(fields: [shippingZoneId], references: [id], onDelete: Cascade)
   shippingZoneId     Int
-  type               ShippingRateType
+  type               ShippingRateType @default(value: custom)
   // Custom rate fields
   transitTime        TransitTime
   customRateName     String? // required if transitTime is CUSTOM
@@ -485,13 +525,6 @@ enum TransitTime {
 enum ShippingRateType {
   custom
   carrier
-}
-
-enum ShippingZoneType {
-  zip
-  state
-  country
-  global
 }
 
 // TODO: Work on integrating with Shipping Carriers

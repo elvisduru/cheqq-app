@@ -20,9 +20,13 @@ type User = Prisma.UserGetPayload<{
     passwordUpdatedAt: true;
     stores: {
       select: {
+        id: true;
         name: true;
         tag: true;
         logo: true;
+        currency: true;
+        address: true;
+        addressCoordinates: true;
         country: true;
       };
     };
@@ -43,6 +47,7 @@ export class UsersService {
       include: {
         stores: {
           select: {
+            id: true,
             name: true,
             tag: true,
             logo: true,
@@ -64,6 +69,7 @@ export class UsersService {
       include: {
         stores: {
           select: {
+            id: true,
             name: true,
             tag: true,
             logo: true,
@@ -83,6 +89,7 @@ export class UsersService {
       include: {
         stores: {
           select: {
+            id: true,
             name: true,
             tag: true,
             logo: true,
@@ -106,6 +113,7 @@ export class UsersService {
       include: {
         stores: {
           select: {
+            id: true,
             name: true,
             tag: true,
             logo: true,

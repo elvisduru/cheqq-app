@@ -24,8 +24,9 @@ import {
 } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import useAddShipping from "../../hooks/mutations/shipping/addShipping";
 import { useStore } from "../../hooks/useStore";
-import { CountryStates } from "../../utils/types";
+import { Rate, ShippingZone } from "../../utils/types";
 import withSuspense from "../hoc/withSuspense";
 import AddShippingRate from "./AddShippingRate";
 
@@ -37,46 +38,20 @@ type Props = {
   dismiss: () => void;
 };
 
-export type Rate = {
-  id?: number;
-  shippingZoneId: number;
-  type: "custom" | "carrier";
-  transitTime:
-    | "economy"
-    | "standard"
-    | "express"
-    | "economyInternational"
-    | "standardInternational"
-    | "expressInternational"
-    | "custom";
-  customRateName: string;
-  price: number;
-  rateCondition?: "weight" | "price";
-  rateConditionMin?: number;
-  rateConditionMax?: number;
-  carrier?: string; // TODO: Carrier enum
-  services?: string[];
-  handlingFeePercent?: number;
-  handlingFeeFlat?: number;
-};
-
-export type ShippingZoneData = {
-  name: string;
-  locations: CountryStates[];
-  rates: Rate[];
-};
-
 export default function AddShippingZone({ dismiss }: Props) {
   const user = useStore((store) => store.user);
   const selectedStore = useStore((store) => store.selectedStore);
+
+  const addShippingZone = useAddShipping();
+
   const {
     control,
-    handleSubmit,
     setValue,
+    handleSubmit,
     watch,
-    formState: { errors },
-  } = useForm<ShippingZoneData>({
-    mode: "onBlur",
+    formState: { errors, isValid },
+  } = useForm<ShippingZone>({
+    mode: "onChange",
     defaultValues: {
       name: "",
       locations: [],
@@ -84,7 +59,7 @@ export default function AddShippingZone({ dismiss }: Props) {
     },
   });
 
-  const { update, append } = useFieldArray({ control, name: "rates" });
+  const { update, append, remove } = useFieldArray({ control, name: "rates" });
 
   const locations = watch("locations");
   const rates = watch("rates");
@@ -92,7 +67,18 @@ export default function AddShippingZone({ dismiss }: Props) {
   const domestic =
     locations.length === 1 &&
     locations?.[0]?.iso2 === user?.stores[selectedStore]?.country;
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = (data: ShippingZone) => {
+    const storeId = user?.stores[selectedStore].id;
+    console.log(data);
+    addShippingZone.mutate(
+      { ...data, storeId },
+      {
+        onSuccess: (res) => {
+          console.log(res);
+        },
+      }
+    );
+  };
   const onError = (error: any) => console.log(error);
 
   const [rateIndex, setRateIndex] = useState<number>();
@@ -172,10 +158,7 @@ export default function AddShippingZone({ dismiss }: Props) {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <form
-          onSubmit={handleSubmit(onSubmit, onError)}
-          className="ion-padding-top ion-padding-horizontal flex flex-column modal-form"
-        >
+        <form className="ion-padding-top ion-padding-horizontal flex flex-column modal-form">
           <IonItem
             className={`input mt-4 ${errors.name ? "ion-invalid" : ""}`}
             fill="outline"
@@ -366,16 +349,37 @@ export default function AddShippingZone({ dismiss }: Props) {
                       fill="clear"
                       color="dark"
                       onClick={() => {
-                        setRateIndex(index);
-                        presentRate({
-                          id: "add-shipping-rate",
-                          breakpoints: [0, 0.6, 1],
-                          initialBreakpoint: rates[rateIndex!]?.rateCondition
-                            ? 1
-                            : 0.6,
-                          onDidDismiss() {
-                            setRateIndex(undefined);
-                          },
+                        presentSheet({
+                          translucent: true,
+                          buttons: [
+                            {
+                              text: "Delete",
+                              role: "destructive",
+                              handler() {
+                                remove(index);
+                              },
+                            },
+                            {
+                              text: "Edit Rate",
+                              handler() {
+                                setRateIndex(index);
+                                presentRate({
+                                  id: "add-shipping-rate",
+                                  breakpoints: [0, 0.6, 1],
+                                  initialBreakpoint: rates[index]?.rateCondition
+                                    ? 1
+                                    : 0.6,
+                                  onDidDismiss() {
+                                    setRateIndex(undefined);
+                                  },
+                                });
+                              },
+                            },
+                            {
+                              text: "Cancel",
+                              role: "cancel",
+                            },
+                          ],
                         });
                       }}
                     >
@@ -409,6 +413,21 @@ export default function AddShippingZone({ dismiss }: Props) {
             </div>
           </IonItemGroup>
         </form>
+        <div
+          slot="fixed"
+          className={`${
+            !isValid ? "opacity-0" : "opacity-100"
+          } transition-opacity backdrop-filter backdrop-blur-lg bg-opacity-30 bottom-0 ion-padding-horizontal pb-4 w-full`}
+        >
+          <IonButton
+            hidden={!isValid}
+            expand="block"
+            color="primary"
+            onClick={() => handleSubmit(onSubmit, onError)()}
+          >
+            Complete
+          </IonButton>
+        </div>
       </IonContent>
     </>
   );

@@ -29,11 +29,7 @@ import { useRef } from "react";
 import { useStore } from "../hooks/useStore";
 import "./SideMenu.scss";
 
-type Props = {
-  contentId: string;
-};
-
-export default function SideMenu({ contentId }: Props) {
+export default function SideMenu() {
   const menuRef = useRef<HTMLIonMenuElement>(null);
   const user = useStore((store) => store.user);
   const selectedStore = useStore((store) => store.selectedStore);
@@ -45,7 +41,7 @@ export default function SideMenu({ contentId }: Props) {
   return (
     <IonMenu
       side="start"
-      contentId={contentId}
+      contentId="main"
       disabled={!user?.name || !user?.stores.length}
       draggable={!user?.name}
       ref={menuRef}
