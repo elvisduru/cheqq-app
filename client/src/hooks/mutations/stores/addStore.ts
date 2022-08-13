@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from "../../../lib/api";
 import { Store } from "../../../utils/types";
 
@@ -7,7 +7,7 @@ export default function useAddStore() {
 
   return useMutation((data: Store) => api.post<Store>("/stores", data), {
     onSuccess() {
-      queryClient.invalidateQueries("store");
+      queryClient.invalidateQueries(['store']);
     },
   });
 }

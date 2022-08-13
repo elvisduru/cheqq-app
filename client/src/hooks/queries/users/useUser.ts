@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from '@tanstack/react-query';
 import api from "../../../lib/api";
 import { User } from "../../../utils/types";
 import { useStore } from "../../useStore";
@@ -10,7 +10,7 @@ const getUser = async () => {
 };
 
 export default function useUser() {
-  return useQuery("user", getUser, {
+  return useQuery(['user'], getUser, {
     enabled: !["/signup", "/login", "/magic-link"].includes(
       window.location.pathname
     ),

@@ -87,7 +87,7 @@ export default function AddShippingZone({ dismiss }: Props) {
       dismissModal();
     },
     setValue,
-    locations,
+    initialLocations: locations,
   });
 
   const handleRateForm = (rate: Rate, index?: number) => {

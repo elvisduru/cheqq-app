@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery } from '@tanstack/react-query';
 import api from "../../../lib/api";
 
 const fetchOrders = async ({ pageParam }: any) => {
@@ -7,7 +7,7 @@ const fetchOrders = async ({ pageParam }: any) => {
 };
 
 export default function useOrders(id?: string) {
-  return useInfiniteQuery("orders", fetchOrders, {
+  return useInfiniteQuery(['orders'], fetchOrders, {
     getNextPageParam: (lastPage) => {
       return lastPage[lastPage.length - 1]?.id;
     },

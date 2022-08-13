@@ -96,6 +96,7 @@ export type Video = {
 };
 
 export type CountryStates = {
+  id?: number;
   name: string;
   iso3: string;
   iso2: string;

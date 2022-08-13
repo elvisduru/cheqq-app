@@ -10,6 +10,17 @@ export class StoresService {
   async create(data: CreateStoreDto): Promise<Store> {
     const categories = [...data.categories];
     delete data.categories;
+
+    // Fetch country and states
+    const country = await this.prisma.country.findFirst({
+      where: {
+        iso2: data.country,
+      },
+      include: {
+        states: true,
+      },
+    });
+
     return this.prisma.store.create({
       data: {
         ...data,
@@ -22,12 +33,12 @@ export class StoresService {
 
   async findAll(
     where: Prisma.StoreWhereInput,
-    pagination?: { take?: number; skip?: number; cursor: number },
+    pagination?: { take?: number; skip?: number; cursor?: number },
   ): Promise<Store[]> {
     return this.prisma.store.findMany({
       where,
       take: pagination?.take || 10,
-      skip: pagination?.skip || 1,
+      skip: pagination?.skip || 0,
       cursor: pagination?.cursor ? { id: pagination.cursor } : undefined,
       orderBy: {
         id: 'asc',

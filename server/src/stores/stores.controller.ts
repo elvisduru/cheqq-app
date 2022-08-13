@@ -25,7 +25,9 @@ export class StoresController {
 
   @Get()
   findAll(@Query() query: any) {
-    const filter: Prisma.StoreWhereInput = JSON.parse(query.filter);
+    const filter: Prisma.StoreWhereInput = query?.filter
+      ? JSON.parse(query.filter)
+      : {};
     delete query.filter;
     const pagination = {
       take: +query.take,

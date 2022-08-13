@@ -2,7 +2,7 @@ import {
   DeleteObjectCommand,
   DeleteObjectCommandInput,
 } from "@aws-sdk/client-s3";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from "../../../lib/api";
 import { Image } from "../../../utils/types";
 
@@ -12,7 +12,7 @@ export function useDeleteImages() {
     (data: Image[]) => api.delete<Image[]>("/images", { data }),
     {
       onSuccess({ data }) {
-        queryClient.invalidateQueries("images");
+        queryClient.invalidateQueries(['images']);
         // delete files from s3 bucket
         data.forEach((image) => {
           const params: DeleteObjectCommandInput = {

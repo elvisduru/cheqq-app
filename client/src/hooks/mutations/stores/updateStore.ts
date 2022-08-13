@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from "../../../lib/api";
 import { Store } from "../../../utils/types";
 
@@ -9,7 +9,7 @@ export default function useUpdateStore() {
     (data: Store) => api.patch<Store>("/stores/current", data),
     {
       onSuccess() {
-        queryClient.invalidateQueries("store");
+        queryClient.invalidateQueries(['store']);
       },
     }
   );

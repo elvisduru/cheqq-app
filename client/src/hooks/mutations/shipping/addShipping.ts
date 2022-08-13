@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from "../../../lib/api";
 import { ShippingZone } from "../../../utils/types";
 
@@ -9,7 +9,7 @@ export default function useAddShipping() {
     (data: ShippingZone) => api.post<ShippingZone>("/shipping", data),
     {
       onSuccess() {
-        queryClient.invalidateQueries("shipping");
+        queryClient.invalidateQueries(['shipping']);
       },
     }
   );
