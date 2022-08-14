@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -48,9 +49,9 @@ export class StoresController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
-    if (isNaN(+id)) throw new BadRequestException('Invalid id');
-    return this.storesService.findById(+id);
+  findById(@Param('id', ParseIntPipe) id: number) {
+    if (isNaN(id)) throw new BadRequestException('Invalid id');
+    return this.storesService.findById(id);
   }
 
   @Patch('current')
@@ -63,14 +64,14 @@ export class StoresController {
 
   @Patch(':id')
   updateById(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateOrderDto: Prisma.StoreUpdateInput,
   ) {
-    return this.storesService.updateById(+id, updateOrderDto);
+    return this.storesService.updateById(id, updateOrderDto);
   }
 
   @Delete(':id')
-  removeById(@Param('id') id: string) {
-    return this.storesService.removeById(+id);
+  removeById(@Param('id', ParseIntPipe) id: number) {
+    return this.storesService.removeById(id);
   }
 }

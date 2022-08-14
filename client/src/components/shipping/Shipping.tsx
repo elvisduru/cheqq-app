@@ -4,6 +4,7 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonInput,
   IonItem,
   IonItemGroup,
   IonLabel,
@@ -17,10 +18,13 @@ import {
   useIonModal,
 } from "@ionic/react";
 import "@ionic/react/css/ionic-swiper.css";
+import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
 import { add, close, earthOutline, ellipsisHorizontal } from "ionicons/icons";
 import React from "react";
 import "swiper/scss";
+import useDeleteFulfillmentService from "../../hooks/mutations/fulfillmentServices/deleteFulfillmentService";
 import useDeleteShippingZone from "../../hooks/mutations/shipping/deleteShippingZone";
+import useFulfillmentServices from "../../hooks/queries/fulfillmentService/useFulfillmentServices";
 import useShippingZones from "../../hooks/queries/shipping/useShippingZones";
 import { useStore } from "../../hooks/useStore";
 import withSuspense from "../hoc/withSuspense";
@@ -30,18 +34,27 @@ import withSuspense from "../hoc/withSuspense";
 const AddShippingZone = withSuspense(
   React.lazy(() => import("./AddShippingZone"))
 );
+const AddFulfillmentService = withSuspense(
+  React.lazy(() => import("./AddFulfillmentService"))
+);
 
 type Props = {
   dismiss: () => void;
 };
 
+polyfillCountryFlagEmojis();
+
 export default function ShippingZones({ dismiss }: Props) {
   const selectedStore = useStore((store) => store.selectedStore);
   const { data: shippingZones } = useShippingZones(selectedStore!);
+  const { data: fulfillmentServices } = useFulfillmentServices(selectedStore!);
   const [selectedZone, setSelectedZone] = React.useState<number | undefined>();
-  console.log(shippingZones);
+  const [selectedService, setSelectedService] = React.useState<
+    number | undefined
+  >();
 
   const deleteShippingZone = useDeleteShippingZone();
+  const deleteFulfillmentService = useDeleteFulfillmentService();
 
   const [present, dismissAddZone] = useIonModal(AddShippingZone, {
     dismiss: () => {
@@ -50,6 +63,19 @@ export default function ShippingZones({ dismiss }: Props) {
     selectedStore,
     shippingZone: shippingZones?.find((zone) => zone.id === selectedZone),
   });
+
+  const [presentFulfillment, dismissFulfillment] = useIonModal(
+    AddFulfillmentService,
+    {
+      dismiss: () => {
+        dismissFulfillment();
+      },
+      selectedStore,
+      fulfillmentService: fulfillmentServices?.find(
+        (service) => service.id === selectedService
+      ),
+    }
+  );
 
   const [presentSheet] = useIonActionSheet();
   // const [presentDeliveryZone, dismissAddDeliveryZone] = useIonModal(
@@ -145,7 +171,7 @@ export default function ShippingZones({ dismiss }: Props) {
               </IonLabel>
             </IonItem>
             {shippingZones?.map((zone) => (
-              <IonItem className="px-0 mt-2">
+              <IonItem key={zone.id} className="px-0 mt-2">
                 <span className="font-sans mr-2 text-2xl!">
                   {zone.locations.length === 1 ? (
                     zone.locations[0]?.country?.emoji
@@ -262,7 +288,7 @@ export default function ShippingZones({ dismiss }: Props) {
                 >
                   Total time it takes to process an order, from placement to
                   when the package is handed to the carrier. This adds up to the
-                  transit time of the carrier.
+                  transit time of your shipping rates.
                 </IonNote>
               </IonLabel>
             </IonItem>
@@ -281,6 +307,7 @@ export default function ShippingZones({ dismiss }: Props) {
                   }
                 }}
               >
+                <IonSelectOption>No processing time</IonSelectOption>
                 <IonSelectOption>Same business day</IonSelectOption>
                 <IonSelectOption>Next business day</IonSelectOption>
                 <IonSelectOption>2 business days</IonSelectOption>
@@ -295,13 +322,55 @@ export default function ShippingZones({ dismiss }: Props) {
                   color="medium"
                   className="text-xs font-normal ion-text-wrap"
                 >
-                  Choose where you ship and how much you charge for shipping at
-                  checkout.
+                  Add the emails of custom providers that fulfill orders for
+                  you. They will get an email when you mark an order as
+                  fulfilled.
                 </IonNote>
               </IonLabel>
             </IonItem>
+            {fulfillmentServices?.map((service) => (
+              <IonItem key={service.id} className="px-0 mt-2">
+                <IonLabel>{service.name}</IonLabel>
+                <IonButton
+                  onClick={() => {
+                    setSelectedService(service.id);
+                    presentSheet({
+                      translucent: true,
+                      buttons: [
+                        {
+                          text: "Delete",
+                          role: "destructive",
+                          handler() {
+                            deleteFulfillmentService.mutate(service.id!);
+                          },
+                        },
+                        {
+                          text: "Edit fulfillment service",
+                          handler() {
+                            presentFulfillment({
+                              id: "add-fulfillment-service",
+                              breakpoints: [0, 0.4],
+                              initialBreakpoint: 0.4,
+                            });
+                          },
+                        },
+                        {
+                          text: "Cancel",
+                          role: "cancel",
+                        },
+                      ],
+                    });
+                  }}
+                  slot="end"
+                  fill="clear"
+                  color="dark"
+                >
+                  <IonIcon icon={ellipsisHorizontal} />
+                </IonButton>
+              </IonItem>
+            ))}
             <div
-              className="border rounded-xl p-1 mt-4"
+              className="border rounded-xl p-1 mt-4 mb-8"
               style={{ borderStyle: "dashed" }}
             >
               <IonButton
@@ -309,16 +378,14 @@ export default function ShippingZones({ dismiss }: Props) {
                 expand="block"
                 color="medium"
                 onClick={() => {
-                  present({
-                    presentingElement: document.querySelector(
-                      "#shipping-settings"
-                    ) as HTMLElement,
-                    canDismiss: true,
-                    id: "add-shipping-zone",
+                  presentFulfillment({
+                    id: "add-fulfillment-service",
+                    breakpoints: [0, 0.4],
+                    initialBreakpoint: 0.4,
                   });
                 }}
               >
-                <IonIcon slot="start" icon={add} /> Add shipping zone
+                <IonIcon slot="start" icon={add} /> Add fulfillment service
               </IonButton>
             </div>
           </IonItemGroup>

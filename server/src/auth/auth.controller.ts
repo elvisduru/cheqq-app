@@ -6,22 +6,16 @@ import {
   HttpStatus,
   Param,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBody } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
-import { Request } from 'express';
 import {
   GetCurrentUser,
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { AccessTokenGuard, RefreshTokenGuard } from 'src/common/guards';
+import { RefreshTokenGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
 import { AuthDto, MagicUrlDto, TokenDto } from './dto';
-import { Tokens } from './types';
 
 @Controller('auth')
 export class AuthController {

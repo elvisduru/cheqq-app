@@ -17,6 +17,7 @@ import { ImagesModule } from './images/images.module';
 import { ProductsModule } from './products/products.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { LocationsModule } from './locations/locations.module';
+import { FulfillmentServicesModule } from './fulfillment-services/fulfillment-services.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { LocationsModule } from './locations/locations.module';
     ProductsModule,
     ShippingModule,
     LocationsModule,
+    FulfillmentServicesModule,
   ],
   controllers: [AppController],
   providers: [

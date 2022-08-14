@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { UsersService } from './users.service';
@@ -32,8 +33,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  findById(@Param() id: string) {
-    return this.usersService.findById(+id);
+  findById(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findById(id);
   }
 
   @Patch('current')
@@ -46,14 +47,14 @@ export class UsersController {
 
   @Patch(':id')
   updateById(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: Prisma.UserUpdateInput,
   ) {
-    return this.usersService.updateById(+id, updateUserDto);
+    return this.usersService.updateById(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.removeById(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.removeById(id);
   }
 }

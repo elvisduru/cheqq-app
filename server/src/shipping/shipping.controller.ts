@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ShippingService } from './shipping.service';
 import { CreateShippingDto } from './dto/create-shipping.dto';
@@ -20,26 +21,31 @@ export class ShippingController {
     return this.shippingService.create(createShippingDto);
   }
 
+  @Get()
+  findAll() {
+    return this.shippingService.findAll();
+  }
+
   @Get('store/:storeId')
-  findAll(@Param('storeId') storeId: string) {
-    return this.shippingService.findAll(+storeId);
+  findAllForStore(@Param('storeId', ParseIntPipe) storeId: number) {
+    return this.shippingService.findAllForStore(storeId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.shippingService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.shippingService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateShippingDto: UpdateShippingDto,
   ) {
-    return this.shippingService.update(+id, updateShippingDto);
+    return this.shippingService.update(id, updateShippingDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.shippingService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.shippingService.remove(id);
   }
 }

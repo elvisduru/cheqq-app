@@ -1,6 +1,12 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { Image } from '@prisma/client';
-import { GetCurrentUserId } from 'src/common/decorators';
 import { ImageDto } from './dto';
 import { ImagesService } from './images.service';
 
@@ -19,7 +25,7 @@ export class ImagesController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string): Promise<Image> {
-    return this.imagesService.delete(+id);
+  delete(@Param('id', ParseIntPipe) id: number): Promise<Image> {
+    return this.imagesService.delete(id);
   }
 }

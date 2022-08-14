@@ -194,3 +194,10 @@ export type ShippingZone = {
   locations: CountryStates[];
   rates: Rate[];
 };
+
+export type FulfillmentService = {
+  id?: number;
+  storeId?: number;
+  name: string;
+  email: string;
+};

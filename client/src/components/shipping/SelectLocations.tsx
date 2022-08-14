@@ -15,15 +15,12 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
 import { close, filter } from "ionicons/icons";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { UseFormSetValue } from "react-hook-form";
 import { Virtuoso } from "react-virtuoso";
 import useCountries from "../../hooks/queries/locations/useCountries";
 import { CountryStates, ShippingZone } from "../../utils/types";
-
-polyfillCountryFlagEmojis();
 
 type Props = {
   dismiss: () => void;

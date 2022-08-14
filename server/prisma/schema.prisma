@@ -38,32 +38,33 @@ model User {
 }
 
 model Store {
-  id                 Int            @id @default(autoincrement())
-  owner              User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId            Int
-  name               String
-  tag                String         @unique
-  status             Boolean        @default(true)
-  domain             String?
-  address            String
-  addressCoordinates Json
-  country            String
-  phone              String
-  order_email        String?
-  language           String
-  currency           String
-  logo               String?
-  banner             String?
-  description        String?
-  categories         Category[]
-  public             Boolean        @default(false)
-  orders             Order[]
-  products           Product[]
-  pricingRule        PricingRule[]
-  deliveryZones      DeliveryZone[]
-  shippingZones      ShippingZone[]
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  id                   Int                  @id @default(autoincrement())
+  owner                User                 @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId              Int
+  name                 String
+  tag                  String               @unique
+  status               Boolean              @default(true)
+  domain               String?
+  address              String
+  addressCoordinates   Json
+  country              String
+  phone                String
+  order_email          String?
+  language             String
+  currency             String
+  logo                 String?
+  banner               String?
+  description          String?
+  categories           Category[]
+  public               Boolean              @default(false)
+  orders               Order[]
+  products             Product[]
+  pricingRule          PricingRule[]
+  deliveryZones        DeliveryZone[]
+  shippingZones        ShippingZone[]
+  fullfillmentServices FulfillmentService[]
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
 }
 
 model DeliveryZone {
@@ -162,6 +163,14 @@ model ShippingRate {
   services           String[] // Selected services from carrier
   handlingFeePercent Float? // Handling fee percent
   handlingFeeFlat    Float? // Handling fee flat amount
+}
+
+model FulfillmentService {
+  id      Int    @id @default(autoincrement())
+  name    String
+  email   String
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId Int
 }
 
 model Product {

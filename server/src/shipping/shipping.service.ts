@@ -32,7 +32,11 @@ export class ShippingService {
     });
   }
 
-  findAll(storeId: number) {
+  findAll() {
+    return this.prisma.shippingZone.findMany();
+  }
+
+  findAllForStore(storeId: number) {
     return this.prisma.shippingZone.findMany({
       where: { storeId },
       include: {
