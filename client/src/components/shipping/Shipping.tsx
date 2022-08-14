@@ -13,12 +13,16 @@ import {
   IonTitle,
   IonToggle,
   IonToolbar,
+  useIonActionSheet,
   useIonModal,
 } from "@ionic/react";
 import "@ionic/react/css/ionic-swiper.css";
-import { add, close } from "ionicons/icons";
+import { add, close, earthOutline, ellipsisHorizontal } from "ionicons/icons";
 import React from "react";
 import "swiper/scss";
+import useDeleteShippingZone from "../../hooks/mutations/shipping/deleteShippingZone";
+import useShippingZones from "../../hooks/queries/shipping/useShippingZones";
+import { useStore } from "../../hooks/useStore";
 import withSuspense from "../hoc/withSuspense";
 // const AddDeliveryZone = withSuspense(
 //   React.lazy(() => import("./AddDeliveryZone"))
@@ -32,11 +36,22 @@ type Props = {
 };
 
 export default function ShippingZones({ dismiss }: Props) {
+  const selectedStore = useStore((store) => store.selectedStore);
+  const { data: shippingZones } = useShippingZones(selectedStore!);
+  const [selectedZone, setSelectedZone] = React.useState<number | undefined>();
+  console.log(shippingZones);
+
+  const deleteShippingZone = useDeleteShippingZone();
+
   const [present, dismissAddZone] = useIonModal(AddShippingZone, {
     dismiss: () => {
       dismissAddZone();
     },
+    selectedStore,
+    shippingZone: shippingZones?.find((zone) => zone.id === selectedZone),
   });
+
+  const [presentSheet] = useIonActionSheet();
   // const [presentDeliveryZone, dismissAddDeliveryZone] = useIonModal(
   //   AddDeliveryZone,
   //   {
@@ -129,6 +144,92 @@ export default function ShippingZones({ dismiss }: Props) {
                 </IonNote>
               </IonLabel>
             </IonItem>
+            {shippingZones?.map((zone) => (
+              <IonItem className="px-0 mt-2">
+                <span className="font-sans mr-2 text-2xl!">
+                  {zone.locations.length === 1 ? (
+                    zone.locations[0]?.country?.emoji
+                  ) : (
+                    <IonIcon slot="start" icon={earthOutline} />
+                  )}
+                </span>
+                <IonLabel>
+                  <div className="flex justify-between">
+                    {zone.name === "Domestic" ? (
+                      <span>
+                        Domestic{" "}
+                        <span className="text-gray-500">
+                          ({zone.locations[0]?.country?.name})
+                        </span>
+                      </span>
+                    ) : zone.locations.length === 1 ? (
+                      <span>
+                        {zone.locations[0]?.country?.name}{" "}
+                        <span className="text-gray-500">
+                          ({zone.locations[0].states.length}{" "}
+                          {zone.locations[0].states.length === 1
+                            ? "state"
+                            : "states"}
+                          )
+                        </span>
+                      </span>
+                    ) : (
+                      <span>
+                        {zone.name}{" "}
+                        <span className="text-gray-500">
+                          ({zone.locations.length}{" "}
+                          {zone.locations.length === 1
+                            ? "country"
+                            : "countries"}
+                          )
+                        </span>
+                      </span>
+                    )}
+                    <span className="text-gray-300">
+                      {zone.rates.length} rates
+                    </span>
+                  </div>
+                </IonLabel>
+                <IonButton
+                  onClick={() => {
+                    setSelectedZone(zone.id);
+                    presentSheet({
+                      translucent: true,
+                      buttons: [
+                        {
+                          text: "Delete",
+                          role: "destructive",
+                          handler() {
+                            deleteShippingZone.mutate(zone.id!);
+                          },
+                        },
+                        {
+                          text: "Edit shipping zone",
+                          handler() {
+                            present({
+                              presentingElement: document.querySelector(
+                                "#shipping-settings"
+                              ) as HTMLElement,
+                              canDismiss: true,
+                              id: "add-shipping-zone",
+                            });
+                          },
+                        },
+                        {
+                          text: "Cancel",
+                          role: "cancel",
+                        },
+                      ],
+                    });
+                  }}
+                  slot="end"
+                  fill="clear"
+                  color="dark"
+                >
+                  <IonIcon icon={ellipsisHorizontal} />
+                </IonButton>
+              </IonItem>
+            ))}
             <div
               className="border rounded-xl p-1 mt-4"
               style={{ borderStyle: "dashed" }}

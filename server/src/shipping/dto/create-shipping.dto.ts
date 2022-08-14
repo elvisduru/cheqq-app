@@ -93,6 +93,10 @@ export class ShippingRate {
 
   @IsNumber()
   handlingFeeFlat?: number;
+
+  @IsNumber()
+  @IsOptional()
+  shippingZoneId?: number;
 }
 
 export class Country {

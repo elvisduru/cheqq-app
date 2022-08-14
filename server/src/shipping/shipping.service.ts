@@ -33,7 +33,15 @@ export class ShippingService {
   }
 
   findAll(storeId: number) {
-    return this.prisma.shippingZone.findMany({ where: { storeId } });
+    return this.prisma.shippingZone.findMany({
+      where: { storeId },
+      include: {
+        rates: true,
+        locations: {
+          include: { states: true, country: true },
+        },
+      },
+    });
   }
 
   findOne(id: number) {
@@ -43,38 +51,37 @@ export class ShippingService {
   async update(id: number, updateShippingDto: UpdateShippingDto) {
     const { name, locations, rates } = updateShippingDto;
 
-    // Update rates
-    await this.prisma.$transaction(
-      rates.map((rate) =>
-        this.prisma.shippingRate.update({ where: { id: rate.id }, data: rate }),
-      ),
-    );
+    // Delete shippingZoneId from rates
+    rates.forEach((rate) => {
+      delete rate.shippingZoneId;
+    });
 
-    return this.prisma.$transaction([
-      this.prisma.shippingZone.update({
-        where: { id },
-        data: {
-          name,
-          rates: {
-            update: rates.map((rate) => ({
-              where: { id: rate.id },
-              data: rate,
-            })),
-          },
-          locations: {
-            set: [],
-            create: locations.map((location) => ({
-              states: {
-                connect: location.states.map((state) => ({ id: state.id })),
-              },
-              country: {
-                connect: { id: location.id },
-              },
-            })),
-          },
+    const deleteShippingRates = this.prisma.shippingRate.deleteMany({
+      where: { shippingZoneId: id },
+    });
+
+    const updateShippingZone = this.prisma.shippingZone.update({
+      where: { id },
+      data: {
+        name,
+        rates: {
+          create: rates,
         },
-      }),
-    ]);
+        locations: {
+          set: [],
+          create: locations.map((location) => ({
+            states: {
+              connect: location.states.map((state) => ({ id: state.id })),
+            },
+            country: {
+              connect: { id: location.id },
+            },
+          })),
+        },
+      },
+    });
+
+    return this.prisma.$transaction([deleteShippingRates, updateShippingZone]);
   }
 
   remove(id: number) {

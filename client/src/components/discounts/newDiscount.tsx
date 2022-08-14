@@ -35,6 +35,7 @@ type Props = {
 export default function NewDiscount({ dismiss, title }: Props) {
   const user = useStore((state) => state.user);
   const selectedStore = useStore((store) => store.selectedStore);
+  const store = user?.stores.find((s) => s.id === selectedStore);
   const [code, toggleCode] = useToggle(true);
   const [appliedTo, setAppliedTo] = useState<string>("products");
   const {
@@ -206,7 +207,7 @@ export default function NewDiscount({ dismiss, title }: Props) {
               <IonLabel position="floating">
                 {adjustmentType === "percent"
                   ? "Enter Percentage (%)"
-                  : `Enter Fixed amount (${user?.stores[selectedStore].currency})`}
+                  : `Enter Fixed amount (${store?.currency})`}
               </IonLabel>
               <Controller
                 name="adjustmentValue"

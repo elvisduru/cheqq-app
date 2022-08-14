@@ -21,6 +21,7 @@ type Props = {
 
 const Products: React.FC<Props> = ({ user }) => {
   const { selectedStore } = useStore();
+  const store = user?.stores.find((s) => s.id === selectedStore);
   return (
     <IonPage id="products">
       <IonHeader collapse="fade" translucent>
@@ -28,7 +29,7 @@ const Products: React.FC<Props> = ({ user }) => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user.stores[selectedStore]?.logo} alt="avatar" />
+                <img src={store?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

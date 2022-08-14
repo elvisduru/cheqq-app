@@ -44,7 +44,7 @@ export enum ModalState {
 export type AppState = {
   user?: User;
   setUser: (user: User) => void;
-  selectedStore: number;
+  selectedStore?: number;
   setSelectedStore: (storeId: number) => void;
   physicalFormData: any;
   setPhysicalFormData: (data: any) => void;
@@ -61,7 +61,7 @@ export const useStore = create(
     (set) => ({
       user: undefined as User | undefined,
       setUser: (user: User) => set(() => ({ user })),
-      selectedStore: 0,
+      selectedStore: undefined as number | undefined,
       setSelectedStore: (selectedStore: number) =>
         set(() => ({ selectedStore })),
       physicalFormData: undefined,

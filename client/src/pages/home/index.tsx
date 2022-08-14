@@ -30,6 +30,7 @@ const ChartCard = withSuspense<{ title: string }>(
 const Home = () => {
   const user = useStore((store) => store.user);
   const selectedStore = useStore((store) => store.selectedStore);
+  const store = user?.stores.find((s) => s.id === selectedStore);
 
   const orders = [
     {
@@ -159,7 +160,7 @@ const Home = () => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user?.stores[selectedStore]?.logo} alt="avatar" />
+                <img src={store?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

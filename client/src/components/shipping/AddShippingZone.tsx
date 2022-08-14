@@ -24,7 +24,8 @@ import {
 } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import useAddShipping from "../../hooks/mutations/shipping/addShipping";
+import useAddShippingZone from "../../hooks/mutations/shipping/addShippingZone";
+import useUpdateShippingZone from "../../hooks/mutations/shipping/updateShippingZone";
 import { useStore } from "../../hooks/useStore";
 import { Rate, ShippingZone } from "../../utils/types";
 import withSuspense from "../hoc/withSuspense";
@@ -36,13 +37,20 @@ const SelectLocations = withSuspense(
 
 type Props = {
   dismiss: () => void;
+  selectedStore: number;
+  shippingZone?: ShippingZone;
 };
 
-export default function AddShippingZone({ dismiss }: Props) {
+export default function AddShippingZone({
+  dismiss,
+  selectedStore,
+  shippingZone,
+}: Props) {
   const user = useStore((store) => store.user);
-  const selectedStore = useStore((store) => store.selectedStore);
+  const store = user?.stores.find((s) => s.id === selectedStore);
 
-  const addShippingZone = useAddShipping();
+  const addShippingZone = useAddShippingZone();
+  const updateShippingZone = useUpdateShippingZone();
 
   const {
     control,
@@ -53,9 +61,16 @@ export default function AddShippingZone({ dismiss }: Props) {
   } = useForm<ShippingZone>({
     mode: "onChange",
     defaultValues: {
-      name: "",
-      locations: [],
-      rates: [],
+      name: shippingZone?.name || "",
+      locations:
+        shippingZone?.locations?.map((zone) => {
+          return {
+            ...zone.country,
+            states: zone.states,
+          };
+        }) || [],
+      rates: shippingZone?.rates || [],
+      id: shippingZone?.id,
     },
   });
 
@@ -65,19 +80,25 @@ export default function AddShippingZone({ dismiss }: Props) {
   const rates = watch("rates");
 
   const domestic =
-    locations.length === 1 &&
-    locations?.[0]?.iso2 === user?.stores[selectedStore]?.country;
+    locations.length === 1 && locations?.[0]?.iso2 === store?.country;
   const onSubmit = (data: ShippingZone) => {
-    const storeId = user?.stores[selectedStore].id;
-    console.log(data);
-    addShippingZone.mutate(
-      { ...data, storeId },
-      {
-        onSuccess: (res) => {
-          console.log(res);
+    const storeId = store?.id;
+    if (shippingZone) {
+      updateShippingZone.mutate(data, {
+        onSuccess: () => {
+          dismiss();
         },
-      }
-    );
+      });
+    } else {
+      addShippingZone.mutate(
+        { ...data, storeId },
+        {
+          onSuccess: (res) => {
+            dismiss();
+          },
+        }
+      );
+    }
   };
   const onError = (error: any) => console.log(error);
 
@@ -144,7 +165,7 @@ export default function AddShippingZone({ dismiss }: Props) {
     <>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Add Shipping Zone</IonTitle>
+          <IonTitle>{shippingZone ? "Edit" : "Add"} Shipping Zone</IonTitle>
           <IonButtons slot="start">
             <IonButton
               color="dark"
@@ -188,8 +209,14 @@ export default function AddShippingZone({ dismiss }: Props) {
             </IonItemDivider>
             {locations?.length ? (
               <IonItem lines="none" className="px-0 mt-2">
-                <IonIcon slot="start" icon={earthOutline} />
-                <IonLabel className="ion-text-wrap">
+                <span className="font-sans mr-2 text-2xl!">
+                  {locations.length === 1 ? (
+                    locations[0].emoji
+                  ) : (
+                    <IonIcon slot="start" icon={earthOutline} />
+                  )}
+                </span>
+                <IonLabel className="ion-text-wrap text-md!">
                   <span className="line-clamp-2">
                     {locations
                       .map(
@@ -216,7 +243,7 @@ export default function AddShippingZone({ dismiss }: Props) {
                           },
                         },
                         {
-                          text: "Edit Locations",
+                          text: "Edit locations",
                           handler() {
                             present();
                           },
@@ -315,8 +342,7 @@ export default function AddShippingZone({ dismiss }: Props) {
                               ? "Free"
                               : new Intl.NumberFormat("en-US", {
                                   style: "currency",
-                                  currency:
-                                    user?.stores[selectedStore].currency,
+                                  currency: store?.currency,
                                 }).format(rate.price)}
                           </span>
                         </div>
@@ -332,8 +358,7 @@ export default function AddShippingZone({ dismiss }: Props) {
                               : rate.rateCondition === "price"
                               ? `${new Intl.NumberFormat("en-US", {
                                   style: "currency",
-                                  currency:
-                                    user?.stores[selectedStore].currency,
+                                  currency: store?.currency,
                                 }).format(rate.rateConditionMin!)} — ${
                                   (rate.rateConditionMax &&
                                     Number(rate.rateConditionMax).toFixed(2)) ||

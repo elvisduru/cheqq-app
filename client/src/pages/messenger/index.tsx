@@ -16,6 +16,7 @@ import { useStore } from "../../hooks/useStore";
 const Messenger = () => {
   const user = useStore((store) => store.user);
   const selectedStore = useStore((store) => store.selectedStore);
+  const store = user?.stores.find((s) => s.id === selectedStore);
   return (
     <IonPage id="messenger">
       <IonHeader collapse="fade" translucent>
@@ -23,7 +24,7 @@ const Messenger = () => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user?.stores[selectedStore]?.logo} alt="avatar" />
+                <img src={store?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

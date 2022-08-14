@@ -33,7 +33,7 @@ export default function SideMenu() {
   const menuRef = useRef<HTMLIonMenuElement>(null);
   const user = useStore((store) => store.user);
   const selectedStore = useStore((store) => store.selectedStore);
-
+  const store = user?.stores.find((s) => s.id === selectedStore);
   return (
     <IonMenu
       side="start"
@@ -49,10 +49,10 @@ export default function SideMenu() {
               <IonItem lines="none">
                 <div>
                   <IonAvatar className="ion-margin-bottom">
-                    <img src={user.stores[selectedStore]?.logo} alt="avatar" />
+                    <img src={store?.logo} alt="avatar" />
                   </IonAvatar>
                   <IonLabel>{user?.name}</IonLabel>
-                  <IonNote>@{user.stores[selectedStore]?.tag}</IonNote>
+                  <IonNote>@{store?.tag}</IonNote>
                   <p className="flex ion-justify-content-between w-full">
                     <span>
                       230 <IonNote>Followers</IonNote>

@@ -27,6 +27,41 @@ export class StoresService {
         categories: {
           connect: categories.map((category) => ({ id: category })),
         },
+        shippingZones: {
+          create: {
+            name: 'Domestic',
+            locations: {
+              create: {
+                country: {
+                  connect: { id: country.id },
+                },
+                states: {
+                  connect: country.states.map((state) => ({ id: state.id })),
+                },
+              },
+            },
+            rates: {
+              create: [
+                {
+                  transitTime: 'economy',
+                  price: 0,
+                },
+                {
+                  transitTime: 'standard',
+                  price: 9.99,
+                  rateCondition: 'price',
+                  rateConditionMin: 15.0,
+                },
+                {
+                  transitTime: 'express',
+                  price: 19.99,
+                  rateCondition: 'weight',
+                  rateConditionMin: 3.0,
+                },
+              ],
+            },
+          },
+        },
       },
     });
   }

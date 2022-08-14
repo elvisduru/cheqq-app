@@ -27,6 +27,7 @@ const OrdersSkeleton = withSuspense<{ length: number }>(
 const Orders = () => {
   const user = useStore((store) => store.user);
   const selectedStore = useStore((store) => store.selectedStore);
+  const store = user?.stores.find((s) => s.id === selectedStore);
   const { data, isLoading } = useOrders();
 
   const [present, dismiss] = useIonModal(ChooseProduct, {
@@ -42,7 +43,7 @@ const Orders = () => {
           <IonButtons slot="start">
             <IonMenuButton>
               <IonAvatar>
-                <img src={user?.stores[selectedStore]?.logo} alt="avatar" />
+                <img src={store?.logo} alt="avatar" />
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>

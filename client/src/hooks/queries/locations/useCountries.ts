@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import api from "../../lib/api";
-import { CountryStates } from "../../utils/types";
+import api from "../../../lib/api";
+import { CountryStates } from "../../../utils/types";
 
 const getCountries = async () => {
   const { data } = await api.get<CountryStates[]>("/locations/countries");
