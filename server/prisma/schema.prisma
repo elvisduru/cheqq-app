@@ -63,6 +63,8 @@ model Store {
   deliveryZones        DeliveryZone[]
   shippingZones        ShippingZone[]
   fullfillmentServices FulfillmentService[]
+  processingTime       ProcessingTime       @default(value: none)
+  localPickup          Boolean              @default(false)
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
 }
@@ -529,6 +531,13 @@ enum TransitTime {
   standardInternational
   expressInternational
   custom
+}
+
+enum ProcessingTime {
+  none
+  sameDay
+  nextDay
+  twoDays
 }
 
 enum ShippingRateType {

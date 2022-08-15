@@ -58,7 +58,7 @@ export default function General() {
         <IonNote slot="helper">
           Give your product a short and clear title.
         </IonNote>
-        <IonNote slot="error">{errors.title?.message}</IonNote>
+        <IonNote slot="error">{String(errors.title?.message)}</IonNote>
       </IonItem>
       <IonItem
         className={`input mt-4 relative ${
@@ -118,7 +118,7 @@ export default function General() {
           )}
         />
         <IonNote slot="helper">State the condition of the product.</IonNote>
-        <IonNote slot="error">{errors.condition?.message}</IonNote>
+        <IonNote slot="error">{String(errors.condition?.message)}</IonNote>
       </IonItem>
       <IonItem
         className={`input mt-4 ${errors.description ? "ion-invalid" : ""}`}
@@ -144,7 +144,7 @@ export default function General() {
         <IonNote slot="helper">
           Give your product a short and clear description.
         </IonNote>
-        <IonNote slot="error">{errors.description?.message}</IonNote>
+        <IonNote slot="error">{String(errors.description?.message)}</IonNote>
       </IonItem>
       <TagInput
         label="Product Tags"
@@ -207,7 +207,7 @@ export default function General() {
           <IonNote slot="helper">
             Enter a price. "0" means customers can pay what they want
           </IonNote>
-          <IonNote slot="error">{errors.price?.message}</IonNote>
+          <IonNote slot="error">{String(errors.price?.message)}</IonNote>
         </IonItem>
         <IonItem
           className={`input mt-4 ${errors.comparePrice ? "ion-invalid" : ""}`}
@@ -238,7 +238,7 @@ export default function General() {
           <IonNote slot="helper">
             Optional. Enter an old price shoppers can compare with.
           </IonNote>
-          <IonNote slot="error">{errors.price?.message}</IonNote>
+          <IonNote slot="error">{String(errors.price?.message)}</IonNote>
         </IonItem>
         {/* TODO: Add Tax support */}
         {/* <IonItem lines="none" className="input checkbox mt-4">
@@ -307,7 +307,9 @@ export default function General() {
               <IonNote slot="helper">
                 How many of this product are you selling?
               </IonNote>
-              <IonNote slot="error">{errors.inventoryLevel?.message}</IonNote>
+              <IonNote slot="error">
+                {String(errors.inventoryLevel?.message)}
+              </IonNote>
             </IonItem>
             <IonItem
               className={`input mt-4 ${
@@ -345,7 +347,7 @@ export default function General() {
                 Optional. Set a warning level when low on stock.
               </IonNote>
               <IonNote slot="error">
-                {errors.inventoryWarningLevel?.message}
+                {String(errors.inventoryWarningLevel?.message)}
               </IonNote>
             </IonItem>
             <IonItem lines="none" className="input checkbox mt-4">

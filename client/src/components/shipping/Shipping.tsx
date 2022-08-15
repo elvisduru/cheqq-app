@@ -8,6 +8,7 @@ import {
   IonItem,
   IonItemGroup,
   IonLabel,
+  IonLoading,
   IonNote,
   IonSelect,
   IonSelectOption,
@@ -15,7 +16,9 @@ import {
   IonToggle,
   IonToolbar,
   useIonActionSheet,
+  useIonAlert,
   useIonModal,
+  useIonToast,
 } from "@ionic/react";
 import "@ionic/react/css/ionic-swiper.css";
 import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
@@ -24,9 +27,12 @@ import React from "react";
 import "swiper/scss";
 import useDeleteFulfillmentService from "../../hooks/mutations/fulfillmentServices/deleteFulfillmentService";
 import useDeleteShippingZone from "../../hooks/mutations/shipping/deleteShippingZone";
+import useUpdateStore from "../../hooks/mutations/stores/updateStore";
 import useFulfillmentServices from "../../hooks/queries/fulfillmentService/useFulfillmentServices";
 import useShippingZones from "../../hooks/queries/shipping/useShippingZones";
+import useReRender from "../../hooks/useReRender";
 import { useStore } from "../../hooks/useStore";
+import useUpdateEffect from "../../hooks/useUpdateEffect";
 import withSuspense from "../hoc/withSuspense";
 // const AddDeliveryZone = withSuspense(
 //   React.lazy(() => import("./AddDeliveryZone"))
@@ -45,29 +51,43 @@ type Props = {
 polyfillCountryFlagEmojis();
 
 export default function ShippingZones({ dismiss }: Props) {
+  const user = useStore((state) => state.user);
+  const setUser = useStore((state) => state.setUser);
   const selectedStore = useStore((store) => store.selectedStore);
+  const store = user?.stores.find((s) => s.id === selectedStore);
   const { data: shippingZones } = useShippingZones(selectedStore!);
   const { data: fulfillmentServices } = useFulfillmentServices(selectedStore!);
   const [selectedZone, setSelectedZone] = React.useState<number | undefined>();
   const [selectedService, setSelectedService] = React.useState<
     number | undefined
   >();
+  const [processingTime, setProcessingTime] = React.useState<
+    string | undefined
+  >(store?.processingTime);
+  const [localPickup, setLocalPickup] = React.useState<boolean | undefined>(
+    store?.localPickup
+  );
 
   const deleteShippingZone = useDeleteShippingZone();
   const deleteFulfillmentService = useDeleteFulfillmentService();
 
+  const updateStore = useUpdateStore();
+
   const [present, dismissAddZone] = useIonModal(AddShippingZone, {
     dismiss: () => {
+      setSelectedZone(undefined);
       dismissAddZone();
     },
     selectedStore,
     shippingZone: shippingZones?.find((zone) => zone.id === selectedZone),
+    deleteShippingZone,
   });
 
   const [presentFulfillment, dismissFulfillment] = useIonModal(
     AddFulfillmentService,
     {
       dismiss: () => {
+        setSelectedService(undefined);
         dismissFulfillment();
       },
       selectedStore,
@@ -78,6 +98,7 @@ export default function ShippingZones({ dismiss }: Props) {
   );
 
   const [presentSheet] = useIonActionSheet();
+  const [presentAlert] = useIonAlert();
   // const [presentDeliveryZone, dismissAddDeliveryZone] = useIonModal(
   //   AddDeliveryZone,
   //   {
@@ -86,6 +107,40 @@ export default function ShippingZones({ dismiss }: Props) {
   //     },
   //   }
   // );
+
+  const [presentToast] = useIonToast();
+
+  React.useEffect(() => {
+    if (processingTime) {
+      updateStore.mutate(
+        {
+          id: store?.id,
+          processingTime,
+        },
+        {
+          onError() {
+            presentToast("⚠️ Error: Could not update processing time", 2000);
+          },
+        }
+      );
+    }
+  }, [processingTime]);
+
+  useUpdateEffect(() => {
+    if (localPickup !== undefined) {
+      updateStore.mutate(
+        {
+          id: store?.id,
+          localPickup,
+        },
+        {
+          onError() {
+            presentToast("⚠️ Error: Could not update local pickup", 2000);
+          },
+        }
+      );
+    }
+  }, [localPickup]);
 
   return (
     <>
@@ -113,7 +168,13 @@ export default function ShippingZones({ dismiss }: Props) {
                 Allow customers pick up orders from your store.
               </IonNote>
             </IonLabel>
-            <IonToggle color="primary" />
+            <IonToggle
+              color="primary"
+              checked={localPickup}
+              onIonChange={(e) => {
+                setLocalPickup(e.detail.checked);
+              }}
+            />
           </IonItem>
           {/* <IonItemGroup className="mt-4"> // TODO: Complete Local Delivery feature
             <IonItem lines="none" className="input checkbox w-full">
@@ -179,7 +240,19 @@ export default function ShippingZones({ dismiss }: Props) {
                     <IonIcon slot="start" icon={earthOutline} />
                   )}
                 </span>
-                <IonLabel>
+                <IonLabel
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setSelectedZone(zone.id);
+                    present({
+                      presentingElement: document.querySelector(
+                        "#shipping-settings"
+                      ) as HTMLElement,
+                      canDismiss: true,
+                      id: "add-shipping-zone",
+                    });
+                  }}
+                >
                   <div className="flex justify-between">
                     {zone.name === "Domestic" ? (
                       <span>
@@ -226,7 +299,24 @@ export default function ShippingZones({ dismiss }: Props) {
                           text: "Delete",
                           role: "destructive",
                           handler() {
-                            deleteShippingZone.mutate(zone.id!);
+                            presentAlert({
+                              header: "Alert!",
+                              message:
+                                "Are you sure you want to delete this zone?",
+                              buttons: [
+                                {
+                                  text: "Cancel",
+                                  role: "cancel",
+                                },
+                                {
+                                  text: "Delete",
+                                  role: "confirm",
+                                  handler: () => {
+                                    deleteShippingZone.mutate(zone.id!);
+                                  },
+                                },
+                              ],
+                            });
                           },
                         },
                         {
@@ -301,16 +391,23 @@ export default function ShippingZones({ dismiss }: Props) {
                   mode: "ios",
                   size: "auto",
                 }}
-                onIonBlur={(e) => {
-                  if (e.target.value) {
-                    // TODO: Update data at API
-                  }
+                onIonDismiss={(e) => {
+                  setProcessingTime(e.target.value);
                 }}
+                value={processingTime}
               >
-                <IonSelectOption>No processing time</IonSelectOption>
-                <IonSelectOption>Same business day</IonSelectOption>
-                <IonSelectOption>Next business day</IonSelectOption>
-                <IonSelectOption>2 business days</IonSelectOption>
+                <IonSelectOption value="none">
+                  No processing time
+                </IonSelectOption>
+                <IonSelectOption value="sameDay">
+                  Same business day
+                </IonSelectOption>
+                <IonSelectOption value="nextDay">
+                  Next business day
+                </IonSelectOption>
+                <IonSelectOption value="twoDays">
+                  2 business days
+                </IonSelectOption>
               </IonSelect>
             </IonItem>
           </IonItemGroup>
@@ -380,8 +477,8 @@ export default function ShippingZones({ dismiss }: Props) {
                 onClick={() => {
                   presentFulfillment({
                     id: "add-fulfillment-service",
-                    breakpoints: [0, 0.4],
-                    initialBreakpoint: 0.4,
+                    breakpoints: [0, 0.5, 1],
+                    initialBreakpoint: 0.5,
                   });
                 }}
               >

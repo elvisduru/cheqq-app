@@ -11,7 +11,7 @@ import {
   useIonViewWillLeave,
 } from "@ionic/react";
 import React from "react";
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
 import { Storage } from "@capacitor/storage";
 import { useStore } from "../../hooks/useStore";
 

@@ -139,7 +139,7 @@ export default function NewDiscount({ dismiss, title }: Props) {
                 >
                   {!errors.code
                     ? "Customers will enter this code at checkout."
-                    : errors.code?.message}
+                    : String(errors.code?.message)}
                 </IonNote>
               </div>
             ) : (
@@ -166,7 +166,7 @@ export default function NewDiscount({ dismiss, title }: Props) {
                 <IonNote slot="helper">
                   Customers will see this in their cart and at checkout.
                 </IonNote>
-                <IonNote slot="error">{errors.title?.message}</IonNote>
+                <IonNote slot="error">{String(errors.title?.message)}</IonNote>
               </IonItem>
             )}
           </IonItemGroup>
@@ -228,7 +228,9 @@ export default function NewDiscount({ dismiss, title }: Props) {
                 {adjustmentType === "percent" ? "percentage" : "fixed amount"}{" "}
                 that will be discounted.
               </IonNote>
-              <IonNote slot="error">{errors.adjustmentValue?.message}</IonNote>
+              <IonNote slot="error">
+                {String(errors.adjustmentValue?.message)}
+              </IonNote>
             </IonItem>
           </IonItemGroup>
           <IonItemGroup className="mt-8">

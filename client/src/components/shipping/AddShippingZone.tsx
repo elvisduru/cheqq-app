@@ -13,8 +13,11 @@ import {
   IonTitle,
   IonToolbar,
   useIonActionSheet,
+  useIonAlert,
   useIonModal,
 } from "@ionic/react";
+import { UseMutationResult } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 import {
   add,
   cashOutline,
@@ -39,12 +42,19 @@ type Props = {
   dismiss: () => void;
   selectedStore: number;
   shippingZone?: ShippingZone;
+  deleteShippingZone: UseMutationResult<
+    AxiosResponse<ShippingZone, any>,
+    unknown,
+    number,
+    unknown
+  >;
 };
 
 export default function AddShippingZone({
   dismiss,
   selectedStore,
   shippingZone,
+  deleteShippingZone,
 }: Props) {
   const user = useStore((store) => store.user);
   const store = user?.stores.find((s) => s.id === selectedStore);
@@ -130,6 +140,7 @@ export default function AddShippingZone({
   });
 
   const [presentSheet] = useIonActionSheet();
+  const [presentAlert] = useIonAlert();
 
   // TODO: Write blog post about transition times. Mention this in the blog post.
   // Update transit time for each rate when location lenght changes
@@ -176,6 +187,35 @@ export default function AddShippingZone({
               <IonIcon slot="icon-only" icon={close} />
             </IonButton>
           </IonButtons>
+          {shippingZone && (
+            <IonButtons slot="end">
+              <IonButton
+                color="danger"
+                onClick={() => {
+                  presentAlert({
+                    header: "Alert!",
+                    message: "Are you sure you want to delete this zone?",
+                    buttons: [
+                      {
+                        text: "Cancel",
+                        role: "cancel",
+                      },
+                      {
+                        text: "Delete",
+                        role: "confirm",
+                        handler: () => {
+                          deleteShippingZone.mutate(shippingZone?.id!);
+                          dismiss();
+                        },
+                      },
+                    ],
+                  });
+                }}
+              >
+                Delete
+              </IonButton>
+            </IonButtons>
+          )}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

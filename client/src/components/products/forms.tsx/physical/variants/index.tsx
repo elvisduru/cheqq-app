@@ -251,7 +251,7 @@ export default function Variants() {
                       )}
                     />
                     <IonNote slot="error">
-                      {errors.options?.[index]?.name?.message}
+                      {String(errors.options?.[index]?.name?.message)}
                     </IonNote>
                   </IonItem>
                   <TagInput

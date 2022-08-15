@@ -9,6 +9,7 @@ import {
   useIonRouter,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import { SplashScreen } from "@capacitor/splash-screen";
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/display.css";
@@ -69,8 +70,6 @@ const App: React.FC = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useReRender();
 
   return (
     <>

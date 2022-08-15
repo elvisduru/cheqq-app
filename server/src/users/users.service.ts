@@ -28,6 +28,8 @@ type User = Prisma.UserGetPayload<{
         address: true;
         addressCoordinates: true;
         country: true;
+        processingTime: true;
+        localPickup: true;
       };
     };
   };
@@ -55,6 +57,8 @@ export class UsersService {
             address: true,
             addressCoordinates: true,
             country: true,
+            processingTime: true,
+            localPickup: true,
           },
         },
       },
@@ -77,6 +81,8 @@ export class UsersService {
             address: true,
             addressCoordinates: true,
             country: true,
+            processingTime: true,
+            localPickup: true,
           },
         },
       },
@@ -97,6 +103,8 @@ export class UsersService {
             address: true,
             addressCoordinates: true,
             country: true,
+            processingTime: true,
+            localPickup: true,
           },
         },
       },
@@ -121,6 +129,8 @@ export class UsersService {
             address: true,
             addressCoordinates: true,
             country: true,
+            processingTime: true,
+            localPickup: true,
           },
         },
       },

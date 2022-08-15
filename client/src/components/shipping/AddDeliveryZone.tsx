@@ -39,7 +39,7 @@ export default function AddDeliveryZone({ dismiss }: Props) {
   });
   const onSubmit = (data: any) => console.log(data);
   const onError = (error: any) => console.log(error);
-  const addressCoordinates = user?.stores[selectedStore].addressCoordinates;
+  const addressCoordinates = user?.stores[selectedStore!].addressCoordinates;
   return (
     <>
       <IonHeader>
@@ -83,7 +83,7 @@ export default function AddDeliveryZone({ dismiss }: Props) {
               )}
             />
             <IonNote slot="helper">Enter a name for this zone.</IonNote>
-            <IonNote slot="error">{errors.name?.message}</IonNote>
+            <IonNote slot="error">{String(errors.name?.message)}</IonNote>
           </IonItem>
           <IonItem className="input mt-4">
             <IonLabel position="floating">Distance</IonLabel>

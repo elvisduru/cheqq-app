@@ -33,6 +33,8 @@ export type User = {
     address: string;
     addressCoordinates: { lat: number; lng: number };
     country: string;
+    processingTime: string;
+    localPickup: boolean;
   }[];
   prefs: JsonObject;
   createdAt: Date;
@@ -50,6 +52,8 @@ export type Store = {
   country: string;
   phone?: string;
   order_email?: string | null;
+  processingTime?: string;
+  localPickup?: boolean;
   language: string;
   currency: string;
   logo: string | null;

@@ -5,7 +5,7 @@ import { useStore } from "../../useStore";
 
 const getUser = async () => {
   const { data } = await api.get<User>("/users/current");
-  useStore.setState({ user: data, selectedStore: data.stores[0].id });
+  useStore.setState({ user: data, selectedStore: data.stores?.[0]?.id });
   return data;
 };
 

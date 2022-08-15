@@ -361,7 +361,7 @@ export default function Checkout() {
           <IonNote slot="helper">
             Send customers to a URL of your choice after purchase.
           </IonNote>
-          <IonNote slot="error">{errors.redirectUrl?.message}</IonNote>
+          <IonNote slot="error">{String(errors.redirectUrl?.message)}</IonNote>
         </IonItem>
       ) : null}
     </Step>
