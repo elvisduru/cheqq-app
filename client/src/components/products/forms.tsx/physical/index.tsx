@@ -154,10 +154,11 @@ export default function PhysicalProductForm() {
                 onClick={() => {
                   swiper?.slideNext();
                 }}
+                color={swiper?.activeIndex === 2 ? "primary" : "medium"}
                 expand="block"
                 size="default"
               >
-                Continue
+                {swiper?.activeIndex === 2 ? "Preview" : "Continue"}
               </IonButton>
             </IonCol>
           </IonRow>
