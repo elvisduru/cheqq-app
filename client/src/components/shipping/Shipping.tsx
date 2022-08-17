@@ -4,11 +4,9 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
-  IonInput,
   IonItem,
   IonItemGroup,
   IonLabel,
-  IonLoading,
   IonNote,
   IonSelect,
   IonSelectOption,
@@ -30,7 +28,6 @@ import useDeleteShippingZone from "../../hooks/mutations/shipping/deleteShipping
 import useUpdateStore from "../../hooks/mutations/stores/updateStore";
 import useFulfillmentServices from "../../hooks/queries/fulfillmentService/useFulfillmentServices";
 import useShippingZones from "../../hooks/queries/shipping/useShippingZones";
-import useReRender from "../../hooks/useReRender";
 import { useStore } from "../../hooks/useStore";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import withSuspense from "../hoc/withSuspense";
@@ -52,7 +49,6 @@ polyfillCountryFlagEmojis();
 
 export default function ShippingZones({ dismiss }: Props) {
   const user = useStore((state) => state.user);
-  const setUser = useStore((state) => state.setUser);
   const selectedStore = useStore((store) => store.selectedStore);
   const store = user?.stores.find((s) => s.id === selectedStore);
   const { data: shippingZones } = useShippingZones(selectedStore!);

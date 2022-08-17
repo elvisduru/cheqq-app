@@ -11,12 +11,11 @@ import {
 } from "@ionic/react";
 import React from "react";
 import notFoundAnimation from "../../assets/json/no-data-found.json";
+import ChooseProduct from "../../components/ChooseProduct";
 import withSuspense from "../../components/hoc/withSuspense";
 import useOrders from "../../hooks/queries/orders/useOrders";
 import { useStore } from "../../hooks/useStore";
-const ChooseProduct = withSuspense(
-  React.lazy(() => import("../../components/ChooseProduct"))
-);
+
 const LottieWrapper = withSuspense<any>(
   React.lazy(() => import("../../components/lottieWrapper"))
 );

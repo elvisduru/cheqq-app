@@ -18,13 +18,11 @@ import {
   downloadOutline,
   reloadOutline,
 } from "ionicons/icons";
-import React, { useState } from "react";
+import { useState } from "react";
 import shallow from "zustand/shallow";
 import useCanDismiss from "../hooks/useCanDismiss";
 import { AppState, useStore } from "../hooks/useStore";
-import withSuspense from "./hoc/withSuspense";
-
-const NewProduct = withSuspense(React.lazy(() => import("./products/new")));
+import NewProduct from "./products/new";
 
 type Props = {
   dismiss: () => void;
@@ -69,7 +67,7 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
       handler: () => {
         setProductType("physical");
         present({
-          presentingElement: routerOutletEl,
+          // presentingElement: routerOutletEl,
           canDismiss: canDismissPhyical,
           id: "new-physical-product",
           onWillPresent() {
@@ -93,7 +91,7 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
       handler: () => {
         setProductType("digital");
         present({
-          presentingElement: routerOutletEl,
+          // presentingElement: routerOutletEl,
           canDismiss: canDismissDigital,
         });
       },
@@ -105,7 +103,7 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
       handler: () => {
         setProductType("membership");
         present({
-          presentingElement: routerOutletEl,
+          // presentingElement: routerOutletEl,
           canDismiss: canDismissMembership,
         });
       },
