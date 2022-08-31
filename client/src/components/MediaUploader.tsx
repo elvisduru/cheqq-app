@@ -1,8 +1,6 @@
 import {
   closestCenter,
   DndContext,
-  DragEndEvent,
-  DragOverlay,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
@@ -10,7 +8,6 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   arraySwap,
   rectSwappingStrategy,
   SortableContext,
@@ -19,16 +16,16 @@ import {
 import { IonIcon, IonLoading, IonSpinner, IonThumbnail } from "@ionic/react";
 import { add, imagesOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import { FieldValues, UseFormSetValue, useWatch } from "react-hook-form";
+import { UseFormSetValue, useWatch } from "react-hook-form";
 import useAddImages from "../hooks/mutations/images/addImages";
 import { useDeleteImage } from "../hooks/mutations/images/deleteImage";
 import usePhotoGallery from "../hooks/usePhotoGallery";
 import { uploadFiles } from "../utils";
-import { ImageWithRequiredId, User } from "../utils/types";
+import { ImageWithRequiredId, ProductInput, User } from "../utils/types";
 import SortableImage from "./SortableImage";
 
 type Props = {
-  setValue: UseFormSetValue<FieldValues>;
+  setValue: UseFormSetValue<ProductInput>;
   user: User;
   name: string;
   control: any;
@@ -68,7 +65,7 @@ export default function MediaUploader({
       const oldIndex = photos.findIndex((photo) => photo.id === active.id);
       const newIndex = photos.findIndex((photo) => photo.id === over?.id);
       const sortedPhotos = arraySwap(photos, oldIndex, newIndex);
-      setValue("photos", sortedPhotos);
+      setValue("images", sortedPhotos);
     }
 
     setActiveIndex(null);
@@ -87,8 +84,9 @@ export default function MediaUploader({
       uploadFiles(user, files).then((uploadedFiles) => {
         addImages.mutate(uploadedFiles, {
           onSuccess: ({ data }) => {
+            console.log("data", data);
             // update form state
-            setValue("photos", photos ? [...photos, ...data] : data);
+            setValue("images", photos ? [...photos, ...data] : data);
             // reset usePhotoGallery hook state
             setPhotos([]);
             setFiles([]);
@@ -107,13 +105,13 @@ export default function MediaUploader({
     deleteImage.mutate(id, {
       onSuccess: (_, id) => {
         setValue(
-          "photos",
+          "images",
           photos.filter((photo) => photo.id !== id)
         );
       },
       onError: (_, id) => {
         setValue(
-          "photos",
+          "images",
           photos.filter((photo) => photo.id !== id)
         );
       },

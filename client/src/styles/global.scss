@@ -297,3 +297,12 @@ ion-item-divider {
 //       filter:var(--map-tiles-filter, none);
 // }
 // }
+
+// Swiper styles
+.swiper-pagination {
+  bottom: 20px !important;
+}
+
+.swiper .swiper-pagination-bullet-active {
+  background: var(--ion-color-step-600, #666666) !important;
+}

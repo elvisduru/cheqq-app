@@ -36,7 +36,7 @@ export default function LottieWrapper({
       </IonGrid>
       <div className="ion-text-center leading-normal mt-10">
         <h3>{title}</h3>
-        {description && <p className="text-gray">{description}</p>}
+        {description && <p className="text-gray text-base">{description}</p>}
         {buttonText && (
           <IonButton
             routerLink={buttonLink}

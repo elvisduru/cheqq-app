@@ -6,10 +6,10 @@ import useAddImages from "../hooks/mutations/images/addImages";
 import useUser from "../hooks/queries/users/useUser";
 import usePhotoGallery from "../hooks/usePhotoGallery";
 import { uploadFiles } from "../utils";
-import { Image } from "../utils/types";
+import { Image, ProductInput } from "../utils/types";
 
 type Props = {
-  setValue: UseFormSetValue<FieldValues>;
+  setValue: UseFormSetValue<ProductInput>;
   name: string;
   control: any;
   selected: number;
@@ -39,7 +39,7 @@ export default function MediaSelector({
         addImages.mutate(uploadedFiles, {
           onSuccess: ({ data }) => {
             // update form state
-            setValue("photos", photos ? [...photos, ...data] : data);
+            setValue("images", photos ? [...photos, ...data] : data);
             // reset usePhotoGallery hook state
             setPhotos([]);
             setFiles([]);

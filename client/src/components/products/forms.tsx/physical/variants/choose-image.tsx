@@ -8,18 +8,17 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { close } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Control, FieldValues, UseFormSetValue } from "react-hook-form";
-import { Variant } from ".";
-import withSuspense from "../../../../hoc/withSuspense";
+import { ProductInput, ProductVariant } from "../../../../../utils/types";
 import MediaSelector from "../../../../MediaSelector";
 
 type Props = {
   dismiss: () => void;
   variantIndex: number;
   control: Control<FieldValues, any>;
-  setValue: UseFormSetValue<FieldValues>;
-  variant: Variant;
+  setValue: UseFormSetValue<ProductInput>;
+  variant: ProductVariant;
 };
 
 export default function ChooseImage({
@@ -32,7 +31,7 @@ export default function ChooseImage({
   const [selected, setSelected] = useState<number>();
 
   useEffect(() => {
-    if (variant) setSelected(variant.image);
+    if (variant) setSelected(variant.imageId);
   }, []);
 
   return (
@@ -50,24 +49,23 @@ export default function ChooseImage({
               <IonIcon slot="icon-only" icon={close} />
             </IonButton>
           </IonButtons>
-          {selected && (
-            <IonButtons slot="end">
-              <IonButton
-                color="dark"
-                onClick={() => {
-                  setValue(`variants.${variantIndex}.image`, selected);
-                  dismiss();
-                }}
-              >
-                Done
-              </IonButton>
-            </IonButtons>
-          )}
+
+          <IonButtons slot="end">
+            <IonButton
+              color="dark"
+              onClick={() => {
+                setValue(`variants.${variantIndex}.imageId`, selected);
+                dismiss();
+              }}
+            >
+              Done
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
         <MediaSelector
-          name="photos"
+          name="images"
           control={control}
           setValue={setValue}
           selected={selected!}

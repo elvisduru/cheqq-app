@@ -24,15 +24,15 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-import { Variant } from ".";
+import { ProductInput, ProductVariant } from "../../../../../utils/types";
 
 type Props = {
   dismiss: () => void;
-  variant: Variant;
+  variant: ProductVariant;
   variantIndex: number;
   watch: UseFormWatch<FieldValues>;
   control: Control<FieldValues, any>;
-  setValue: UseFormSetValue<FieldValues>;
+  setValue: UseFormSetValue<ProductInput>;
   errors: { [x: string]: any };
 };
 
@@ -60,7 +60,7 @@ export default function EditVariant({
     <>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Edit {variant.name}</IonTitle>
+          <IonTitle>Edit {variant.title}</IonTitle>
           <IonButtons slot="start">
             <IonButton
               color="dark"

@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import useToggle from "../../../../hooks/useToggle";
+import { ProductInput } from "../../../../utils/types";
 import Discounts from "../../../discounts";
 import ShippingZones from "../../../shipping/Shipping";
 import Step from "../Step";
@@ -23,9 +24,8 @@ import Step from "../Step";
 export default function Checkout() {
   const {
     control,
-    watch,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<ProductInput>();
   const [redirect, setRedirect] = useState(false);
   const [flatShipping, setFlatShipping] = useState(false);
 
@@ -227,7 +227,6 @@ export default function Checkout() {
                   onChange(e.detail.checked);
                 }}
                 onIonBlur={onBlur}
-                value={value}
               />
             )}
           />
@@ -357,7 +356,7 @@ export default function Checkout() {
           <IonNote slot="helper">
             Send customers to a URL of your choice after purchase.
           </IonNote>
-          <IonNote slot="error">{String(errors.redirectUrl?.message)}</IonNote>
+          <IonNote slot="error">{errors.redirectUrl?.message}</IonNote>
         </IonItem>
       ) : null}
     </Step>

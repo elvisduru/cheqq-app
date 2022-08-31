@@ -10,11 +10,11 @@ const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   // <React.StrictMode>
   <QueryClientProvider client={queryClient}>
-    <IonApp>
-      <IonReactRouter>
+    <IonReactRouter>
+      <IonApp>
         <App />
-      </IonReactRouter>
-    </IonApp>
+      </IonApp>
+    </IonReactRouter>
     {/* <ReactQueryDevtools initialIsOpen={false} /> */}
   </QueryClientProvider>
   // </React.StrictMode>

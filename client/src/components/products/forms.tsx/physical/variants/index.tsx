@@ -1,6 +1,5 @@
 import {
   IonButton,
-  IonCheckbox,
   IonIcon,
   IonImg,
   IonInput,
@@ -18,40 +17,35 @@ import {
 import { ellipsisHorizontal, image, trash } from "ionicons/icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
-import { Image } from "../../../../../utils/types";
+import variantAnimation from "../../../../../assets/json/variants.json";
+import { useStore } from "../../../../../hooks/useStore";
+import {
+  Image,
+  ProductInput,
+  ProductVariant,
+} from "../../../../../utils/types";
 import withSuspense from "../../../../hoc/withSuspense";
 import LottieWrapper from "../../../../lottieWrapper";
 import TagInput from "../../../../TagInput";
 import Step from "../../Step";
-import variantAnimation from "../../../../../assets/json/variants.json";
 
 const ChooseImage = withSuspense(React.lazy(() => import("./choose-image")));
 const EditVariant = withSuspense(React.lazy(() => import("./editVariant")));
 
-export type Variant = {
-  name: string;
-  price?: number;
-  sku?: string;
-  image?: number;
-  inventoryTracking?: boolean;
-  inventoryLevel?: number;
-  inventoryWarningLevel?: number;
-  allowBackorder?: boolean;
-  gtin?: string;
-  enabled?: boolean;
-};
-
 export default function Variants() {
+  const user = useStore((store) => store.user);
+  const selectedStore = useStore((store) => store.selectedStore);
+  const store = user?.stores.find((store) => store.id === selectedStore);
   const {
     watch,
     setValue,
     control,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<ProductInput>();
   const hasVariants = watch("hasVariants");
   const options = watch("options") || [];
   const variants = watch("variants") || [];
-  const photos = watch("photos") || [];
+  const images = watch("images") || [];
 
   const { fields, append, remove, move } = useFieldArray({
     control,
@@ -63,7 +57,7 @@ export default function Variants() {
     name: "variants",
   });
 
-  const [variant, setVariant] = useState<Variant>();
+  const [variant, setVariant] = useState<ProductVariant>();
   const [variantIndex, setVariantIndex] = useState<number>();
 
   const [present, dismiss] = useIonModal(EditVariant, {
@@ -102,31 +96,34 @@ export default function Variants() {
   };
 
   const generateVariants = useCallback(
-    (options: { name: string; values: string[] }[]): Variant[] => {
+    (options: { name: string; values: string[] }[]): ProductVariant[] => {
       const values = options
         .filter((option) => option.values.length > 0)
         .map((option) => option.values);
-      const newVariants: Variant[] = cartesianProduct(...values).map(
-        (variant: string[]): Variant => {
+      const newVariants: ProductVariant[] = cartesianProduct(...values).map(
+        (variant: string[]): ProductVariant => {
           // check if variant already exists
-          const variantExists = variants.find((v: Variant) =>
-            v.name.split("-").every((el: string) => {
+          const variantExists = variants.find((v: ProductVariant) =>
+            v.title.split("-").every((el: string) => {
               return variant.includes(el);
             })
           );
           if (variantExists) {
-            return { ...variantExists, name: variant.join("-") };
+            return { ...variantExists, title: variant.join("-") };
           }
           return {
-            name: variant.join("-"),
+            title: variant.join("-"),
             price: undefined,
             sku: undefined,
-            image: undefined,
+            imageId: undefined,
             inventoryLevel: undefined,
             inventoryWarningLevel: undefined,
             inventoryTracking: undefined,
             gtin: undefined,
             enabled: true,
+            currency: store?.currency!,
+            isFreeShipping: true,
+            allowBackOrder: false,
           };
         }
       );
@@ -255,7 +252,7 @@ export default function Variants() {
                     )}
                   />
                   <IonNote slot="error">
-                    {String(errors.options?.[index]?.name?.message)}
+                    {errors.options?.[index]?.name?.message}
                   </IonNote>
                 </IonItem>
                 <TagInput
@@ -314,13 +311,14 @@ export default function Variants() {
                       }}
                       className="bg-light mr-1 flex items-center ion-justify-content-center rounded"
                     >
-                      {photos.find(
-                        (p: Image) => p.id === watch(`variants.${index}.image`)
+                      {images.find(
+                        (p: Image) =>
+                          p.id === watch(`variants.${index}.imageId`)
                       ) ? (
                         <IonImg
                           src={
-                            photos.find(
-                              (p: Image) => p.id === variants[index].image
+                            images.find(
+                              (p: Image) => p.id === variants[index].imageId
                             )?.url
                           }
                         />
@@ -329,13 +327,16 @@ export default function Variants() {
                       )}
                     </IonThumbnail>
                     <IonLabel onClick={() => handleEditVariant(index)}>
-                      <h2>{variants[index].name}</h2>
+                      <h2>{variants[index].title}</h2>
                       <p>
                         {Intl.NumberFormat("en-US", {
                           style: "currency",
                           currency: "USD",
                         }).format(variants[index].price || 0)}
-                        &nbsp;• {variants[index].inventoryLevel || 0} available
+                        &nbsp;•{" "}
+                        {variants[index].inventoryLevel
+                          ? `${variants[index].inventoryLevel} available`
+                          : "No inventory"}
                       </p>
                     </IonLabel>
                   </div>
@@ -354,7 +355,6 @@ export default function Variants() {
                         <IonToggle
                           checked={value}
                           onIonBlur={onBlur}
-                          value={value}
                           onIonChange={(e) => {
                             onChange(e.detail.checked);
                           }}

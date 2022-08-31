@@ -205,3 +205,125 @@ export type FulfillmentService = {
   name: string;
   email: string;
 };
+
+export type Product = {
+  id?: number;
+  storeId?: number;
+  type: ProductType;
+  title: string;
+  description?: string;
+  price: number;
+  compareAtPrice?: number;
+  currency: string;
+  categories?: number[];
+  collections?: number[];
+  tags?: string[];
+  weight?: number;
+  weightUnit?: WeightUnit;
+  width?: number;
+  height?: number;
+  depth?: number;
+  dimensionUnit?: DimensionUnit;
+  brandId?: number;
+  options?: ProductOption[];
+  variants?: ProductVariant[];
+  images?: Image[];
+  videos?: Video[];
+  inventoryTracking?: boolean;
+  allowBackOrder?: boolean;
+  inventoryLevel?: number;
+  inventoryWarningLevel?: number;
+  sku?: string;
+  gtin?: string;
+  isFreeShipping?: boolean;
+  fixedShippingRate?: number;
+  public?: boolean;
+  featured?: boolean;
+  relatedProducts?: number[];
+  warranty?: string;
+  layout?: string;
+  availability?: ProductAvailability;
+  availabilityLabel?: string;
+  preOrderReleaseDate?: Date;
+  preOrderMessage?: string;
+  preOrderOnly?: boolean;
+  redirectUrl?: string;
+  condition: Condition;
+  showCondition?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type ProductInput = {
+  brand: string;
+  hasVariants: boolean;
+} & Product;
+
+export type ProductOption = {
+  id?: number;
+  productId?: number;
+  name: string;
+  values: string[];
+};
+
+export type ProductVariant = {
+  id?: number;
+  productId?: number;
+  title: string;
+  price?: number;
+  compareAtPrice?: number;
+  currency: string;
+  inventoryTracking?: boolean;
+  allowBackOrder: boolean;
+  inventoryLevel?: number;
+  inventoryWarningLevel?: number;
+  sku?: string;
+  gtin?: string;
+  isFreeShipping: boolean;
+  fixedShippingRate?: number;
+  imageId?: number;
+  videoId?: number;
+  enabled: boolean;
+  pricingRuleId?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+const Condition = {
+  new: "new",
+  used: "used",
+  refurbished: "refurbished",
+};
+
+export type Condition = keyof typeof Condition;
+
+const ProductAvailability = {
+  available: "available",
+  disabled: "disabled",
+  preorder: "preorder",
+};
+export type ProductAvailability = keyof typeof ProductAvailability;
+
+const ProductType = {
+  physical: "physical",
+  digital: "digital",
+} as const;
+
+export type ProductType = typeof ProductType[keyof typeof ProductType];
+
+const WeightUnit = {
+  lb: "lb",
+  kg: "kg",
+  oz: "oz",
+  g: "g",
+} as const;
+
+export type WeightUnit = typeof WeightUnit[keyof typeof WeightUnit];
+
+const DimensionUnit = {
+  in: "in",
+  cm: "cm",
+  m: "m",
+} as const;
+
+export type DimensionUnit = typeof DimensionUnit[keyof typeof DimensionUnit];

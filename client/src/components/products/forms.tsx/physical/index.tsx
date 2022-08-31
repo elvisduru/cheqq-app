@@ -6,6 +6,7 @@ import {
   IonRow,
   IonSegment,
   IonSegmentButton,
+  useIonModal,
 } from "@ionic/react";
 import { chevronBack } from "ionicons/icons";
 import React, { useEffect, useRef, useState } from "react";
@@ -15,9 +16,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper/types";
 import shallow from "zustand/shallow";
 import { useDeleteImages } from "../../../../hooks/mutations/images/deleteImages";
-import useUser from "../../../../hooks/queries/users/useUser";
 import { AppState, ModalState, useStore } from "../../../../hooks/useStore";
+import useUpdateEffect from "../../../../hooks/useUpdateEffect";
+import { ProductInput } from "../../../../utils/types";
 import withSuspense from "../../../hoc/withSuspense";
+import ProductDetails from "../../details";
 import General from "./general";
 const Checkout = withSuspense(React.lazy(() => import("./checkout")));
 const Variants = withSuspense(React.lazy(() => import("./variants")));
@@ -35,13 +38,12 @@ const selector = ({
 // TODO: When submitting form, update sortOrder of photos and videos
 
 export default function PhysicalProductForm() {
-  const { data: user } = useUser();
   const { setPhysicalFormData, physicalFormData, physicalModalState } =
     useStore(selector, shallow);
 
   const deleteImages = useDeleteImages();
 
-  const methods = useForm({
+  const methods = useForm<ProductInput>({
     mode: "onBlur",
     defaultValues: { ...physicalFormData, type: "physical" },
   });
@@ -54,6 +56,23 @@ export default function PhysicalProductForm() {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
 
+  const [formValid, setFormValid] = useState(false);
+
+  // Product Preview Modal
+  const [present, dismiss] = useIonModal(ProductDetails, {
+    product: methods.getValues(),
+    goBack: () => {
+      dismiss();
+    },
+    isPreview: true,
+  });
+
+  useUpdateEffect(() => {
+    methods.trigger().then((result) => {
+      setFormValid(result);
+    });
+  }, [tabIndex]);
+
   // Save photos to cloud
   useEffect(() => {
     const formValues = methods.getValues();
@@ -64,8 +83,8 @@ export default function PhysicalProductForm() {
 
     if (physicalModalState === ModalState.DELETE) {
       // Delete all uploaded images
-      if (formValues?.photos?.length) {
-        deleteImages.mutate(formValues.photos);
+      if (formValues?.images?.length) {
+        deleteImages.mutate(formValues.images);
       }
       setPhysicalFormData(undefined);
     }
@@ -92,7 +111,6 @@ export default function PhysicalProductForm() {
           <IonSegmentButton value="0">General</IonSegmentButton>
           <IonSegmentButton value="1">Variants</IonSegmentButton>
           <IonSegmentButton value="2">Checkout</IonSegmentButton>
-          <IonSegmentButton value="3">Preview</IonSegmentButton>
         </IonSegment>
       </div>
       <form
@@ -152,9 +170,14 @@ export default function PhysicalProductForm() {
               <IonButton
                 className="drop-shadow"
                 onClick={() => {
-                  swiper?.slideNext();
+                  if (tabIndex === 2) {
+                    present();
+                  } else {
+                    swiper?.slideNext();
+                  }
                 }}
-                color={swiper?.activeIndex === 2 ? "primary" : "medium"}
+                disabled={tabIndex === 2 && !formValid}
+                color={swiper?.activeIndex! < 2 ? "medium" : "primary"}
                 expand="block"
                 size="default"
               >
