@@ -103,10 +103,9 @@ export default function EditVariant({
               control={control}
               name={`variants.${variantIndex}.price`}
               rules={{
-                required: "Please enter a price",
                 min: {
                   value: 0,
-                  message: "Price must be greater than 0",
+                  message: "Price must be greater than or equal to 0",
                 },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -121,7 +120,7 @@ export default function EditVariant({
               )}
             />
             <IonNote slot="helper">
-              Enter a price. "0" means customers can pay what they want
+              Defaults to original product price if left blank.
             </IonNote>
             <IonNote slot="error">
               {errors.variants?.[variantIndex]?.price?.message}
@@ -129,7 +128,9 @@ export default function EditVariant({
           </IonItem>
           <IonItem
             className={`input mt-4 ${
-              errors.variants?.[variantIndex]?.comparePrice ? "ion-invalid" : ""
+              errors.variants?.[variantIndex]?.compareAtPrice
+                ? "ion-invalid"
+                : ""
             }`}
             fill="outline"
             mode="md"
@@ -137,11 +138,11 @@ export default function EditVariant({
             <IonLabel position="floating">Compare at price</IonLabel>
             <Controller
               control={control}
-              name={`variants.${variantIndex}.comparePrice`}
+              name={`variants.${variantIndex}.compareAtPrice`}
               rules={{
                 min: {
                   value: 0,
-                  message: "Price must be greater than 0",
+                  message: "Price must be greater than or equal to 0",
                 },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -156,7 +157,7 @@ export default function EditVariant({
               )}
             />
             <IonNote slot="helper">
-              Optional. Enter an old price shoppers can compare with.
+              Optional. Defaults to original product price if left blank.
             </IonNote>
             <IonNote slot="error">
               {errors.variants?.[variantIndex]?.price?.message}

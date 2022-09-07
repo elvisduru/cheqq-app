@@ -189,7 +189,7 @@ export default function General() {
               required: "Please enter a price",
               min: {
                 value: 0,
-                message: "Price must be greater than 0",
+                message: "Price must be greater than or equal to 0",
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -213,14 +213,14 @@ export default function General() {
           fill="outline"
           mode="md"
         >
-          <IonLabel position="floating">Compare at price</IonLabel>
+          <IonLabel position="floating">Old Price</IonLabel>
           <Controller
             control={control}
             name="compareAtPrice"
             rules={{
               min: {
                 value: 0,
-                message: "Price must be greater than 0",
+                message: "Price must be greater than or equal to 0",
               },
             }}
             render={({ field: { onChange, onBlur, value } }) => (

@@ -29,17 +29,28 @@ const selector = ({
   setPhysicalFormData,
   physicalFormData,
   physicalModalState,
+  user,
+  selectedStore,
 }: AppState) => ({
   setPhysicalFormData,
   physicalFormData,
   physicalModalState,
+  user,
+  selectedStore,
 });
 
 // TODO: When submitting form, update sortOrder of photos and videos
 
 export default function PhysicalProductForm() {
-  const { setPhysicalFormData, physicalFormData, physicalModalState } =
-    useStore(selector, shallow);
+  const {
+    setPhysicalFormData,
+    physicalFormData,
+    physicalModalState,
+    user,
+    selectedStore,
+  } = useStore(selector, shallow);
+
+  const store = user?.stores?.find((store) => store.id === selectedStore);
 
   const deleteImages = useDeleteImages();
 
@@ -60,7 +71,7 @@ export default function PhysicalProductForm() {
 
   // Product Preview Modal
   const [present, dismiss] = useIonModal(ProductDetails, {
-    product: methods.getValues(),
+    product: { ...methods.getValues(), store },
     goBack: () => {
       dismiss();
     },

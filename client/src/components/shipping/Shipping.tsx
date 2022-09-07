@@ -31,15 +31,8 @@ import useShippingZones from "../../hooks/queries/shipping/useShippingZones";
 import { useStore } from "../../hooks/useStore";
 import useUpdateEffect from "../../hooks/useUpdateEffect";
 import withSuspense from "../hoc/withSuspense";
-// const AddDeliveryZone = withSuspense(
-//   React.lazy(() => import("./AddDeliveryZone"))
-// );
-const AddShippingZone = withSuspense(
-  React.lazy(() => import("./AddShippingZone"))
-);
-const AddFulfillmentService = withSuspense(
-  React.lazy(() => import("./AddFulfillmentService"))
-);
+import AddFulfillmentService from "./AddFulfillmentService";
+import AddShippingZone from "./AddShippingZone";
 
 type Props = {
   dismiss: () => void;

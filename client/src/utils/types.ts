@@ -209,6 +209,7 @@ export type FulfillmentService = {
 export type Product = {
   id?: number;
   storeId?: number;
+  store: Store;
   type: ProductType;
   title: string;
   description?: string;

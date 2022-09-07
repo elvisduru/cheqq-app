@@ -92,3 +92,16 @@ export function generateId(
     })
     .join("");
 }
+
+export const cartesianProduct = (...arrays: any[]) => {
+  return arrays.reduce(
+    (acc, array) => {
+      return acc.reduce(
+        (a: string[], v: string[]) =>
+          a.concat(array.map((w: string) => [...v, w])),
+        []
+      );
+    },
+    [[]]
+  );
+};

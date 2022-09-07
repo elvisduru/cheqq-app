@@ -270,7 +270,7 @@ model ProductVariant {
   product               Product      @relation(fields: [productId], references: [id])
   productId             Int
   name                  String
-  price                 Float
+  price                 Float?
   compareAtPrice        Float?
   costPrice             Float?
   currency              String       @default(value: "USD")

@@ -19,6 +19,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import variantAnimation from "../../../../../assets/json/variants.json";
 import { useStore } from "../../../../../hooks/useStore";
+import { cartesianProduct } from "../../../../../utils";
 import {
   Image,
   ProductInput,
@@ -81,19 +82,6 @@ export default function Variants() {
     setValue,
     control,
   });
-
-  const cartesianProduct = (...arrays: any[]) => {
-    return arrays.reduce(
-      (acc, array) => {
-        return acc.reduce(
-          (a: string[], v: string[]) =>
-            a.concat(array.map((w: string) => [...v, w])),
-          []
-        );
-      },
-      [[]]
-    );
-  };
 
   const generateVariants = useCallback(
     (options: { name: string; values: string[] }[]): ProductVariant[] => {
