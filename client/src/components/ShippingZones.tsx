@@ -47,7 +47,7 @@ export default function ShippingZones({ dismiss }: Props) {
     items?: any;
     children?: JSX.Element[] | JSX.Element;
   }) => (
-    <IonList className="bg-modal ion-text-left h-full ion-padding-horizontal flex flex-column items-center">
+    <IonList className="bg-modal ion-text-left h-full ion-padding-horizontal flex flex-col items-center">
       <IonListHeader className="ion-no-padding">
         <IonLabel>{title}</IonLabel>
       </IonListHeader>

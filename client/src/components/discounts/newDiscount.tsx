@@ -75,7 +75,7 @@ export default function NewDiscount({ dismiss, title }: Props) {
       <IonContent fullscreen>
         <form
           // onSubmit={handleSubmit(onSubmit, onError)}
-          className="ion-padding-top ion-padding-horizontal flex flex-column modal-form"
+          className="ion-padding-top ion-padding-horizontal flex flex-col modal-form"
         >
           <IonItemGroup>
             <IonItemDivider className="pl-0">

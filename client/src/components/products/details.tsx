@@ -42,7 +42,6 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
   );
 
   const [selectedVariant, setSelectedVariant] = useState<number>(-1);
-  const [selectedImage, setSelectedImage] = useState<number>(-1);
 
   const handleSelectedValues = useCallback(
     (option: string, value: string) => {

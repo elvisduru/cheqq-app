@@ -219,7 +219,7 @@ export default function AddShippingZone({
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <form className="ion-padding-top ion-padding-horizontal flex flex-column modal-form">
+        <form className="ion-padding-top ion-padding-horizontal flex flex-col modal-form">
           <IonItem
             className={`input mt-4 ${errors.name ? "ion-invalid" : ""}`}
             fill="outline"

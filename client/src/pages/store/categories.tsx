@@ -85,7 +85,7 @@ export default function Categories({ progress, setProgress }: Props) {
                   }
                 >
                   <div
-                    className={`flex flex-column items-center border-light ion-padding rounded-lg h-full ${
+                    className={`flex flex-col items-center border border-solid border-gray-400 border-opacity-20 ion-padding rounded-lg h-full ${
                       selected?.includes(id) ? "selected" : ""
                     }`}
                   >

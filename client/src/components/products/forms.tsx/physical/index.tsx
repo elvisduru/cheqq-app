@@ -84,12 +84,12 @@ export default function PhysicalProductForm() {
     });
   }, [tabIndex]);
 
-  // Save photos to cloud
   useEffect(() => {
     const formValues = methods.getValues();
+
+    // Save form data to store
     if (physicalModalState === ModalState.SAVE) {
       setPhysicalFormData({ ...formValues });
-      console.log(formValues);
     }
 
     if (physicalModalState === ModalState.DELETE) {

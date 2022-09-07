@@ -60,7 +60,7 @@ export default function AddDeliveryZone({ dismiss }: Props) {
       <IonContent fullscreen>
         <form
           onSubmit={handleSubmit(onSubmit, onError)}
-          className="ion-padding-top ion-padding-horizontal flex flex-column modal-form"
+          className="ion-padding-top ion-padding-horizontal flex flex-col modal-form"
         >
           <IonItem
             className={`input mt-1 ${errors.name ? "ion-invalid" : ""}`}

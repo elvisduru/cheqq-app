@@ -118,7 +118,7 @@ export default function Confirm() {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <div className="flex flex-column h-full ion-padding">
+        <div className="flex flex-col h-full ion-padding">
           <h2>Check your Email</h2>
           <div className="text-gray leading-normal mt-0">
             {email && <p>We've sent an email to {email}.</p>}

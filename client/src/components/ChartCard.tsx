@@ -52,7 +52,7 @@ export default function GraphCard({ title }: Props) {
     <IonCard>
       <IonCardHeader>
         <div className="flex">
-          <div className="mt-0 mb-0 text-white flex ion-justify-content-between ion-align-items-end grow">
+          <div className="mt-0 mb-0 text-white flex ion-justify-content-between ion-align-items-end flex-grow">
             <div>
               <IonNote className="ion-text-capitalize">
                 {selected === "today" || selected === "yesterday"

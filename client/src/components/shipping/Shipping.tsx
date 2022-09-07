@@ -149,7 +149,7 @@ export default function ShippingZones({ dismiss }: Props) {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <div className="ion-padding-top ion-padding-horizontal flex flex-column">
+        <div className="ion-padding-top ion-padding-horizontal flex flex-col">
           <IonItem lines="none" className="input checkbox w-full">
             <IonLabel>
               Enable local pickup <br />

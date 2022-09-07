@@ -58,7 +58,7 @@ export default function MediaSelector({
       {!photos?.length ? (
         <div
           onClick={() => takePhotos()}
-          className="flex flex-column items-center ion-justify-content-center"
+          className="flex flex-col items-center ion-justify-content-center"
         >
           <div
             className="rounded-full bg-light flex items-center ion-justify-content-center"

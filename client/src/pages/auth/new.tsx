@@ -95,7 +95,7 @@ function New() {
       </IonHeader>
       <IonContent fullscreen>
         <form onSubmit={handleSubmit(onSubmit, onError)}>
-          <div className="flex flex-column h-full ion-padding">
+          <div className="flex flex-col h-full ion-padding">
             <h2>Create a profile</h2>
             <div className="text-gray leading-normal mt-0">
               <p>

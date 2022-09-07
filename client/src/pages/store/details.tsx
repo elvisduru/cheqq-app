@@ -139,7 +139,7 @@ export default function Details({ progress, user }: Props) {
           <div>
             <div
               onClick={takeBannerPhoto}
-              className="banner bg-mute rounded-t-3xl w-full h-44 relative border"
+              className="banner bg-mute rounded-t-3xl w-full h-44 relative border border-solid border-gray-400 border-opacity-50"
             >
               {watch("bannerUrl") && (
                 <img
@@ -157,7 +157,7 @@ export default function Details({ progress, user }: Props) {
                 {watch("bannerUrl") ? "Replace" : "Add"}
               </IonButton>
             </div>
-            <div className="rounded-b-3xl border border-t-none ion-padding">
+            <div className="rounded-b-3xl border border-solid border-gray-400 border-opacity-50 border-t-0 ion-padding">
               <IonAvatar
                 onClick={takeAvatarPhoto}
                 className="relative bg-mute flex items-center ion-justify-content-center"

@@ -84,7 +84,6 @@ export default function MediaUploader({
       uploadFiles(user, files).then((uploadedFiles) => {
         addImages.mutate(uploadedFiles, {
           onSuccess: ({ data }) => {
-            console.log("data", data);
             // update form state
             setValue("images", photos ? [...photos, ...data] : data);
             // reset usePhotoGallery hook state
@@ -131,7 +130,7 @@ export default function MediaUploader({
             onClick={() => {
               takePhotos(photos?.length || 0);
             }}
-            className="flex flex-column items-center ion-justify-content-center"
+            className="flex flex-col items-center ion-justify-content-center"
           >
             <div
               className="rounded-full bg-light flex items-center ion-justify-content-center"

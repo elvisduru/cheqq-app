@@ -65,7 +65,7 @@ export default function Login() {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <div className="flex flex-column h-full ion-padding">
+        <div className="flex flex-col h-full ion-padding">
           <h2>Welcome to Cheqq</h2>
           <div className="text-gray leading-normal mt-0">
             <p>Cheqq is the home for all your business needs.</p>

@@ -200,7 +200,7 @@ const Home = () => {
                 slot="start"
               >
                 {order.cart.length > 1 ? (
-                  <p className="ion-text-center leading-none bg-card w-full h-full flex flex-column ion-justify-content-center rounded-full">
+                  <p className="ion-text-center leading-none bg-card w-full h-full flex flex-col ion-justify-content-center rounded-full">
                     {order.cart.length} <br />
                     <span className="text-xs">items</span>
                   </p>

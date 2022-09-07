@@ -12,8 +12,8 @@ export default function SignUp() {
   return (
     <IonPage id="signup">
       <IonContent fullscreen>
-        <div className="flex flex-column h-full">
-          <div className="top-illustration flex flex-column">
+        <div className="flex flex-col h-full">
+          <div className="top-illustration flex flex-col">
             <h1 className="mt-auto text-2xl font-black">
               Get started. It's Free.
             </h1>
