@@ -11,7 +11,7 @@
     <mj-section border-bottom="1px solid #e2e2e2" full-width="full-width" padding-bottom="50px">
       <mj-column>
         <mj-social align="left" padding-bottom="30px" padding-left="23px">
-          <mj-social-element background-color="#f2f2f2" alt="cheqq" align="left" src="https://cdn.cheqq.me/cheqq/icon.png" href="https://cheqq.me" icon-size="28px" font-size="24px" font-family="Futura PT" font-weight="500">
+          <mj-social-element background-color="#f2f2f2" alt="cheqq" align="left" src="https://cheqq.fra1.cdn.digitaloceanspaces.com/cheqq/icon.png" href="https://cheqq.me" icon-size="28px" font-size="24px" font-family="Futura PT" font-weight="500">
             Cheqq
           </mj-social-element>
         </mj-social>

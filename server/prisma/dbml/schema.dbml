@@ -178,7 +178,6 @@ Table Product {
   price Float
   compareAtPrice Float
   costPrice Float
-  currency String [not null, default: 'USD']
   taxable Boolean [not null, default: false]
   tax Tax
   taxId Int
@@ -203,13 +202,9 @@ Table Product {
   layout String [not null, default: 'default']
   availability ProductAvailability [not null, default: 'available']
   availabilityLabel String
-  preorderReleaseDate DateTime
+  preOrderReleaseDate DateTime
   preOrderMessage String
   preOrderOnly Boolean [not null, default: false]
-  minHandlingTime Int
-  maxHandlingTime Int
-  giftWrap Boolean [not null, default: false]
-  giftWrapOptions GiftWrapOption [not null]
   redirectUrl String
   condition Condition
   showCondition Boolean [not null, default: false]
@@ -235,6 +230,7 @@ Table Product {
   subscriptionPrice Float [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  GiftWrapOption GiftWrapOption [not null]
 }
 
 Table ProductOption {
@@ -242,8 +238,7 @@ Table ProductOption {
   product Product [not null]
   productId Int [not null]
   name String [not null]
-  price Float [not null]
-  compareAtPrice Float
+  values String[] [not null]
 }
 
 Table ProductVariant {
@@ -251,10 +246,9 @@ Table ProductVariant {
   product Product [not null]
   productId Int [not null]
   name String [not null]
-  price Float [not null]
+  price Float
   compareAtPrice Float
   costPrice Float
-  currency String [not null, default: 'USD']
   inventoryTracking Boolean [not null, default: false]
   allowBackOrder Boolean [not null, default: false]
   inventoryLevel Int [not null, default: 0]

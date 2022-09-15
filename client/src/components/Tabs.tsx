@@ -58,6 +58,7 @@ function Tabs() {
           present({
             breakpoints: [0, 0.5],
             initialBreakpoint: 0.5,
+            id: "choose-product",
           });
         }
       }}

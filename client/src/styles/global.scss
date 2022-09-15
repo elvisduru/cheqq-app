@@ -1,4 +1,5 @@
 @use "utils/colors";
+@use "utils/animations";
 
 @tailwind components;
 @tailwind utilities;
@@ -298,4 +299,18 @@ ion-item-divider {
 
 .swiper .swiper-pagination-bullet-active {
   background: var(--ion-color-step-600, #666666) !important;
+}
+
+.qty {
+  /* Chrome, Safari, Edge, Opera */
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  -moz-appearance: textfield;
+  
+  --padding-end: 0;
 }

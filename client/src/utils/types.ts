@@ -215,7 +215,6 @@ export type Product = {
   description?: string;
   price: number;
   compareAtPrice?: number;
-  currency: string;
   categories?: number[];
   collections?: number[];
   tags?: string[];
@@ -251,8 +250,17 @@ export type Product = {
   redirectUrl?: string;
   condition: Condition;
   showCondition?: boolean;
+  totalSold?: number;
+  reviewCount?: number;
+  reviewAverage?: number;
+  customFields?: CustomField[];
   createdAt?: Date;
   updatedAt?: Date;
+};
+
+export type CustomField = {
+  label?: string;
+  value?: string;
 };
 
 export type ProductInput = {

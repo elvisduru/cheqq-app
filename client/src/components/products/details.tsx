@@ -1,5 +1,8 @@
 import {
+  IonAccordion,
+  IonAccordionGroup,
   IonAvatar,
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -9,13 +12,19 @@ import {
   IonContent,
   IonIcon,
   IonImg,
+  IonInput,
+  IonItem,
+  IonLabel,
   IonThumbnail,
 } from "@ionic/react";
 import {
+  addCircle,
   chatbubbleOutline,
   chevronBack,
   chevronDown,
+  heart,
   heartOutline,
+  removeCircle,
   shareOutline,
   star,
 } from "ionicons/icons";
@@ -25,6 +34,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/zoom";
 import { Swiper, SwiperSlide } from "swiper/react";
+import useCounter from "../../hooks/useCounter";
+import useToggle from "../../hooks/useToggle";
 import { ProductInput } from "../../utils/types";
 
 type Props = {
@@ -33,6 +44,7 @@ type Props = {
   isPreview?: boolean;
 };
 
+// TODO: Out of stock message, disable qty buttons
 export default function ProductDetails({ product, goBack, isPreview }: Props) {
   const [productOptions, setProductOptions] = useState<
     typeof defaultProductOptions
@@ -43,10 +55,20 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
 
   const [selectedVariant, setSelectedVariant] = useState<number>(-1);
 
+  const [liked, toggleLike] = useToggle();
+  const { count, increment, decrement, setCount } = useCounter(1);
+
   const handleSelectedValues = useCallback(
-    (option: string, value: string) => {
-      // if value exists already, delete key
-      if (Object.values(selectedValues).includes(value)) {
+    (option: string, value?: string) => {
+      // if no value is selected, remove the option from the selectedValues object
+      if (!value) {
+        setSelectedValues((prev) => {
+          const newSelectedValues = { ...prev };
+          delete newSelectedValues[option];
+          return newSelectedValues;
+        });
+      } else if (Object.values(selectedValues).includes(value)) {
+        // if value exists already, delete key
         const newSelectedValues = { ...selectedValues };
         delete newSelectedValues[option];
         setSelectedValues(newSelectedValues);
@@ -70,8 +92,16 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
         return values.every((value) => variantTitleArray.includes(value));
       });
       setSelectedVariant(variant!);
+      // check count and update if necessary
+      const inventoryLevel = product.variants?.[variant!].inventoryLevel;
+      if (inventoryLevel && count > inventoryLevel) {
+        setCount(inventoryLevel);
+      }
     } else {
       setSelectedVariant(-1);
+      if (product.inventoryLevel && count > product.inventoryLevel) {
+        setCount(product.inventoryLevel);
+      }
     }
   }, [selectedValues]);
 
@@ -127,6 +157,20 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
     [selectedVariant]
   );
 
+  const price = useMemo(() => {
+    if (variant?.price) {
+      return variant.price;
+    }
+    return product.price;
+  }, [variant?.price, product.price]);
+
+  const compareAtPrice = useMemo(() => {
+    if (variant?.compareAtPrice) {
+      return variant.compareAtPrice;
+    }
+    return product.compareAtPrice;
+  }, [variant?.compareAtPrice, product.compareAtPrice]);
+
   return (
     <IonContent fullscreen>
       <div className="fixed z-20 top-0 left-0 w-full ion-padding">
@@ -139,101 +183,176 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
           <IonIcon size="small" icon={isPreview ? chevronDown : chevronBack} />
         </button>
       </div>
-      <div className="h-1/2 flex-shrink-0">
-        <Swiper
-          zoom
-          pagination={{ clickable: true }}
-          modules={[Pagination, Zoom]}
-          className="h-full"
-        >
-          {product?.images?.map((image) => (
-            <SwiperSlide key={image.id}>
-              <IonThumbnail className="w-full h-full">
-                <IonImg src={image.url} />
-              </IonThumbnail>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-      <IonCard className="m-0 -mt-4 z-10">
-        <IonCardHeader>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center pr-4">
-              <IonAvatar className="w-6 h-6">
-                <IonImg src={product?.store?.logo!} />
-              </IonAvatar>
-              <span className="text-white ml-1 text-base">
-                {product.store.name}
-              </span>
-            </div>
-            <div className="flex items-center text-2xl text-white space-x-5">
-              <IonIcon
-                icon={heartOutline}
-                className="text-[calc(1.5rem+12%)]"
-              />
-              <IonIcon icon={chatbubbleOutline} />
-              <IonIcon icon={shareOutline} />
-            </div>
-          </div>
-          <div className="flex flex-wrap">
-            <IonCardTitle className="text-xl font-normal pr-4 mr-auto line-clamp-2">
-              {product?.title}
-            </IonCardTitle>
-            <IonCardTitle className="text-xl flex-shrink-0 font-medium flex items-center mb-2">
-              <span>${variant?.price || product?.price}</span>
-              {variant?.price || product?.compareAtPrice ? (
-                <div className="text-sm font-light font-sans ml-1">
-                  <span className="text-gray-400 ml-1 line-through">
-                    ${variant?.compareAtPrice || product?.compareAtPrice}
-                  </span>{" "}
-                  <span
-                    className={
-                      (variant?.compareAtPrice || product?.compareAtPrice!) >
-                      (variant?.price || product?.price)
-                        ? "text-green-400"
-                        : "text-red-500"
-                    }
-                  >
-                    {(
-                      (((variant?.price || product?.price) -
-                        (variant?.compareAtPrice || product?.compareAtPrice!)) /
-                        (variant?.compareAtPrice || product?.compareAtPrice!)) *
-                      100
-                    ).toFixed(2)}
-                    %
-                  </span>
-                </div>
-              ) : (
-                ""
-              )}
-            </IonCardTitle>
-          </div>
-          <div className="flex items-center">
-            <IonIcon icon={star} className="text-[#EE8937]" />
-            <IonCardSubtitle className="mb-0 ml-1">(4.5)</IonCardSubtitle>{" "}
-            &nbsp;<span>123 reviews</span>
-          </div>
-        </IonCardHeader>
-        <IonCardContent>
-          {productOptions?.map((option) => (
-            <div key={option.id || option.name} className="mb-2">
-              <div className="text-sm font-medium text-gray-400 mb-1">
-                {option.name}
+      <div className="flex flex-col pb-16">
+        <div className="h-1/2 flex-shrink-0">
+          <Swiper
+            zoom
+            pagination={{ clickable: true }}
+            modules={[Pagination, Zoom]}
+            className="h-full"
+          >
+            {product?.images?.map((image) => (
+              <SwiperSlide key={image.id}>
+                <IonThumbnail className="w-full h-full">
+                  <IonImg src={image.url} />
+                </IonThumbnail>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+        <IonCard className="m-0 -mt-4 z-10 flex-1">
+          <IonCardHeader>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center pr-4">
+                <IonAvatar className="w-6 h-6">
+                  <IonImg src={product?.store?.logo!} />
+                </IonAvatar>
+                <span className="text-white ml-1 text-base">
+                  {product.store.name}
+                </span>
               </div>
-              <div className="flex flex-wrap">
-                <OptionValues
-                  option={option.name}
-                  values={option.values}
-                  handleSelectedValues={handleSelectedValues}
+              <div className="flex items-center text-[1.6rem] text-white space-x-5 [&>*]:cursor-pointer">
+                <IonIcon
+                  icon={liked ? heart : heartOutline}
+                  onClick={toggleLike}
+                  className={`${liked ? "like" : ""} text-[calc(1.6rem+15%)]`}
+                />
+                <IonIcon icon={chatbubbleOutline} />
+                <IonIcon icon={shareOutline} />
+              </div>
+            </div>
+            <div className="flex flex-wrap">
+              <IonCardTitle className="text-xl font-normal pr-4 mr-auto line-clamp-2">
+                {product?.title}
+              </IonCardTitle>
+              <IonCardTitle className="text-xl flex-shrink-0 font-medium flex items-center mb-2">
+                <span>${price}</span>
+                {compareAtPrice && compareAtPrice !== price ? (
+                  <div className="text-sm font-light font-sans ml-1">
+                    <span className="text-gray-400 ml-1 line-through">
+                      ${compareAtPrice}
+                    </span>{" "}
+                    <span
+                      className={
+                        compareAtPrice > price
+                          ? "text-green-400"
+                          : "text-red-500"
+                      }
+                    >
+                      {(
+                        ((price - compareAtPrice) / compareAtPrice) *
+                        100
+                      ).toFixed(2)}
+                      %
+                    </span>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </IonCardTitle>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <IonIcon icon={star} className="text-[#EE8937]" />
+                <IonCardSubtitle className="mb-0 ml-1">
+                  (4.5)
+                </IonCardSubtitle>{" "}
+                &nbsp;<span>123 reviews</span>
+              </div>
+              <div className="flex items-center text-2xl">
+                <IonIcon
+                  onClick={() => {
+                    if (count >= 2) decrement();
+                  }}
+                  icon={removeCircle}
+                  className="active:text-primary"
+                />
+                <IonInput
+                  type="number"
+                  value={count}
+                  onIonChange={(e) => {
+                    const value = parseInt(e.detail.value!);
+                    // If the value is more than inventoryLevel, set it to inventoryLevel
+                    let inventoryLevel =
+                      variant?.inventoryLevel || product.inventoryLevel;
+                    if (inventoryLevel && value > inventoryLevel) {
+                      setCount(inventoryLevel);
+                      return;
+                    }
+                    setCount(value);
+                  }}
+                  className="w-12 text-center text-base appearance-none qty"
+                />
+                <IonIcon
+                  onClick={() => {
+                    if (
+                      count < (product?.inventoryLevel || Infinity) ||
+                      product.allowBackOrder
+                    )
+                      increment();
+                  }}
+                  icon={addCircle}
+                  className="active:text-primary"
                 />
               </div>
             </div>
-          ))}
-          <Section title="Description">
-            <p>{product?.description}</p>
-          </Section>
-        </IonCardContent>
-      </IonCard>
+          </IonCardHeader>
+          <IonCardContent>
+            {productOptions?.map((option) => (
+              <div key={option.id || option.name} className="mb-2">
+                <div className="text-sm font-medium text-gray-400 mb-1">
+                  {option.name}
+                </div>
+                <div className="flex flex-wrap">
+                  <OptionValues
+                    option={option.name}
+                    values={option.values}
+                    handleSelectedValues={handleSelectedValues}
+                  />
+                </div>
+              </div>
+            ))}
+            <IonAccordionGroup>
+              <IonAccordion className="bg-inherit">
+                <IonItem
+                  slot="header"
+                  lines="inset"
+                  className="px-0 text-gray-400"
+                >
+                  <IonLabel>Description</IonLabel>
+                </IonItem>
+                <div slot="content" className="py-3">
+                  {product?.description}
+                </div>
+              </IonAccordion>
+              <IonAccordion className="bg-inherit">
+                <IonItem
+                  slot="header"
+                  lines="inset"
+                  className="px-0 text-gray-400"
+                >
+                  <IonLabel>Specifications</IonLabel>
+                </IonItem>
+                <div slot="content" className="py-3 grid grid-cols-2 gap-y-2">
+                  {product?.customFields?.map((field) => (
+                    <>
+                      <div className="font-medium capitalize">
+                        {field.label}
+                      </div>
+                      <div className="font-normal">{field.value}</div>
+                    </>
+                  ))}
+                </div>
+              </IonAccordion>
+            </IonAccordionGroup>
+          </IonCardContent>
+        </IonCard>
+      </div>
+      <div slot="fixed" className="bottom-0 ion-padding-horizontal pb-4 w-full">
+        <IonButton expand="block" className="bottom-0 w-full">
+          Publish
+        </IonButton>
+      </div>
     </IonContent>
   );
 }
@@ -241,7 +360,7 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
 type OptionValuesProps = {
   option: string;
   values: { label: string; disabled: boolean }[];
-  handleSelectedValues: (option: string, value: string) => void;
+  handleSelectedValues: (option: string, value?: string) => void;
 };
 
 const OptionValues = ({
@@ -265,12 +384,18 @@ const OptionValues = ({
       {values.map((value, index) => (
         <IonChip
           onClick={() => {
-            handleSelection(value.label);
+            if (value.disabled) {
+              setSelected(undefined);
+              handleSelectedValues(option);
+            } else {
+              handleSelection(value.label);
+            }
           }}
-          color={selected === value.label ? "" : "null"}
+          color={
+            selected === value.label ? "" : value.disabled ? "medium" : "null"
+          }
           outline={selected !== value.label}
           key={value.label + index}
-          disabled={value.disabled}
         >
           {value.label}
         </IonChip>
@@ -278,18 +403,3 @@ const OptionValues = ({
     </div>
   );
 };
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <h2 className="text-xl font-medium mb-2">{title}</h2>
-      {children}
-    </div>
-  );
-}

@@ -193,7 +193,6 @@ model Product {
   price                  Float?
   compareAtPrice         Float?
   costPrice              Float?
-  currency               String               @default(value: "USD")
   taxable                Boolean              @default(false)
   tax                    Tax?                 @relation(fields: [taxId], references: [id])
   taxId                  Int?
@@ -273,7 +272,6 @@ model ProductVariant {
   price                 Float?
   compareAtPrice        Float?
   costPrice             Float?
-  currency              String       @default(value: "USD")
   inventoryTracking     Boolean      @default(false)
   allowBackOrder        Boolean      @default(value: false)
   inventoryLevel        Int          @default(value: 0)

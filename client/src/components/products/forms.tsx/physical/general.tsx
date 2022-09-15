@@ -1,18 +1,23 @@
 import {
+  IonButton,
   IonCheckbox,
+  IonIcon,
   IonInput,
   IonItem,
   IonItemDivider,
   IonItemGroup,
   IonLabel,
   IonNote,
+  IonReorder,
+  IonReorderGroup,
   IonSelect,
   IonSelectOption,
   IonTextarea,
   IonToggle,
 } from "@ionic/react";
+import { trash } from "ionicons/icons";
 import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { useStore } from "../../../../hooks/useStore";
 import { ProductInput } from "../../../../utils/types";
 import withSuspense from "../../../hoc/withSuspense";
@@ -20,9 +25,9 @@ import MediaUploader from "../../../MediaUploader";
 import TagInput from "../../../TagInput";
 import Step from "../Step";
 
-const SelectCategory = withSuspense<any>(
-  React.lazy(() => import("../../../SelectCategory"))
-);
+// const SelectCategory = withSuspense<any>(
+//   React.lazy(() => import("../../../SelectCategory"))
+// );
 
 export default function General() {
   const user = useStore((state) => state.user);
@@ -32,6 +37,12 @@ export default function General() {
     setValue,
     watch,
   } = useFormContext<ProductInput>();
+
+  const { fields, append, remove, move } = useFieldArray({
+    control,
+    name: "customFields",
+  });
+
   return (
     <Step>
       <IonItem
@@ -250,6 +261,102 @@ export default function General() {
             )}
           />
         </IonItem> */}
+      </IonItemGroup>
+      <IonItemGroup className="mt-8">
+        <IonItemDivider className="pl-0">
+          <IonLabel color="medium">Specifications</IonLabel>
+        </IonItemDivider>
+        <IonReorderGroup
+          disabled={false}
+          onIonItemReorder={(e) => {
+            move(e.detail.from, e.detail.to);
+            e.detail.complete();
+          }}
+        >
+          {fields.map((field, index) => (
+            <div key={field.id} className="mb-2">
+              <div className="flex ion-justify-content-between">
+                <div className="flex items-center">
+                  <IonReorder />
+                  <IonNote className="text-sm">Drag to reorder</IonNote>
+                </div>
+                <IonButton
+                  slot="end"
+                  fill="clear"
+                  color="danger"
+                  size="small"
+                  onClick={() => {
+                    remove(index);
+                  }}
+                >
+                  <IonIcon slot="icon-only" icon={trash} />
+                </IonButton>
+              </div>
+              <IonItem
+                className={`input mt-1 ${
+                  errors.customFields?.[index]?.label ? "ion-invalid" : ""
+                }`}
+                fill="outline"
+                mode="md"
+              >
+                <IonLabel position="floating">Label</IonLabel>
+                <Controller
+                  name={`customFields.${index}.label`}
+                  control={control}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <IonInput
+                      value={value}
+                      type="text"
+                      onIonChange={onChange}
+                      onIonBlur={onBlur}
+                      minlength={3}
+                      autoCorrect="on"
+                    />
+                  )}
+                />
+                <IonNote slot="error">
+                  {errors.customFields?.[index]?.label?.message}
+                </IonNote>
+              </IonItem>
+              <IonItem
+                className={`input mt-4 ${
+                  errors.customFields?.[index]?.value ? "ion-invalid" : ""
+                }`}
+                fill="outline"
+                mode="md"
+              >
+                <IonLabel position="floating">Value</IonLabel>
+                <Controller
+                  name={`customFields.${index}.value`}
+                  control={control}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <IonInput
+                      value={value}
+                      type="text"
+                      onIonChange={onChange}
+                      onIonBlur={onBlur}
+                      minlength={3}
+                      autoCorrect="on"
+                    />
+                  )}
+                />
+                <IonNote slot="error">
+                  {errors.customFields?.[index]?.value?.message}
+                </IonNote>
+              </IonItem>
+            </div>
+          ))}
+        </IonReorderGroup>
+        <IonButton
+          fill="solid"
+          expand="block"
+          color="medium"
+          onClick={() => {
+            append({ label: undefined, value: undefined });
+          }}
+        >
+          Add new field
+        </IonButton>
       </IonItemGroup>
       <IonItemGroup className="mt-8">
         <IonItemDivider className="pl-0">

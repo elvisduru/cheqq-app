@@ -54,7 +54,7 @@ export default function usePhotoGallery() {
       );
       const files = await Promise.all(
         photosToAdd.map(async (photo, index) => {
-          const file = await getFileFromPath(
+          const file: File = await getFileFromPath(
             photo.webPath!,
             photo.format,
             index

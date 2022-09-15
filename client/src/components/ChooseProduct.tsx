@@ -71,6 +71,9 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
           canDismiss: canDismissPhyical,
           id: "new-physical-product",
           onWillPresent() {
+            (
+              document.querySelector("#choose-product") as HTMLIonModalElement
+            ).dismiss();
             if (physicalFormData) {
               presentToast(
                 "Continue where you left off. We saved your progress 🎉.",
@@ -93,6 +96,11 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
         present({
           // presentingElement: routerOutletEl,
           canDismiss: canDismissDigital,
+          onWillPresent() {
+            (
+              document.querySelector("#choose-product") as HTMLIonModalElement
+            ).dismiss();
+          },
         });
       },
       icon: downloadOutline,
@@ -105,6 +113,11 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
         present({
           // presentingElement: routerOutletEl,
           canDismiss: canDismissMembership,
+          onWillPresent() {
+            (
+              document.querySelector("#choose-product") as HTMLIonModalElement
+            ).dismiss();
+          },
         });
       },
       icon: reloadOutline,
