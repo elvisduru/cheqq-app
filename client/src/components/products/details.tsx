@@ -34,6 +34,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/zoom";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper as SwiperType } from "swiper/types";
 import useCounter from "../../hooks/useCounter";
 import useToggle from "../../hooks/useToggle";
 import { ProductInput } from "../../utils/types";
@@ -58,6 +59,7 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
   const [liked, toggleLike] = useToggle();
   const { count, increment, decrement, setCount } = useCounter(1);
 
+  const [swiper, setSwiper] = useState<SwiperType | null>(null);
   const handleSelectedValues = useCallback(
     (option: string, value?: string) => {
       // if no value is selected, remove the option from the selectedValues object
@@ -86,6 +88,7 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
 
   useEffect(() => {
     if (Object.keys(selectedValues).length === product.options?.length) {
+      // When variant combination is matched
       const variant = product?.variants?.findIndex((variant) => {
         const values: string[] = Object.values(selectedValues);
         const variantTitleArray = variant.title.split("-");
@@ -97,7 +100,17 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
       if (inventoryLevel && count > inventoryLevel) {
         setCount(inventoryLevel);
       }
+      // Update slider index if images are available
+      if (product.images) {
+        const imagePos = product.images.findIndex(
+          (img) => img.id === product.variants?.[variant!].imageId
+        );
+        if (swiper && imagePos !== -1) {
+          swiper.slideTo(imagePos);
+        }
+      }
     } else {
+      // Variant combination is not matched
       setSelectedVariant(-1);
       if (product.inventoryLevel && count > product.inventoryLevel) {
         setCount(product.inventoryLevel);
@@ -190,6 +203,7 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
             pagination={{ clickable: true }}
             modules={[Pagination, Zoom]}
             className="h-full"
+            onSwiper={setSwiper}
           >
             {product?.images?.map((image) => (
               <SwiperSlide key={image.id}>
