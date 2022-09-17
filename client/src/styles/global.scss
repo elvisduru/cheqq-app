@@ -1,6 +1,7 @@
 @use "utils/colors";
 @use "utils/animations";
 
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -149,6 +150,15 @@ ion-item.tags {
 }
 
 ion-item {
+  ion-label {
+    // height: 18px;
+    line-height: normal;
+  }
+  ion-input {
+    input {
+      line-height: normal;
+    }
+  }
   &.px-0 {
     &::part(native) {
       --padding-start: 0;

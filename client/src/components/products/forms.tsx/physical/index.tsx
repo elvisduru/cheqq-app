@@ -20,8 +20,10 @@ import { AppState, ModalState, useStore } from "../../../../hooks/useStore";
 import useUpdateEffect from "../../../../hooks/useUpdateEffect";
 import { ProductInput } from "../../../../utils/types";
 import withSuspense from "../../../hoc/withSuspense";
+import ProductSuccess from "../../../ProductSuccess";
 import ProductDetails from "../../details";
 import General from "./general";
+
 const Checkout = withSuspense(React.lazy(() => import("./checkout")));
 const Variants = withSuspense(React.lazy(() => import("./variants")));
 
@@ -59,7 +61,9 @@ export default function PhysicalProductForm() {
     defaultValues: { ...physicalFormData, type: "physical" },
   });
 
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = (data: any) => {
+    presentSuccess();
+  };
   const onError = (error: any) => console.log(error);
 
   const ref = useRef(null);
@@ -77,6 +81,13 @@ export default function PhysicalProductForm() {
     },
     isPreview: true,
     handleSubmit: methods.handleSubmit(onSubmit, onError),
+  });
+
+  // Success Modal
+  const [presentSuccess, dismissSuccess] = useIonModal(ProductSuccess, {
+    dismiss: () => {
+      dismissSuccess();
+    },
   });
 
   useUpdateEffect(() => {
@@ -103,8 +114,9 @@ export default function PhysicalProductForm() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [physicalModalState]);
-
   // TODO: Empty Variant slide should be filled with an illustration/animation explaining the concept of variants
+
+  // successModalRef.current?.dismiss();
 
   return (
     <FormProvider {...methods}>
@@ -179,7 +191,9 @@ export default function PhysicalProductForm() {
                 className="drop-shadow"
                 onClick={() => {
                   if (tabIndex === 2) {
-                    present();
+                    present({
+                      id: "product-preview",
+                    });
                   } else {
                     swiper?.slideNext();
                   }

@@ -1,15 +1,12 @@
 import { App as NativeApp } from "@capacitor/app";
 import {
   BackButtonEvent,
-  IonApp,
-  IonContent,
   IonRouterOutlet,
   IonSplitPane,
   setupIonicReact,
   useIonRouter,
 } from "@ionic/react";
-import { IonReactRouter } from "@ionic/react-router";
-import { SplashScreen } from "@capacitor/splash-screen";
+/* Tailwind */
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/display.css";
@@ -32,9 +29,8 @@ import "./App.css";
 import "./styles/global.scss";
 
 import withSuspense from "./components/hoc/withSuspense";
-import StoreRouterOutlet from "./pages/store";
-import useReRender from "./hooks/useReRender";
 import SideMenu from "./components/SideMenu";
+import StoreRouterOutlet from "./pages/store";
 
 const AppUrlListener = withSuspense(
   React.lazy(() => import("./components/AppUrlListener"))
