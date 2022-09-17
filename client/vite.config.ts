@@ -57,7 +57,7 @@ export default defineConfig({
     visualizer(),
   ],
   server: {
-    port: 8100,
+    port: 3000,
     host: true,
     // hmr: { clientPort: process.env.CODESPACES ? 443 : undefined }
   },
