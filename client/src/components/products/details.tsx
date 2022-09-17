@@ -28,7 +28,8 @@ import {
   shareOutline,
   star,
 } from "ionicons/icons";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { UseFormHandleSubmit } from "react-hook-form";
 import { Pagination, Zoom } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -43,10 +44,18 @@ type Props = {
   product: ProductInput;
   goBack: () => void;
   isPreview?: boolean;
+  handleSubmit: (
+    e?: React.BaseSyntheticEvent<object, any, any> | undefined
+  ) => Promise<void>;
 };
 
 // TODO: Out of stock message, disable qty buttons
-export default function ProductDetails({ product, goBack, isPreview }: Props) {
+export default function ProductDetails({
+  product,
+  goBack,
+  isPreview,
+  handleSubmit,
+}: Props) {
   const [productOptions, setProductOptions] = useState<
     typeof defaultProductOptions
   >([]);
@@ -60,6 +69,7 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
   const { count, increment, decrement, setCount } = useCounter(1);
 
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
+
   const handleSelectedValues = useCallback(
     (option: string, value?: string) => {
       // if no value is selected, remove the option from the selectedValues object
@@ -348,13 +358,13 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
                   <IonLabel>Specifications</IonLabel>
                 </IonItem>
                 <div slot="content" className="py-3 grid grid-cols-2 gap-y-2">
-                  {product?.customFields?.map((field) => (
-                    <>
+                  {product?.customFields?.map((field, index) => (
+                    <React.Fragment key={index}>
                       <div className="font-medium capitalize">
                         {field.label}
                       </div>
                       <div className="font-normal">{field.value}</div>
-                    </>
+                    </React.Fragment>
                   ))}
                 </div>
               </IonAccordion>
@@ -363,7 +373,11 @@ export default function ProductDetails({ product, goBack, isPreview }: Props) {
         </IonCard>
       </div>
       <div slot="fixed" className="bottom-0 ion-padding-horizontal pb-4 w-full">
-        <IonButton expand="block" className="bottom-0 w-full">
+        <IonButton
+          expand="block"
+          className="bottom-0 w-full"
+          onClick={handleSubmit}
+        >
           Publish
         </IonButton>
       </div>

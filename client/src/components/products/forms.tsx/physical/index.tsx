@@ -76,6 +76,7 @@ export default function PhysicalProductForm() {
       dismiss();
     },
     isPreview: true,
+    handleSubmit: methods.handleSubmit(onSubmit, onError),
   });
 
   useUpdateEffect(() => {
@@ -124,11 +125,7 @@ export default function PhysicalProductForm() {
           <IonSegmentButton value="2">Checkout</IonSegmentButton>
         </IonSegment>
       </div>
-      <form
-        ref={ref}
-        onSubmit={methods.handleSubmit(onSubmit, onError)}
-        className="modal-form h-full"
-      >
+      <form ref={ref} className="modal-form h-full">
         <Swiper
           initialSlide={tabIndex}
           onSwiper={(swiper) => {

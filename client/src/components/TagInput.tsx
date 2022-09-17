@@ -41,6 +41,7 @@ export default function TagInput({
     if (tags.length === 20) return;
     const value = e.target.value.trim();
     if (value.length > 1) {
+      // Prevent tag from starting with ","
       if (value.startsWith(",")) return;
       // check if the last character is a comma
       if (value[value.length - 1] === ",") {
@@ -54,6 +55,11 @@ export default function TagInput({
   };
 
   const handleKeyDown = (e: any) => {
+    // prevent hyphen from being entered
+    if (e.key === "-") {
+      e.preventDefault();
+    }
+
     if (e.key === "Backspace" && e.target.value.length === 0) {
       setTags(tags.slice(0, -1));
     }
