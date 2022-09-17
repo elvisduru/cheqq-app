@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Redirect, Route } from "react-router-dom";
 import withSuspense from "../../components/hoc/withSuspense";
+import useUser from "../../hooks/queries/users/useUser";
 import { useStore } from "../../hooks/useStore";
 import { User } from "../../utils/types";
 
@@ -36,7 +37,7 @@ export type StoreFormValues = {
 };
 
 const StoreRouterOutlet = () => {
-  const user = useStore((store) => store.user);
+  const { data: user, isLoading } = useUser();
   const [progress, setProgress] = useState(1);
   const methods = useForm<StoreFormValues>({
     mode: "onChange",
