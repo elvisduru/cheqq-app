@@ -1,63 +1,63 @@
 version: '3.8'
 
 services:
-  traefik:
-    image: "traefik:latest"
-    container_name: "traefik"
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  # traefik:
+  #   image: "traefik:latest"
+  #   container_name: "traefik"
+  #   command:
+  #     - "--api.insecure=true"
+  #     - "--providers.docker=true"
+  #     - "--providers.docker.exposedbydefault=false"
+  #     - "--entrypoints.web.address=:80"
+  #   ports:
+  #     - "80:80"
+  #     - "8080:8080"
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
-  client:
-    # stdin_open: true
-    # environment:
-    #   - CHOKIDAR_USEPOLLING=true
-    container_name: cheqq-client
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-      target: development
-    command: ionic serve
-    ports:
-      - 8100:8100
-    volumes:
-      - /app/node_modules
-      - ./client:/app
-    # env_file:
-    #   - ./client/.env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.client.rule=Host(`localhost`, `127.0.0.1`)"
-      - "traefik.http.routers.client.entrypoints=web"
+  # client:
+  #   # stdin_open: true
+  #   # environment:
+  #   #   - CHOKIDAR_USEPOLLING=true
+  #   container_name: cheqq-client
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #     target: development
+  #   command: ionic serve
+  #   ports:
+  #     - 8100:8100
+  #   volumes:
+  #     - /app/node_modules
+  #     - ./client:/app
+  #   # env_file:
+  #   #   - ./client/.env
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.client.rule=Host(`localhost`, `127.0.0.1`)"
+  #     - "traefik.http.routers.client.entrypoints=web"
 
-  api:
-    container_name: cheqq-api
-    build:
-      context: ./server
-      dockerfile: ./Dockerfile
-      target: development
-    command: npm run start:dev
-    ports:
-      - 4000:4000
-      - 9229:9229
-    volumes:
-      - /app/node_modules
-      - ./server:/app
-    depends_on:
-      - postgres
-    # env_file:
-    #   - ./server/.env
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`api.localhost`)"
-      - "traefik.http.routers.api.entrypoints=web"
+  # api:
+  #   container_name: cheqq-api
+  #   build:
+  #     context: ./server
+  #     dockerfile: ./Dockerfile
+  #     target: development
+  #   command: npm run start:dev
+  #   ports:
+  #     - 4000:4000
+  #     - 9229:9229
+  #   volumes:
+  #     - /app/node_modules
+  #     - ./server:/app
+  #   depends_on:
+  #     - postgres
+  #   # env_file:
+  #   #   - ./server/.env
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.api.rule=Host(`api.localhost`)"
+  #     - "traefik.http.routers.api.entrypoints=web"
 
   postgres:
     image: postgres:14
