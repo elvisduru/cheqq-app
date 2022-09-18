@@ -2,5 +2,15 @@
 	"appId": "co.cheqq.cheqq",
 	"appName": "cheqq",
 	"webDir": "dist",
-	"bundledWebRuntime": false
+	"bundledWebRuntime": false,
+	"plugins": {
+		"SplashScreen": {
+			"launchAutoHide": true,
+			"backgroundColor": "#00000000",
+			"androidSplashResourceName": "splash",
+			"androidScaleType": "CENTER_CROP",
+			"splashFullScreen": true,
+			"splashImmersive": true
+		}
+	}
 }
