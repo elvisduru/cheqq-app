@@ -15,7 +15,7 @@ export default function SignUp() {
         <div className="flex flex-col h-full">
           <div className="top-illustration flex flex-col">
             <h1 className="mt-auto text-2xl font-black">
-              Get started. It's Free.
+              Get started. It's Frees.
             </h1>
           </div>
           <div className="custom-card">

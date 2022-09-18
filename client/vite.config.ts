@@ -59,6 +59,6 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
-    // hmr: { clientPort: process.env.CODESPACES ? 443 : undefined }
+    hmr: { clientPort: process.env.CODESPACES ? 443 : undefined },
   },
 });

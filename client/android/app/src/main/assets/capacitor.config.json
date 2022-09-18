@@ -5,7 +5,12 @@
 	"bundledWebRuntime": false,
 	"plugins": {
 		"SplashScreen": {
-			"androidScaleType": "CENTER_CROP"
+			"launchAutoHide": true,
+			"backgroundColor": "#000000",
+			"androidSplashResourceName": "splash",
+			"androidScaleType": "CENTER_CROP",
+			"splashFullScreen": true,
+			"splashImmersive": true
 		}
 	}
 }

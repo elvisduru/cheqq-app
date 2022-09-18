@@ -15,7 +15,6 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonThumbnail,
 } from "@ionic/react";
 import {
   addCircle,
@@ -29,7 +28,6 @@ import {
   star,
 } from "ionicons/icons";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { UseFormHandleSubmit } from "react-hook-form";
 import { Pagination, Zoom } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -207,19 +205,19 @@ export default function ProductDetails({
         </button>
       </div>
       <div className="flex flex-col pb-16">
-        <div className="h-1/2 flex-shrink-0">
+        <div className="flex-shrink-0">
           <Swiper
-            zoom
+            zoom={true}
             pagination={{ clickable: true }}
             modules={[Pagination, Zoom]}
-            className="h-full"
+            className="min-h-[400px] max-h-[500px]"
             onSwiper={setSwiper}
           >
             {product?.images?.map((image) => (
               <SwiperSlide key={image.id}>
-                <IonThumbnail className="w-full h-full">
-                  <IonImg src={image.url} />
-                </IonThumbnail>
+                <div className="swiper-zoom-container">
+                  <IonImg className="swiper-zoom-target" src={image.url} />
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>

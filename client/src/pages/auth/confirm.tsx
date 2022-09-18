@@ -1,4 +1,4 @@
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import {
   IonBackButton,
   IonButton,
@@ -55,11 +55,11 @@ export default function Confirm() {
         );
         if (res) {
           await Promise.all([
-            Storage.set({
+            Preferences.set({
               key: "access_token",
               value: res.data.access_token,
             }),
-            Storage.set({
+            Preferences.set({
               key: "refresh_token",
               value: res.data.refresh_token,
             }),

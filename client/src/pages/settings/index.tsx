@@ -12,7 +12,7 @@ import {
 } from "@ionic/react";
 import React from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { useStore } from "../../hooks/useStore";
 
 type Props = {};
@@ -49,7 +49,7 @@ const Settings: React.FC = (props: Props) => {
         <div>Product Details</div>
         <IonButton
           onClick={async () => {
-            await Storage.clear();
+            await Preferences.clear();
             queryClient.clear();
             window.location.reload();
           }}

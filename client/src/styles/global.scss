@@ -28,6 +28,10 @@ h3 {
   @apply text-xl;
 }
 
+ion-title[size="large"] {
+  @apply my-2;
+}
+
 ion-back-button {
   --color: var(--ion-color-dark-shade);
 }

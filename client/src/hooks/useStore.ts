@@ -1,4 +1,4 @@
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import { useEffect, useState } from "react";
 import create from "zustand";
 import { persist, StateStorage } from "zustand/middleware";
@@ -6,13 +6,13 @@ import { ProductInput, User } from "../utils/types";
 
 const storage: StateStorage = {
   getItem: async (key: string): Promise<string | null> => {
-    return (await Storage.get({ key })).value || null;
+    return (await Preferences.get({ key })).value || null;
   },
   setItem: async (key: string, value: string): Promise<void> => {
-    await Storage.set({ key, value });
+    await Preferences.set({ key, value });
   },
   removeItem: async (key: string): Promise<void> => {
-    await Storage.remove({ key });
+    await Preferences.remove({ key });
   },
 };
 

@@ -1,14 +1,17 @@
 import {
   IonAvatar,
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
   useIonModal,
 } from "@ionic/react";
+import { notifications } from "ionicons/icons";
 import React from "react";
 import notFoundAnimation from "../../assets/json/no-data-found.json";
 import ChooseProduct from "../../components/ChooseProduct";
@@ -47,6 +50,9 @@ const Orders = () => {
             </IonMenuButton>
           </IonButtons>
           <IonTitle>Orders</IonTitle>
+          <IonButton fill="solid" color="white" slot="end">
+            <IonIcon slot="icon-only" icon={notifications} />
+          </IonButton>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

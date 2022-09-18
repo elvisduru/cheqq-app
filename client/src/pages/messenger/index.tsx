@@ -5,12 +5,14 @@ import {
   IonContent,
   IonGrid,
   IonHeader,
+  IonIcon,
   IonMenuButton,
   IonPage,
   IonRow,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { notifications } from "ionicons/icons";
 import { useStore } from "../../hooks/useStore";
 
 const Messenger = () => {
@@ -29,6 +31,9 @@ const Messenger = () => {
             </IonMenuButton>
           </IonButtons>
           <IonTitle>Messenger</IonTitle>
+          <IonButton fill="solid" color="white" slot="end">
+            <IonIcon slot="icon-only" icon={notifications} />
+          </IonButton>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

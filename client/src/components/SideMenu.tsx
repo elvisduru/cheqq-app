@@ -1,3 +1,4 @@
+import { SplashScreen } from "@capacitor/splash-screen";
 import {
   IonAvatar,
   IonContent,
@@ -86,7 +87,15 @@ export default function SideMenu() {
               </IonItem>
             </IonList>
             <IonList lines="none" className="ion-padding-vertical">
-              <IonItem button>
+              <IonItem
+                button
+                onClick={async () => {
+                  await SplashScreen.show({
+                    showDuration: 2000,
+                    autoHide: true,
+                  });
+                }}
+              >
                 <IonIcon icon={cashOutline} slot="start" />
                 <IonLabel>Payouts</IonLabel>
               </IonItem>

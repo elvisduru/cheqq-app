@@ -1,4 +1,4 @@
-import { Storage } from "@capacitor/storage";
+import { Preferences } from "@capacitor/preferences";
 import axios from "axios";
 import createAuthRefreshInterceptor, {
   AxiosAuthRefreshRequestConfig,
@@ -18,7 +18,7 @@ enum TokenEnum {
 }
 
 const getToken = async (key: TokenEnum) => {
-  const data = await Storage.get({ key });
+  const data = await Preferences.get({ key });
   return data.value;
 };
 
@@ -49,11 +49,11 @@ const refreshAccessToken = async (failedRequest: any) => {
     console.log("Refresh token failed");
   }
   await Promise.all([
-    Storage.set({
+    Preferences.set({
       key: TokenEnum.access_token,
       value: response.data.access_token,
     }),
-    Storage.set({
+    Preferences.set({
       key: TokenEnum.refresh_token,
       value: response.data.refresh_token,
     }),

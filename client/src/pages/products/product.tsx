@@ -6,12 +6,14 @@ import {
   IonContent,
   IonGrid,
   IonHeader,
+  IonIcon,
   IonMenuButton,
   IonPage,
   IonRow,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { notifications } from "ionicons/icons";
 import { useStore } from "../../hooks/useStore";
 import { User } from "../../utils/types";
 
@@ -34,6 +36,9 @@ const Products: React.FC<Props> = ({ user }) => {
             </IonMenuButton>
           </IonButtons>
           <IonTitle>Products</IonTitle>
+          <IonButton fill="solid" color="white" slot="end">
+            <IonIcon slot="icon-only" icon={notifications} />
+          </IonButton>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
