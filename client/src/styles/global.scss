@@ -16,6 +16,18 @@ ion-list-header {
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+h1 {
+  @apply text-3xl;
+}
+
+h2 {
+  @apply text-2xl;
+}
+
+h3 {
+  @apply text-xl;
+}
+
 ion-back-button {
   --color: var(--ion-color-dark-shade);
 }

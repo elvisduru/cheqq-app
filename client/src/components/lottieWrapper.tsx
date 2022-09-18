@@ -29,13 +29,9 @@ export default function LottieWrapper({
   });
   return (
     <div className="mt-2">
-      <IonGrid>
-        <IonRow>
-          <IonCol>{View}</IonCol>
-        </IonRow>
-      </IonGrid>
-      <div className="ion-text-center leading-normal mt-10">
-        <h3>{title}</h3>
+      <div>{View}</div>
+      <div className="ion-text-center leading-normal mt-8">
+        <h2 className="mb-4">{title}</h2>
         {description && <p className="text-gray text-base">{description}</p>}
         {buttonText && (
           <IonButton

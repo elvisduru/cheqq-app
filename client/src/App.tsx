@@ -6,7 +6,6 @@ import {
   setupIonicReact,
   useIonRouter,
 } from "@ionic/react";
-/* Tailwind */
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/display.css";
