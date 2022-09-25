@@ -46,7 +46,7 @@ model Store {
   status               Boolean              @default(true)
   domain               String?
   address              String
-  addressCoordinates   Json
+  addressCoordinates   Json?
   country              String
   phone                String
   order_email          String?
@@ -176,8 +176,8 @@ model FulfillmentService {
 }
 
 model Product {
-  id                     Int                  @id @default(autoincrement())
-  Store                  Store                @relation(fields: [storeId], references: [id])
+  id                     Int                   @id @default(autoincrement())
+  store                  Store                 @relation(fields: [storeId], references: [id])
   storeId                Int
   collections            Collection[]
   type                   ProductType
@@ -185,74 +185,75 @@ model Product {
   description            String
   tags                   String[]
   weight                 Float?
-  weightUnit             WeightUnit           @default(value: g)
+  weightUnit             WeightUnit?
   width                  Float?
   height                 Float?
   depth                  Float?
-  dimensionUnit          DimensionUnit        @default(value: cm)
-  price                  Float?
+  dimensionUnit          DimensionUnit?
+  price                  Float                 @default(0)
   compareAtPrice         Float?
   costPrice              Float?
-  taxable                Boolean              @default(false)
-  tax                    Tax?                 @relation(fields: [taxId], references: [id])
+  currency               String
+  taxable                Boolean               @default(false)
+  tax                    Tax?                  @relation(fields: [taxId], references: [id])
   taxId                  Int?
   categories             Category[]
-  brand                  Brand?               @relation(fields: [brandId], references: [id])
+  brand                  Brand?                @relation(fields: [brandId], references: [id])
   brandId                Int?
   options                ProductOption[]
   variants               ProductVariant[]
   // Inventory
-  inventoryTracking      Boolean              @default(false)
-  allowBackOrder         Boolean              @default(value: false)
+  inventoryTracking      Boolean               @default(false)
+  allowBackOrder         Boolean               @default(value: false)
   inventoryLevel         Int?
   inventoryWarningLevel  Int?
   sku                    String?
   gtin                   String?
-  isFreeShipping         Boolean              @default(true)
+  isFreeShipping         Boolean               @default(true)
   fixedShippingRate      Float?
-  public                 Boolean              @default(false)
-  featured               Boolean              @default(false)
-  relatedProductRelation Product[]            @relation("RelatedProducts")
-  relatedProducts        Product[]            @relation("RelatedProducts")
+  public                 Boolean               @default(false)
+  featured               Boolean               @default(false)
+  relatedProductRelation Product[]             @relation("RelatedProducts")
+  relatedProducts        Product[]             @relation("RelatedProducts")
   warranty               String?
-  layout                 String               @default(value: "default")
-  availability           ProductAvailability  @default(value: available)
+  layout                 String                @default(value: "default")
+  availability           ProductAvailability   @default(value: available)
   availabilityLabel      String? // For products that are for display only (availability disabled), not for sale
   preOrderReleaseDate    DateTime?
   preOrderMessage        String?
-  preOrderOnly           Boolean              @default(false)
+  preOrderOnly           Boolean               @default(false)
   // minHandlingTime        Int?
   // maxHandlingTime        Int?
   // giftWrap               Boolean              @default(false)
   // giftWrapOptions        GiftWrapOption[]
   redirectUrl            String?
   condition              Condition?
-  showCondition          Boolean              @default(false) // TODO: add this to the UI
+  showCondition          Boolean               @default(false) // TODO: add this to the UI
   // SEO
   searchKeywords         String[]
   pageTitle              String?
   metaDescription        String?
   metaKeywords           String[]
-  viewCount              Int                  @default(value: 0)
+  viewCount              Int                   @default(value: 0)
   customUrl              String?
   openGraphTitle         String?
   openGraphDescription   String?
-  openGraphType          OpenGraphType        @default(value: product)
-  totalSold              Int                  @default(value: 0)
-  reviewCount            Int                  @default(value: 0)
-  reviewAverage          Float                @default(value: 0)
+  openGraphType          OpenGraphType         @default(value: product)
+  totalSold              Int                   @default(value: 0)
+  reviewCount            Int                   @default(value: 0)
+  reviewAverage          Float                 @default(value: 0)
   customFields           Json[]
   // Bulk Pricing rules
   pricingRules           PricingRule[]
   images                 Image[]
   videos                 Video[]
   // Subscriptions
-  subscription           Boolean              @default(false)
-  subscriptionInterval   SubscriptionInterval
+  subscription           Boolean               @default(false)
+  subscriptionInterval   SubscriptionInterval?
   subscriptionLength     Int?
-  subscriptionPrice      Float
-  createdAt              DateTime             @default(now())
-  updatedAt              DateTime             @updatedAt
+  subscriptionPrice      Float?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
   GiftWrapOption         GiftWrapOption[]
 }
 

@@ -12,8 +12,5 @@
 			"splashFullScreen": true,
 			"splashImmersive": true
 		}
-	},
-	"server": {
-		"url": "https://elvisduru-cheqq-app-96g6q956xrj2gj7-3000.githubpreview.dev"
 	}
 }

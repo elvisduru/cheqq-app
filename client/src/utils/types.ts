@@ -264,8 +264,11 @@ export type CustomField = {
 };
 
 export type ProductInput = {
-  brand: string;
   hasVariants: boolean;
+  shippingInfo: boolean;
+  dimensions: boolean;
+  flatShipping: boolean;
+  redirect: boolean;
 } & Product;
 
 export type ProductOption = {

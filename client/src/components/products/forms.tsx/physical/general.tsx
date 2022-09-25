@@ -358,7 +358,7 @@ export default function General() {
           Add new field
         </IonButton>
       </IonItemGroup>
-      <IonItemGroup className="mt-8">
+      <IonItemGroup className="my-8">
         <IonItemDivider className="pl-0">
           <IonLabel color="medium">Inventory</IonLabel>
         </IonItemDivider>
@@ -514,7 +514,8 @@ export default function General() {
           </>
         )}
       </IonItemGroup>
-      <IonItem className="input mt-4" fill="outline" mode="md">
+      {/* TODO: Brand input select component */}
+      {/* <IonItem className="input mt-4" fill="outline" mode="md">
         <IonLabel position="floating">Brand</IonLabel>
         <Controller
           name="brand"
@@ -531,7 +532,7 @@ export default function General() {
           )}
         />
         <IonNote slot="helper">Optional</IonNote>
-      </IonItem>
+      </IonItem> */}
     </Step>
   );
 }

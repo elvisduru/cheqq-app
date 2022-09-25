@@ -23,11 +23,15 @@ import Step from "../Step";
 
 export default function Checkout() {
   const {
+    watch,
     control,
     formState: { errors },
   } = useFormContext<ProductInput>();
-  const [redirect, setRedirect] = useState(false);
-  const [flatShipping, setFlatShipping] = useState(false);
+
+  const shippingInfo = watch("shippingInfo");
+  const flatShipping = watch("flatShipping");
+  const dimensions = watch("dimensions");
+  const redirect = watch("redirect");
 
   // Shipping Zones
   const [present, dismiss] = useIonModal(ShippingZones, {
@@ -42,8 +46,6 @@ export default function Checkout() {
     },
   });
 
-  const [dimensions, toggleDimensions] = useToggle();
-  const [shippingInfo, toggleShippingInfo] = useToggle();
   return (
     <Step>
       <IonItemGroup>
@@ -68,12 +70,19 @@ export default function Checkout() {
         </IonItemDivider>
         <IonItem lines="none" className="input mt-4 checkbox">
           <IonLabel>Add shipping information</IonLabel>
-          <IonCheckbox
-            onIonChange={(e) => {
-              toggleShippingInfo();
-            }}
-            checked={shippingInfo}
-            slot="start"
+          <Controller
+            control={control}
+            name="shippingInfo"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <IonCheckbox
+                onIonChange={(e) => {
+                  onChange(e.detail.checked);
+                }}
+                onIonBlur={onBlur}
+                checked={value}
+                slot="start"
+              />
+            )}
           />
         </IonItem>
 
@@ -126,12 +135,19 @@ export default function Checkout() {
             </IonItem>
             <IonItem lines="none" className="input mt-4 checkbox">
               <IonLabel>Add product dimensions</IonLabel>
-              <IonCheckbox
-                onIonChange={() => {
-                  toggleDimensions();
-                }}
-                checked={dimensions}
-                slot="start"
+              <Controller
+                control={control}
+                name="dimensions"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <IonCheckbox
+                    onIonChange={(e) => {
+                      onChange(e.detail.checked);
+                    }}
+                    onIonBlur={onBlur}
+                    checked={value}
+                    slot="start"
+                  />
+                )}
               />
             </IonItem>
             {dimensions && (
@@ -233,13 +249,20 @@ export default function Checkout() {
         </IonItem>
         <IonItem lines="none" className="input mt-2 checkbox">
           <IonLabel>Enable flat shipping rate</IonLabel>
-          <IonToggle
-            slot="end"
-            checked={flatShipping}
-            color="primary"
-            onIonChange={(e) => {
-              setFlatShipping(e.detail.checked);
-            }}
+          <Controller
+            control={control}
+            name="flatShipping"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <IonToggle
+                slot="end"
+                checked={flatShipping}
+                color="primary"
+                onIonChange={(e) => {
+                  onChange(e.detail.checked);
+                }}
+                onIonBlur={onBlur}
+              />
+            )}
           />
         </IonItem>
 
@@ -317,18 +340,27 @@ export default function Checkout() {
       </IonItemGroup> */}
       <IonItem lines="none" className="input mt-4 checkbox">
         <IonLabel>Redirect after purchase?</IonLabel>
-        <IonToggle
-          slot="end"
-          checked={redirect}
-          color="primary"
-          onIonChange={(e) => {
-            setRedirect(e.detail.checked);
-          }}
+        <Controller
+          control={control}
+          name="redirect"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <IonToggle
+              onIonChange={(e) => {
+                onChange(e.detail.checked);
+              }}
+              onIonBlur={onBlur}
+              checked={value}
+              color="primary"
+              slot="end"
+            />
+          )}
         />
       </IonItem>
       {redirect ? (
         <IonItem
-          className={`input mt-1 ${errors.redirectUrl ? "ion-invalid" : ""}`}
+          className={`input mt-1 mb-8 ${
+            errors.redirectUrl ? "ion-invalid" : ""
+          }`}
           fill="outline"
           mode="md"
         >

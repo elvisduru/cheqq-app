@@ -1,7 +1,16 @@
 import {
+  Image,
+  Prisma,
+  ProductOption,
+  ProductVariant,
+  Video,
+} from '@prisma/client';
+import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -26,92 +35,301 @@ export enum DimensionUnit {
   in = 'in',
 }
 
+enum ProductAvailability {
+  available = 'available',
+  disabled = 'disabled',
+  preorder = 'preorder',
+}
+
+enum Condition {
+  new = 'new',
+  used = 'used',
+  refurbished = 'refurbished',
+}
+
+enum OpenGraphType {
+  product = 'product',
+  album = 'album',
+  book = 'book',
+  drink = 'drink',
+  food = 'food',
+  game = 'game',
+  movie = 'movie',
+  song = 'song',
+  tv_show = 'tv_show',
+}
+
+enum SubscriptionInterval {
+  day = 'day',
+  week = 'week',
+  month = 'month',
+  year = 'year',
+}
+
 export class CreateProductDto {
-  @IsNumber()
   @IsNotEmpty()
+  @IsInt()
   storeId: number;
 
   @IsOptional()
   @IsNumber({}, { each: true })
-  collections: number[];
+  collections?: number[];
 
   @IsNotEmpty()
   @IsEnum(ProductType)
   type: ProductType;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   title: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   description: string;
 
   @IsOptional()
   @IsArray()
-  tags: string[];
+  tags?: string[];
 
   @IsOptional()
   @IsNumber()
-  weight: number;
+  weight?: number;
 
   @IsOptional()
   @IsEnum(WeightUnit)
-  weightUnit: WeightUnit;
+  weightUnit?: WeightUnit;
 
   @IsOptional()
   @IsNumber()
-  width: number;
+  width?: number;
 
   @IsOptional()
   @IsNumber()
-  height: number;
+  height?: number;
 
   @IsOptional()
   @IsNumber()
-  depth: number;
+  depth?: number;
 
   @IsOptional()
   @IsEnum(DimensionUnit)
-  dimensionUnit: DimensionUnit;
+  dimensionUnit?: DimensionUnit;
 
   @IsOptional()
   @IsNumber()
-  price: number;
+  price?: number;
 
   @IsOptional()
   @IsNumber()
-  compareAtPrice: number;
+  compareAtPrice?: number;
 
   @IsOptional()
   @IsNumber()
-  costPrice: number;
+  costPrice?: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   currency: string;
 
   @IsOptional()
   @IsBoolean()
-  taxable: boolean;
+  taxable?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  taxId: number;
+  taxId?: number;
 
   @IsOptional()
   @IsNumber({}, { each: true })
-  categories: number[];
+  categories?: number[];
 
   @IsOptional()
   @IsNumber()
-  brandId: number;
+  brandId?: number;
+
+  @IsOptional()
+  options?: ProductOption[];
+
+  @IsOptional()
+  variants?: ProductVariant[];
+
+  @IsOptional()
+  @IsBoolean()
+  inventoryTracking?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  allowBackOrder?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  inventoryLevel?: number;
+
+  @IsOptional()
+  @IsNumber()
+  inventoryWarningLevel?: number;
+
+  @IsOptional()
+  @IsString()
+  sku?: string;
+
+  @IsOptional()
+  @IsString()
+  gtin?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isFreeShipping?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  fixedShippingRate?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  public = false;
+
+  @IsOptional()
+  @IsBoolean()
+  featured = false;
 
   @IsOptional()
   @IsNumber({}, { each: true })
-  options: number[];
+  relatedProductRelation?: number[];
 
   @IsOptional()
   @IsNumber({}, { each: true })
-  variants: number[];
+  relatedProducts?: number[];
+
+  @IsOptional()
+  @IsString()
+  warranty?: string;
+
+  @IsOptional()
+  @IsString()
+  layout?: string; // TODO: Layout enum
+
+  @IsOptional()
+  @IsEnum(ProductAvailability)
+  availability?: ProductAvailability;
+
+  @IsOptional()
+  @IsString()
+  availabilityLabel?: string;
+
+  @IsOptional()
+  @IsDate()
+  preOrderReleaseDate?: Date;
+
+  @IsOptional()
+  @IsString()
+  preOrderMessage?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  preOrderOnly = false;
+
+  @IsOptional()
+  @IsString()
+  redirectUrl?: string;
+
+  @IsOptional()
+  @IsEnum(Condition)
+  condition: Condition;
+
+  @IsOptional()
+  @IsBoolean()
+  showCondition = false;
+
+  @IsOptional()
+  @IsString({ each: true })
+  searchKeywords?: string[];
+
+  @IsOptional()
+  @IsString()
+  pageTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  metaDescription?: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  metaKeywords?: string[];
+
+  @IsOptional()
+  @IsNumber()
+  viewCount = 0;
+
+  @IsOptional()
+  @IsString()
+  customUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  openGraphTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  openGraphDescription?: string;
+
+  @IsOptional()
+  @IsEnum(OpenGraphType)
+  openGraphType?: OpenGraphType;
+
+  @IsOptional()
+  @IsNumber()
+  totalSold = 0;
+
+  @IsOptional()
+  @IsNumber()
+  reviewCount = 0;
+
+  @IsOptional()
+  @IsNumber()
+  reviewAverage = 0;
+
+  @IsOptional()
+  @IsArray()
+  customFields?: Prisma.JsonArray;
+
+  @IsOptional()
+  @IsNumber({}, { each: true })
+  pricingRules?: number[];
+
+  @IsOptional()
+  @IsArray()
+  images?: Image[];
+
+  @IsOptional()
+  @IsArray()
+  videos?: Video[];
+
+  @IsOptional()
+  @IsBoolean()
+  subscription = false;
+
+  @IsOptional()
+  @IsEnum(SubscriptionInterval)
+  subscriptionInterval?: SubscriptionInterval;
+
+  @IsOptional()
+  @IsNumber()
+  subscriptionLength?: number;
+
+  @IsOptional()
+  @IsNumber()
+  subscriptionPrice?: number;
+
+  @IsOptional()
+  @IsDate()
+  createdAt?: Date;
+
+  @IsOptional()
+  @IsDate()
+  updatedAt?: Date;
+
+  @IsOptional()
+  @IsNumber({}, { each: true })
+  GiftWrapOption?: number[];
 }

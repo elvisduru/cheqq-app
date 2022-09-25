@@ -34,7 +34,7 @@ Table Store {
   status Boolean [not null, default: true]
   domain String
   address String [not null]
-  addressCoordinates Json [not null]
+  addressCoordinates Json
   country String [not null]
   phone String [not null]
   order_email String
@@ -162,7 +162,7 @@ Table FulfillmentService {
 
 Table Product {
   id Int [pk, increment]
-  Store Store [not null]
+  store Store [not null]
   storeId Int [not null]
   collections Collection [not null]
   type ProductType [not null]
@@ -170,14 +170,15 @@ Table Product {
   description String [not null]
   tags String[] [not null]
   weight Float
-  weightUnit WeightUnit [not null, default: 'g']
+  weightUnit WeightUnit
   width Float
   height Float
   depth Float
-  dimensionUnit DimensionUnit [not null, default: 'cm']
-  price Float
+  dimensionUnit DimensionUnit
+  price Float [not null, default: 0]
   compareAtPrice Float
   costPrice Float
+  currency String [not null]
   taxable Boolean [not null, default: false]
   tax Tax
   taxId Int
@@ -225,9 +226,9 @@ Table Product {
   images Image [not null]
   videos Video [not null]
   subscription Boolean [not null, default: false]
-  subscriptionInterval SubscriptionInterval [not null]
+  subscriptionInterval SubscriptionInterval
   subscriptionLength Int
-  subscriptionPrice Float [not null]
+  subscriptionPrice Float
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   GiftWrapOption GiftWrapOption [not null]

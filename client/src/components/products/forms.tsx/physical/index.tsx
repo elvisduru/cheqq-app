@@ -16,13 +16,15 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper/types";
 import shallow from "zustand/shallow";
 import { useDeleteImages } from "../../../../hooks/mutations/images/deleteImages";
+import useAddProduct from "../../../../hooks/mutations/products/addProduct";
 import { AppState, ModalState, useStore } from "../../../../hooks/useStore";
 import useUpdateEffect from "../../../../hooks/useUpdateEffect";
-import { ProductInput } from "../../../../utils/types";
+import { Product, ProductInput } from "../../../../utils/types";
 import withSuspense from "../../../hoc/withSuspense";
 import ProductSuccess from "../../../ProductSuccess";
 import ProductDetails from "../../details";
 import General from "./general";
+import { Toast } from "@capacitor/toast";
 
 const Checkout = withSuspense(React.lazy(() => import("./checkout")));
 const Variants = withSuspense(React.lazy(() => import("./variants")));
@@ -41,6 +43,19 @@ const selector = ({
   selectedStore,
 });
 
+const convertNumberInputs = <T extends {}>(data: T, ignoredKeys: string[]) => {
+  return Object.entries(data).reduce((acc, [key, value]) => {
+    if (
+      typeof value === "string" &&
+      !isNaN(+value) &&
+      !ignoredKeys.includes(key)
+    ) {
+      return { ...acc, [key]: +value };
+    }
+    return { ...acc, [key]: value };
+  }, {}) as T;
+};
+
 // TODO: When submitting form, update sortOrder of photos and videos
 
 export default function PhysicalProductForm() {
@@ -55,14 +70,50 @@ export default function PhysicalProductForm() {
   const store = user?.stores?.find((store) => store.id === selectedStore);
 
   const deleteImages = useDeleteImages();
+  const addProduct = useAddProduct();
 
   const methods = useForm<ProductInput>({
     mode: "onBlur",
     defaultValues: { ...physicalFormData, type: "physical" },
   });
 
-  const onSubmit = (data: any) => {
-    presentSuccess();
+  const onSubmit = (productInput: ProductInput) => {
+    // If product has an ID, it means it's an update
+    // if (productInput.id) {
+    // Update product
+    // }
+    // If no store, return toast error
+    if (!store) {
+      return Toast.show({ text: "⚠️ Error: No storeId for product" });
+    }
+    // clean data
+    const {
+      hasVariants,
+      shippingInfo,
+      dimensions,
+      flatShipping,
+      redirect,
+      ...rest
+    } = productInput;
+    // convert number inputs to numbers
+    const data = {
+      ...convertNumberInputs<Product>(rest, ["gtin", "title", "description"]),
+      storeId: store.id,
+      currency: store.currency,
+    };
+    // Send data to server
+    addProduct.mutate(data, {
+      onSuccess: ({ data }) => {
+        if (data) {
+          console.log(data);
+          // Update form data with product id
+          setPhysicalFormData({ ...productInput, id: data.id });
+          methods.reset({ ...productInput, id: data.id });
+          // Show success modal
+          presentSuccessModal();
+        }
+      },
+    });
   };
   const onError = (error: any) => console.log(error);
 
@@ -84,11 +135,14 @@ export default function PhysicalProductForm() {
   });
 
   // Success Modal
-  const [presentSuccess, dismissSuccess] = useIonModal(ProductSuccess, {
-    dismiss: () => {
-      dismissSuccess();
-    },
-  });
+  const [presentSuccessModal, dismissSuccessModal] = useIonModal(
+    ProductSuccess,
+    {
+      dismiss: () => {
+        dismissSuccessModal();
+      },
+    }
+  );
 
   useUpdateEffect(() => {
     methods.trigger().then((result) => {

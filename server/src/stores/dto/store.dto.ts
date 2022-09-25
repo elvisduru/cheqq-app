@@ -7,7 +7,6 @@ import {
   IsLocale,
   IsLowercase,
   IsNotEmpty,
-  IsNumber,
   IsObject,
   IsOptional,
   IsPhoneNumber,
@@ -30,11 +29,11 @@ export class CreateStoreDto {
   tag: string;
 
   @IsBoolean()
-  status: boolean = true;
+  status = true;
 
   @IsFQDN()
   @IsOptional()
-  domain?: string | null;
+  domain?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -67,9 +66,9 @@ export class CreateStoreDto {
   categories: number[];
 
   @IsBoolean()
-  public: boolean = false;
+  public = false;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsObject()
-  addressCoordinates: Prisma.JsonObject;
+  addressCoordinates?: Prisma.JsonObject;
 }
