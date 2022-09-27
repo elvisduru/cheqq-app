@@ -231,7 +231,7 @@ Table Product {
   subscriptionPrice Float
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  GiftWrapOption GiftWrapOption [not null]
+  giftWrapOptions GiftWrapOption [not null]
 }
 
 Table ProductOption {
@@ -246,10 +246,11 @@ Table ProductVariant {
   id Int [pk, increment]
   product Product [not null]
   productId Int [not null]
-  name String [not null]
+  title String [not null]
   price Float
   compareAtPrice Float
   costPrice Float
+  currency String [not null]
   inventoryTracking Boolean [not null, default: false]
   allowBackOrder Boolean [not null, default: false]
   inventoryLevel Int [not null, default: 0]
@@ -260,7 +261,7 @@ Table ProductVariant {
   fixedShippingRate Float
   image Image
   imageId Int
-  videos Video
+  video Video
   videoId Int
   enabled Boolean [not null, default: true]
   pricingRule PricingRule

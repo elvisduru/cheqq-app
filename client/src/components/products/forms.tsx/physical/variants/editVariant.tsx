@@ -119,9 +119,7 @@ export default function EditVariant({
                 />
               )}
             />
-            <IonNote slot="helper">
-              Defaults to original product price if left blank.
-            </IonNote>
+            <IonNote slot="helper">Defaults to original product price.</IonNote>
             <IonNote slot="error">
               {errors.variants?.[variantIndex]?.price?.message}
             </IonNote>
@@ -157,7 +155,7 @@ export default function EditVariant({
               )}
             />
             <IonNote slot="helper">
-              Optional. Defaults to original product price if left blank.
+              Optional. Defaults to original product comparing price.
             </IonNote>
             <IonNote slot="error">
               {errors.variants?.[variantIndex]?.price?.message}

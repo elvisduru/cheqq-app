@@ -254,7 +254,7 @@ model Product {
   subscriptionPrice      Float?
   createdAt              DateTime              @default(now())
   updatedAt              DateTime              @updatedAt
-  GiftWrapOption         GiftWrapOption[]
+  giftWrapOptions        GiftWrapOption[]
 }
 
 model ProductOption {
@@ -269,10 +269,11 @@ model ProductVariant {
   id                    Int          @id @default(autoincrement())
   product               Product      @relation(fields: [productId], references: [id])
   productId             Int
-  name                  String
+  title                 String
   price                 Float?
   compareAtPrice        Float?
   costPrice             Float?
+  currency              String
   inventoryTracking     Boolean      @default(false)
   allowBackOrder        Boolean      @default(value: false)
   inventoryLevel        Int          @default(value: 0)
@@ -280,10 +281,10 @@ model ProductVariant {
   sku                   String?
   gtin                  String?
   isFreeShipping        Boolean      @default(true)
-  fixedShippingRate     Float?
+  fixedShippingRate     Float? //TODO: add this to the UI
   image                 Image?       @relation(fields: [imageId], references: [id])
   imageId               Int?
-  videos                Video?       @relation(fields: [videoId], references: [id])
+  video                 Video?       @relation(fields: [videoId], references: [id])
   videoId               Int?
   enabled               Boolean      @default(true)
   pricingRule           PricingRule? @relation(fields: [pricingRuleId], references: [id])

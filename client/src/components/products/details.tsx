@@ -199,7 +199,7 @@ export default function ProductDetails({
           onClick={() => {
             goBack();
           }}
-          className="w-10 h-10 bg-black flex justify-center items-center rounded-full backdrop-filter backdrop-blur-sm bg-opacity-50"
+          className="w-10 h-10 flex justify-center items-center rounded-full backdrop-filter backdrop-blur-sm bg-opacity-50"
         >
           <IonIcon size="small" icon={isPreview ? chevronDown : chevronBack} />
         </button>

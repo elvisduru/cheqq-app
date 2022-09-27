@@ -47,6 +47,8 @@ export default function Variants() {
   const options = watch("options") || [];
   const variants = watch("variants") || [];
   const images = watch("images") || [];
+  const price = watch("price");
+  const compareAtPrice = watch("compareAtPrice");
 
   const { fields, append, remove, move } = useFieldArray({
     control,
@@ -101,7 +103,8 @@ export default function Variants() {
           }
           return {
             title: variant.join("-"),
-            price: undefined,
+            price,
+            compareAtPrice,
             sku: undefined,
             imageId: undefined,
             inventoryLevel: undefined,

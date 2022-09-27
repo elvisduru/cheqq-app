@@ -195,10 +195,6 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsNumber({}, { each: true })
-  relatedProductRelation?: number[];
-
-  @IsOptional()
-  @IsNumber({}, { each: true })
   relatedProducts?: number[];
 
   @IsOptional()
@@ -322,14 +318,14 @@ export class CreateProductDto {
   subscriptionPrice?: number;
 
   @IsOptional()
+  @IsNumber({}, { each: true })
+  giftWrapOptions?: number[];
+
+  @IsOptional()
   @IsDate()
   createdAt?: Date;
 
   @IsOptional()
   @IsDate()
   updatedAt?: Date;
-
-  @IsOptional()
-  @IsNumber({}, { each: true })
-  GiftWrapOption?: number[];
 }
