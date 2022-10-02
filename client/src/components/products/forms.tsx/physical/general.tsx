@@ -16,14 +16,14 @@ import {
   IonToggle,
 } from "@ionic/react";
 import { trash } from "ionicons/icons";
-import React from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { useStore } from "../../../../hooks/useStore";
 import { ProductInput } from "../../../../utils/types";
-import withSuspense from "../../../hoc/withSuspense";
 import MediaUploader from "../../../MediaUploader";
 import TagInput from "../../../TagInput";
 import Step from "../Step";
+import slugify from "slugify";
+import { useEffect } from "react";
 
 // const SelectCategory = withSuspense<any>(
 //   React.lazy(() => import("../../../SelectCategory"))
@@ -31,17 +31,30 @@ import Step from "../Step";
 
 export default function General() {
   const user = useStore((state) => state.user);
+  const selectedStore = useStore((store) => store.selectedStore);
+  const store = user?.stores.find((s) => s.id === selectedStore);
+
   const {
     formState: { errors },
     control,
     setValue,
     watch,
+    getFieldState,
   } = useFormContext<ProductInput>();
 
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "customFields",
   });
+
+  const title = watch("title");
+  const slug = watch("slug");
+
+  useEffect(() => {
+    if (title && getFieldState("slug").isTouched === false) {
+      setValue("slug", slugify(title, { lower: true }));
+    }
+  }, [title]);
 
   return (
     <Step>
@@ -70,6 +83,7 @@ export default function General() {
         </IonNote>
         <IonNote slot="error">{errors.title?.message}</IonNote>
       </IonItem>
+
       {/* TODO: Move category input to product's settings. When publishing on Cheqq Marketplace, it's a requirement */}
       {/* <IonItem
         className={`input mt-4 relative ${
@@ -156,6 +170,45 @@ export default function General() {
         </IonNote>
         <IonNote slot="error">{errors.description?.message}</IonNote>
       </IonItem>
+      <div className="mt-4 relative">
+        <IonItem
+          className={`input ${errors.slug ? "ion-invalid" : ""}`}
+          fill="outline"
+          mode="md"
+        >
+          <IonLabel position="floating">URL Slug</IonLabel>
+          <Controller
+            name="slug"
+            control={control}
+            rules={{ required: "Please enter your product's URL slug" }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <IonInput
+                value={value}
+                type="text"
+                onIonChange={onChange}
+                onIonBlur={onBlur}
+              />
+            )}
+          />
+          <IonNote slot="helper">
+            https://cheqq.me/{store?.tag}/{slug}
+          </IonNote>
+          <IonNote slot="error">{errors.slug?.message}</IonNote>
+        </IonItem>
+        <div className="absolute z-10 right-0 top-0 mt-3 mr-4">
+          <IonButton
+            fill="clear"
+            size="small"
+            onClick={() =>
+              setValue("slug", slugify(title, { lower: true }), {
+                shouldValidate: true,
+              })
+            }
+          >
+            Reset
+          </IonButton>
+        </div>
+      </div>
       <TagInput
         label="Product Tags"
         name="tags"
@@ -163,7 +216,7 @@ export default function General() {
         setValue={(tags: string[]) => {
           setValue("tags", tags);
         }}
-        note="Optional. Enter tags separated by commas. Limit 20."
+        note="Optional. Enter tags separated by commas ( , ). Limit 20."
       />
       <IonItemGroup className="mt-8">
         <IonItemDivider className="pl-0">
@@ -358,7 +411,7 @@ export default function General() {
           Add new field
         </IonButton>
       </IonItemGroup>
-      <IonItemGroup className="my-8">
+      <IonItemGroup className="mt-8">
         <IonItemDivider className="pl-0">
           <IonLabel color="medium">Inventory</IonLabel>
         </IonItemDivider>

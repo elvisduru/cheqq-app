@@ -48,6 +48,14 @@ type Props = {
 };
 
 // TODO: Out of stock message, disable qty buttons
+// TODO: Select default variant if merchants configured one, else prevent users from adding to cart if no variant is selected.
+/*
+ TODO: When no variant is selected, find the least and most expensive prices and display the range. 
+ If there is only one variant, display the price of that variant. 
+ If there are no variants, display the price of the product. 
+ If there is no price, display "Free".
+*/
+
 export default function ProductDetails({
   product,
   goBack,
@@ -210,16 +218,18 @@ export default function ProductDetails({
             zoom={true}
             pagination={{ clickable: true }}
             modules={[Pagination, Zoom]}
-            className="min-h-[400px] max-h-[500px]"
+            className="h-[500px]"
             onSwiper={setSwiper}
           >
-            {product?.images?.map((image) => (
-              <SwiperSlide key={image.id}>
-                <div className="swiper-zoom-container">
-                  <IonImg className="swiper-zoom-target" src={image.url} />
-                </div>
-              </SwiperSlide>
-            ))}
+            {product?.images
+              ?.sort((a, b) => a.sortOrder - b.sortOrder)
+              ?.map((image) => (
+                <SwiperSlide key={image.id}>
+                  <div className="swiper-zoom-container">
+                    <IonImg className="swiper-zoom-target" src={image.url} />
+                  </div>
+                </SwiperSlide>
+              ))}
           </Swiper>
         </div>
         <IonCard className="m-0 -mt-4 z-10 flex-1">

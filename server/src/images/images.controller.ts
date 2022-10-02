@@ -4,6 +4,7 @@ import {
   Delete,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { Image } from '@prisma/client';
@@ -17,6 +18,16 @@ export class ImagesController {
   @Post()
   create(@Body() data: ImageDto[]): Promise<Image[]> {
     return this.imagesService.create(data);
+  }
+
+  @Patch()
+  updateMany(@Body() data: ImageDto[]): Promise<Image[]> {
+    return this.imagesService.updateMany(data);
+  }
+
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() data: ImageDto) {
+    return this.imagesService.update(data);
   }
 
   @Delete()

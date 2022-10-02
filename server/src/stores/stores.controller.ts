@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { GetCurrentUserId } from 'src/common/decorators';
+import { GetCurrentUserId, Public } from 'src/common/decorators';
 import { CreateStoreDto } from './dto';
 import { StoresService } from './stores.service';
 
@@ -43,11 +43,13 @@ export class StoresController {
     return this.storesService.findAll({ ownerId: userId });
   }
 
+  @Public()
   @Get('tag/:tag')
   findByTag(@Param('tag') tag: string) {
     return this.storesService.findByTag(tag);
   }
 
+  @Public()
   @Get(':id')
   findById(@Param('id', ParseIntPipe) id: number) {
     if (isNaN(id)) throw new BadRequestException('Invalid id');

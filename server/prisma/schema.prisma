@@ -230,6 +230,7 @@ model Product {
   condition              Condition?
   showCondition          Boolean               @default(false) // TODO: add this to the UI
   // SEO
+  slug                   String
   searchKeywords         String[]
   pageTitle              String?
   metaDescription        String?

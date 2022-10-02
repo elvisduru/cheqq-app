@@ -209,6 +209,7 @@ Table Product {
   redirectUrl String
   condition Condition
   showCondition Boolean [not null, default: false]
+  slug String [not null]
   searchKeywords String[] [not null]
   pageTitle String
   metaDescription String

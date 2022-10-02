@@ -13,9 +13,7 @@ import {
   IonToggle,
   useIonModal,
 } from "@ionic/react";
-import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import useToggle from "../../../../hooks/useToggle";
 import { ProductInput } from "../../../../utils/types";
 import Discounts from "../../../discounts";
 import ShippingZones from "../../../shipping/Shipping";
@@ -338,7 +336,7 @@ export default function Checkout() {
           </IonButton>
         </IonItemDivider>
       </IonItemGroup> */}
-      <IonItem lines="none" className="input mt-4 checkbox">
+      <IonItem lines="none" className="input mt-2 checkbox">
         <IonLabel>Redirect after purchase?</IonLabel>
         <Controller
           control={control}

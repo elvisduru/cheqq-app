@@ -27,6 +27,7 @@ import General from "./general";
 import { Toast } from "@capacitor/toast";
 import useUpdateProduct from "../../../../hooks/mutations/products/updateProduct";
 import { AxiosResponse } from "axios";
+import useUpdateImages from "../../../../hooks/mutations/images/updateImages";
 
 const Checkout = withSuspense(React.lazy(() => import("./checkout")));
 const Variants = withSuspense(React.lazy(() => import("./variants")));
@@ -53,7 +54,7 @@ const convertNumberInputs = <T extends {}>(data: T, ignoredKeys: string[]) => {
       continue;
     }
     // if key is variants, loop through array and convert each variant
-    if (key === "variants") {
+    if (key === "variants" && Array.isArray(data[key])) {
       result[key] = (data[key] as unknown as any[]).map((variant) =>
         convertNumberInputs(variant, ["gtin", "title", "description", "sku"])
       ) as any;
@@ -83,6 +84,7 @@ export default function PhysicalProductForm() {
   const deleteImages = useDeleteImages();
   const addProduct = useAddProduct();
   const updateProduct = useUpdateProduct();
+  const updateImages = useUpdateImages();
 
   const methods = useForm<ProductInput>({
     mode: "onBlur",
@@ -91,6 +93,11 @@ export default function PhysicalProductForm() {
 
   const onSubmit = async (productInput: ProductInput) => {
     try {
+      // Update Images
+      if (productInput.images) {
+        console.log("Updating images");
+        await updateImages.mutateAsync(productInput.images);
+      }
       // If no store, return toast error
       if (!store) {
         return Toast.show({ text: "⚠️ Error: No storeId for product" });
@@ -120,7 +127,6 @@ export default function PhysicalProductForm() {
       let res: AxiosResponse<Product>;
 
       // Send data to server
-      console.log("data", data);
 
       if (data.id) {
         // If product has an ID, it means it's an update
@@ -131,7 +137,6 @@ export default function PhysicalProductForm() {
         res = await addProduct.mutateAsync(data);
       }
 
-      console.log(res.data);
       // Update form data with product id
       setPhysicalFormData({ ...productInput, id: res.data.id });
       methods.reset({ ...productInput, id: res.data.id });
@@ -271,6 +276,19 @@ export default function PhysicalProductForm() {
               <IonButton
                 className="drop-shadow"
                 onClick={() => {
+                  if (tabIndex === 0) {
+                    const images = methods.getValues("images");
+                    // If images are present, update the images order in the api
+                    if (images?.length) {
+                      // update sort order
+                      const newImages = images.map((image, index) => {
+                        return { ...image, sortOrder: index };
+                      });
+
+                      methods.setValue("images", newImages);
+                    }
+                  }
+
                   if (tabIndex === 2) {
                     present({
                       id: "product-preview",

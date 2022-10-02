@@ -250,6 +250,7 @@ export type Product = {
   redirectUrl?: string;
   condition: Condition;
   showCondition?: boolean;
+  slug: string;
   totalSold?: number;
   reviewCount?: number;
   reviewAverage?: number;

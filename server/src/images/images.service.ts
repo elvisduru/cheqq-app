@@ -13,6 +13,21 @@ export class ImagesService {
     );
   }
 
+  async update(data: ImageDto): Promise<Image> {
+    return this.prisma.image.update({ where: { id: data.id }, data });
+  }
+
+  async updateMany(data: ImageDto[]): Promise<Image[]> {
+    return this.prisma.$transaction(
+      data.map((image) =>
+        this.prisma.image.update({
+          where: { id: image.id },
+          data: image,
+        }),
+      ),
+    );
+  }
+
   async delete(id: number): Promise<Image> {
     return this.prisma.image.delete({ where: { id } });
   }

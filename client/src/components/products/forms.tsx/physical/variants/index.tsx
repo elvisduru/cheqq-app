@@ -33,6 +33,8 @@ import Step from "../../Step";
 const ChooseImage = withSuspense(React.lazy(() => import("./choose-image")));
 const EditVariant = withSuspense(React.lazy(() => import("./editVariant")));
 
+// TODO: Enable merchants choose a default selected variant for their product, this will be used in the product details page
+
 export default function Variants() {
   const user = useStore((store) => store.user);
   const selectedStore = useStore((store) => store.selectedStore);
@@ -120,7 +122,7 @@ export default function Variants() {
       );
       return newVariants;
     },
-    [watch]
+    [watch, price]
   );
 
   const variantsLength = options?.reduce(
@@ -253,6 +255,7 @@ export default function Variants() {
                   label="Option values"
                   name={`options.${index}.values`}
                   control={control}
+                  note="Enter values separated by commas ( , ) or press enter."
                 />
               </div>
             ))}

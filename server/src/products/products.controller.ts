@@ -7,10 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Public } from 'src/common/decorators';
+import { Prisma } from '@prisma/client';
 
 @Controller('products')
 export class ProductsController {
@@ -21,14 +24,31 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
+  @Public()
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Query() query: any) {
+    const filter: Prisma.ProductWhereInput = query?.filter
+      ? JSON.parse(query.filter)
+      : {};
+    delete query.filter;
+    const pagination = {
+      take: +query.take,
+      skip: +query.skip,
+      cursor: +query.cursor,
+    };
+    return this.productsService.findAll({ ...filter }, pagination);
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
+  }
+
+  @Public()
+  @Get('slug/:slug')
+  findBySlug(@Param('slug') slug: string) {
+    return this.productsService.findBySlug(slug);
   }
 
   @Patch(':id')

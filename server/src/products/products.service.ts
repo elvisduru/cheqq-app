@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Product } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -42,12 +42,73 @@ export class ProductsService {
     return product;
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll(
+    where: Prisma.ProductWhereInput,
+    pagination?: { take?: number; skip?: number; cursor?: number },
+  ): Promise<Product[]> {
+    return this.prisma.product.findMany({
+      where,
+      take: pagination?.take || undefined,
+      skip: pagination?.skip || 0,
+      cursor: pagination?.cursor ? { id: pagination.cursor } : undefined,
+      orderBy: {
+        id: 'asc',
+      },
+      include: {
+        images: true,
+        videos: true,
+        options: true,
+        variants: true,
+        collections: true,
+        categories: true,
+        store: true,
+        brand: true,
+        tax: true,
+        relatedProducts: true,
+        giftWrapOptions: true,
+        pricingRules: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    return this.prisma.product.findUnique({
+      where: { id },
+      include: {
+        images: true,
+        videos: true,
+        options: true,
+        variants: true,
+        collections: true,
+        categories: true,
+        store: true,
+        brand: true,
+        tax: true,
+        relatedProducts: true,
+        giftWrapOptions: true,
+        pricingRules: true,
+      },
+    });
+  }
+
+  async findBySlug(slug: string) {
+    return this.prisma.product.findFirstOrThrow({
+      where: { slug },
+      include: {
+        images: true,
+        videos: true,
+        options: true,
+        variants: true,
+        collections: true,
+        categories: true,
+        store: true,
+        brand: true,
+        tax: true,
+        relatedProducts: true,
+        giftWrapOptions: true,
+        pricingRules: true,
+      },
+    });
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
