@@ -17,15 +17,10 @@ import {
 } from "@ionic/react";
 import { format } from "date-fns";
 import { notifications } from "ionicons/icons";
-import React from "react";
 import { Link } from "react-router-dom";
-import withSuspense from "../../components/hoc/withSuspense";
+import ChartCard from "../../components/ChartCard";
 import { useStore } from "../../hooks/useStore";
 import { getCurrentDayPeriod } from "../../utils";
-
-const ChartCard = withSuspense<{ title: string }>(
-  React.lazy(() => import("../../components/ChartCard"))
-);
 
 const Home = () => {
   const user = useStore((store) => store.user);
@@ -44,8 +39,8 @@ const Home = () => {
         {
           product: {
             images: [
-              "https://picsum.photos/200/300",
-              "https://picsum.photos/200/300",
+              "https://api.lorem.space/image/face?w=151&h=150",
+              "https://api.lorem.space/image/face?w=150&h=150",
             ],
             name: "Nike shoes",
             price: 120,
@@ -66,8 +61,8 @@ const Home = () => {
         {
           product: {
             images: [
-              "https://picsum.photos/200/300",
-              "https://picsum.photos/200/300",
+              "https://api.lorem.space/image/face?w=150&h=150",
+              "https://api.lorem.space/image/face?w=150&h=150",
             ],
             name: "Nike shoes",
             price: 120,
@@ -77,9 +72,9 @@ const Home = () => {
         {
           product: {
             images: [
-              "https://picsum.photos/200/300",
-              "https://picsum.photos/200/300",
-              "https://picsum.photos/200/300",
+              "https://api.lorem.space/image/face?w=152&h=150",
+              "https://api.lorem.space/image/face?w=150&h=150",
+              "https://api.lorem.space/image/face?w=150&h=150",
             ],
             name: "Adiddas shoes",
             price: 100,
@@ -100,8 +95,8 @@ const Home = () => {
         {
           product: {
             images: [
-              "https://picsum.photos/202/300",
-              "https://picsum.photos/200/300",
+              "https://api.lorem.space/image/face?w=153&h=150",
+              "https://api.lorem.space/image/face?w=150&h=150",
             ],
             name: "Nike shoes",
             price: 120,
@@ -122,8 +117,8 @@ const Home = () => {
         {
           product: {
             images: [
-              "https://picsum.photos/201/300",
-              "https://picsum.photos/200/300",
+              "https://api.lorem.space/image/face?w=150&h=150",
+              "https://api.lorem.space/image/face?w=150&h=150",
             ],
             name: "Nike shoes",
             price: 120,

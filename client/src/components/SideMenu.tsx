@@ -105,7 +105,7 @@ export default function SideMenu() {
               </IonItem>
               <IonItem button>
                 <IonIcon icon={searchOutline} slot="start" />
-                <IonLabel>Discover</IonLabel>
+                <IonLabel>Marketplace</IonLabel>
               </IonItem>
               <IonItem button>
                 <IonIcon icon={bookmarkOutline} slot="start" />

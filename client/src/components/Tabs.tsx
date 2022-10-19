@@ -17,24 +17,18 @@ import {
   home,
   homeOutline,
 } from "ionicons/icons";
-import React from "react";
 import { Route, useLocation } from "react-router-dom";
 import { useStore } from "../hooks/useStore";
+import Home from "../pages/home";
+import Messenger from "../pages/messenger";
+import Notifications from "../pages/notifications";
+import Orders from "../pages/orders";
 import ProductsRouterOutlet from "../pages/products";
+import Settings from "../pages/settings";
 import ChooseProduct from "./ChooseProduct";
 
 import withAuth from "./hoc/withAuth";
-import withSuspense from "./hoc/withSuspense";
 import "./Tabs.scss";
-
-// const ChooseProduct = withSuspense(React.lazy(() => import("./ChooseProduct")));
-const Home = withSuspense(React.lazy(() => import("../pages/home")));
-const Messenger = withSuspense(React.lazy(() => import("../pages/messenger")));
-const Notifications = withSuspense(
-  React.lazy(() => import("../pages/notifications"))
-);
-const Orders = withSuspense(React.lazy(() => import("../pages/orders")));
-const Settings = withSuspense(React.lazy(() => import("../pages/settings")));
 
 function Tabs() {
   const { pathname } = useLocation();

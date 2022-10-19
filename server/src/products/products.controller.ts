@@ -1,19 +1,19 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import { ProductsService } from './products.service';
+import { Prisma } from '@prisma/client';
+import { Public } from 'src/common/decorators';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Public } from 'src/common/decorators';
-import { Prisma } from '@prisma/client';
+import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {

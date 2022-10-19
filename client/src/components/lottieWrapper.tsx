@@ -29,7 +29,7 @@ export default function LottieWrapper({
   });
   return (
     <div className="mt-2">
-      <div>{View}</div>
+      <div className="aspect-[4/3]">{View}</div>
       <div className="ion-text-center leading-normal mt-8">
         <h2 className="mb-4">{title}</h2>
         {description && <p className="text-gray text-base">{description}</p>}

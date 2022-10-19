@@ -3,16 +3,16 @@ import {
   IonButton,
   IonButtons,
   IonContent,
-  IonGrid,
   IonHeader,
   IonIcon,
   IonMenuButton,
   IonPage,
-  IonRow,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { notifications } from "ionicons/icons";
+import chattingAnimation from "../../assets/json/chatting.json";
+import LottieWrapper from "../../components/lottieWrapper";
 import { useStore } from "../../hooks/useStore";
 
 const Messenger = () => {
@@ -42,12 +42,21 @@ const Messenger = () => {
             <IonTitle size="large">Messenger</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonGrid>
-          <IonRow>
-            <IonTitle>See your Messenger</IonTitle>
-          </IonRow>
-          <IonButton routerLink="/store/new">Create new store</IonButton>
-        </IonGrid>
+        <div className="ion-padding">
+          <div className="mt-8">
+            <LottieWrapper
+              title="Chat with your customers"
+              animationData={chattingAnimation}
+              description="You have no messages yet. When you do, they will appear here."
+              // loop={false}
+              // initialSegment={[0, 130]}
+              buttonHandler={() => {
+                console.log("button clicked");
+              }}
+              buttonText="Start a conversation"
+            />
+          </div>
+        </div>
       </IonContent>
     </IonPage>
   );
