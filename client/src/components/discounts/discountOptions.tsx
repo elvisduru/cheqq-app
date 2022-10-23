@@ -46,7 +46,7 @@ export default function DiscountOptions({ dismiss }: Props) {
         present({
           presentingElement: parentEl,
           canDismiss,
-          id: "new-physical-product",
+          id: "physical-product-form",
         });
       },
       icon: bagHandleOutline,

@@ -1,4 +1,5 @@
 import {
+  IonContent,
   IonIcon,
   IonRouterOutlet,
   IonTabBar,

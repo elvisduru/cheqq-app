@@ -2,23 +2,40 @@ import {
   IonAvatar,
   IonButton,
   IonButtons,
+  IonCard,
+  IonCardContent,
   IonCol,
   IonContent,
   IonGrid,
   IonHeader,
   IonIcon,
+  IonImg,
   IonMenuButton,
   IonPage,
   IonRow,
   IonSegment,
   IonSegmentButton,
+  IonThumbnail,
   IonTitle,
   IonToolbar,
+  useIonModal,
 } from "@ionic/react";
-import { filter, notifications, trash, trashBinOutline } from "ionicons/icons";
+import {
+  filter,
+  imagesOutline,
+  notifications,
+  trash,
+  trashBinOutline,
+} from "ionicons/icons";
+import LottieWrapper from "../../components/lottieWrapper";
+import OrdersSkeleton from "../../components/skeletons/orders";
 import useProducts from "../../hooks/queries/products/useProducts";
 import { useStore } from "../../hooks/useStore";
+import notFoundAnimation from "../../assets/json/no-data-found.json";
 import { User } from "../../utils/types";
+import ChooseProduct from "../../components/ChooseProduct";
+import React from "react";
+import ProductCard from "../../components/products/card";
 
 type Props = {
   user: User;
@@ -33,6 +50,12 @@ const Products: React.FC<Props> = ({ user }) => {
     },
   };
   const { data: products, isLoading } = useProducts(filter);
+
+  const [present, dismiss] = useIonModal(ChooseProduct, {
+    dismiss: () => {
+      dismiss();
+    },
+  });
 
   return (
     <IonPage id="products">
@@ -62,17 +85,38 @@ const Products: React.FC<Props> = ({ user }) => {
             <IonSegmentButton>All Products</IonSegmentButton>
             <IonSegmentButton>Subscriptions</IonSegmentButton>
           </IonSegment>
+          <div>
+            {isLoading ? (
+              <OrdersSkeleton length={9} />
+            ) : !products?.pages[0].length ? (
+              <div className="mt-8">
+                <LottieWrapper
+                  title="No Products"
+                  description="Create a new product to start receiving orders from customers"
+                  buttonText="Create Product"
+                  animationData={notFoundAnimation}
+                  buttonHandler={() =>
+                    present({
+                      breakpoints: [0, 0.5],
+                      initialBreakpoint: 0.5,
+                      id: "choose-product",
+                    })
+                  }
+                />
+              </div>
+            ) : (
+              <IonGrid className="p-0">
+                {products.pages.map((group, i) => (
+                  <IonRow key={i}>
+                    {group.map((product, i) => (
+                      <ProductCard key={i} {...product} />
+                    ))}
+                  </IonRow>
+                ))}
+              </IonGrid>
+            )}
+          </div>
         </div>
-        <IonGrid>
-          <IonRow>
-            <IonTitle>See your products</IonTitle>
-          </IonRow>
-          <IonRow>
-            <IonCol>
-              <IonButton routerLink="/products/1">View Detail page</IonButton>
-            </IonCol>
-          </IonRow>
-        </IonGrid>
       </IonContent>
     </IonPage>
   );

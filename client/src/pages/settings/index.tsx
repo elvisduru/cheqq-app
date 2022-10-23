@@ -31,7 +31,7 @@ const Settings: React.FC = (props: Props) => {
   const queryClient = useQueryClient();
 
   return (
-    <IonPage>
+    <IonPage id="settings">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">

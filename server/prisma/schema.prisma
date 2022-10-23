@@ -230,7 +230,7 @@ model Product {
   condition              Condition?
   showCondition          Boolean               @default(false) // TODO: add this to the UI
   // SEO
-  slug                   String
+  slug                   String                @unique
   searchKeywords         String[]
   pageTitle              String?
   metaDescription        String?
@@ -369,9 +369,11 @@ model GiftWrapOption {
 }
 
 model Brand {
-  id      Int       @id @default(autoincrement())
-  name    String
-  Product Product[]
+  id        Int       @id @default(autoincrement())
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Category {

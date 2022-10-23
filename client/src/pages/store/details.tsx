@@ -112,7 +112,7 @@ export default function Details({ progress, user }: Props) {
   });
 
   return (
-    <IonPage>
+    <IonPage id="store-details">
       <IonHeader translucent>
         <IonToolbar>
           <IonButtons slot="start">

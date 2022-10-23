@@ -28,6 +28,7 @@ export default function usePhotoGallery() {
       });
       setUploading(true);
       setPhoto(photo);
+      console.log("photo", photo);
       const file = await getFileFromPath(photo.webPath!, photo.format);
       setFile(file);
     } catch (error) {

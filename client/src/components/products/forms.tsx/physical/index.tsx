@@ -131,6 +131,9 @@ export default function PhysicalProductForm() {
       if (data.id) {
         // If product has an ID, it means it's an update
         console.log("updating product");
+        delete data.store;
+        delete data.brand;
+        delete data.tax;
         res = await updateProduct.mutateAsync(data);
       } else {
         console.log("adding new product");
@@ -163,13 +166,14 @@ export default function PhysicalProductForm() {
       dismiss();
     },
     isPreview: true,
-    handleSubmit: methods.handleSubmit(onSubmit, onError),
+    buttonHandler: methods.handleSubmit(onSubmit, onError),
   });
 
   // Success Modal
   const [presentSuccessModal, dismissSuccessModal] = useIonModal(
     ProductSuccess,
     {
+      product: { ...methods.getValues(), store },
       dismiss: () => {
         dismissSuccessModal();
       },
@@ -192,7 +196,7 @@ export default function PhysicalProductForm() {
 
     if (physicalModalState === ModalState.DELETE) {
       // Delete all uploaded images
-      if (formValues?.images?.length) {
+      if (formValues?.images?.length && !formValues.id) {
         deleteImages.mutate(formValues.images);
       }
       setPhysicalFormData(undefined);
@@ -257,7 +261,7 @@ export default function PhysicalProductForm() {
                 onClick={() => {
                   if (tabIndex === 0) {
                     const modal = document.querySelector(
-                      "#new-physical-product"
+                      "#physical-product-form"
                     ) as HTMLIonModalElement;
                     modal.dismiss();
                   } else {

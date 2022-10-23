@@ -6,10 +6,14 @@ import successAnimation from "../assets/json/success.json";
 import LottieWrapper from "./lottieWrapper";
 import { Share } from "@capacitor/share";
 import { Browser } from "@capacitor/browser";
+import { Product } from "../utils/types";
 
-type Props = { dismiss: () => void };
+type Props = {
+  product: Product;
+  dismiss: () => void;
+};
 
-export default function ProductSuccess({ dismiss }: Props) {
+export default function ProductSuccess({ product, dismiss }: Props) {
   const [copied, setCopied] = useState(false);
 
   const resetCopyText = () => setCopied(false);
@@ -37,7 +41,11 @@ export default function ProductSuccess({ dismiss }: Props) {
             className="text-sm"
             color="light"
             onClick={async () => {
-              await Browser.open({ url: "https://elvisduru.com" });
+              await Browser.open({
+                url: `${import.meta.env.VITE_SITE_URL}/${product.store?.tag}/${
+                  product.slug
+                }`,
+              });
             }}
           >
             <IonIcon size="medium" slot="icon-only" icon={globe} />
@@ -49,7 +57,11 @@ export default function ProductSuccess({ dismiss }: Props) {
             className="text-sm"
             color="light"
             onClick={async () => {
-              await Clipboard.write({ url: "https://cheqq.me" });
+              await Clipboard.write({
+                url: `${import.meta.env.VITE_SITE_URL}/${product.store?.tag}/${
+                  product.slug
+                }`,
+              });
               setCopied(true);
             }}
           >
@@ -63,9 +75,11 @@ export default function ProductSuccess({ dismiss }: Props) {
             color="light"
             onClick={async () => {
               await Share.share({
-                title: "See cool stuff",
+                title: product.title,
                 text: "Really awesome thing you need to see right meow",
-                url: "https://www.cheqq.me/",
+                url: `${import.meta.env.VITE_SITE_URL}/${product.store?.tag}/${
+                  product.slug
+                }`,
                 dialogTitle: "Share with buddies",
               });
             }}
@@ -75,7 +89,7 @@ export default function ProductSuccess({ dismiss }: Props) {
           <p className="text-xs">Share</p>
         </div>
       </div>
-      <IonButton expand="block" onClick={dismiss}>
+      <IonButton expand="block" routerLink="/home">
         Back to Home
       </IonButton>
       <IonButton expand="block" color="medium" fill="clear" onClick={dismiss}>

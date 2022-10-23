@@ -18,15 +18,16 @@ const PhysicalProductForm = withSuspense(
 type Props = {
   productType: string;
   dismiss: () => void;
+  edit?: boolean;
 };
 
-export default function NewProduct({ productType, dismiss }: Props) {
+export default function NewProduct({ productType, dismiss, edit }: Props) {
   return (
     <>
       <IonHeader translucent>
         <IonToolbar>
           <IonTitle className="capitalize">
-            Create {productType} Product
+            {edit ? "Edit" : "Create"} {productType} Product
           </IonTitle>
           <IonButtons slot="start">
             <IonButton onClick={dismiss} color="dark">

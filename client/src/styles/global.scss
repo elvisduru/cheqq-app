@@ -311,3 +311,16 @@ ion-item-divider {
   
   --padding-end: 0;
 }
+
+.no-x-padding {
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+ion-accordion.bg-inherit ion-item {
+  --background: inherit;
+}
+
+#product-details ion-content {
+  --background: var(--ion-color-step-100)
+}

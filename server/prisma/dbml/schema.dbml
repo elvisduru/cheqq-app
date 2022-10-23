@@ -209,7 +209,7 @@ Table Product {
   redirectUrl String
   condition Condition
   showCondition Boolean [not null, default: false]
-  slug String [not null]
+  slug String [unique, not null]
   searchKeywords String[] [not null]
   pageTitle String
   metaDescription String
@@ -348,7 +348,9 @@ Table GiftWrapOption {
 Table Brand {
   id Int [pk, increment]
   name String [not null]
-  Product Product [not null]
+  products Product [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
 }
 
 Table Category {

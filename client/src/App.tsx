@@ -31,6 +31,7 @@ import "./styles/global.scss";
 import withSuspense from "./components/hoc/withSuspense";
 import SideMenu from "./components/SideMenu";
 import StoreRouterOutlet from "./pages/store";
+import Tabs from "./components/Tabs";
 
 const AppUrlListener = withSuspense(
   React.lazy(() => import("./components/AppUrlListener"))
@@ -40,13 +41,13 @@ const AppUrlListener = withSuspense(
 // );
 const New = withSuspense(React.lazy(() => import("./pages/auth/new")));
 
-const Tabs = withSuspense(React.lazy(() => import("./components/Tabs")));
 const Confirm = withSuspense(React.lazy(() => import("./pages/auth/confirm")));
 const Login = withSuspense(React.lazy(() => import("./pages/auth/login")));
 const SignUp = withSuspense(React.lazy(() => import("./pages/auth/signup")));
 
 setupIonicReact({
   mode: "ios",
+  swipeBackEnabled: false, // HACK: To fix double back navigation on swipe back. Need to confirm if this is a bug in iOS.
 });
 
 const App: React.FC = () => {

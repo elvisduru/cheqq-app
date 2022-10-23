@@ -9,6 +9,7 @@ import {
   IsArray,
   IsBoolean,
   IsDate,
+  IsDateString,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -326,10 +327,10 @@ export class CreateProductDto {
   giftWrapOptions?: number[];
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   createdAt?: Date;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   updatedAt?: Date;
 }

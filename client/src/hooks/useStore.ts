@@ -2,7 +2,7 @@ import { Preferences } from "@capacitor/preferences";
 import { useEffect, useState } from "react";
 import create from "zustand";
 import { persist, StateStorage } from "zustand/middleware";
-import { ProductInput, User } from "../utils/types";
+import { Product, ProductInput, User } from "../utils/types";
 
 const storage: StateStorage = {
   getItem: async (key: string): Promise<string | null> => {
@@ -46,8 +46,8 @@ export type AppState = {
   setUser: (user: User) => void;
   selectedStore?: number;
   setSelectedStore: (storeId: number) => void;
-  physicalFormData?: ProductInput;
-  setPhysicalFormData: (data: ProductInput | undefined) => void;
+  physicalFormData?: Product | ProductInput;
+  setPhysicalFormData: (data: Product | ProductInput | undefined) => void;
   physicalModalState?: ModalState;
   setPhysicalModalState: (modalState: ModalState | undefined) => void;
   deleteForm: boolean;
@@ -64,9 +64,10 @@ export const useStore = create(
       selectedStore: undefined as number | undefined,
       setSelectedStore: (selectedStore: number) =>
         set(() => ({ selectedStore })),
-      physicalFormData: undefined as ProductInput | undefined,
-      setPhysicalFormData: (physicalFormData: ProductInput | undefined) =>
-        set(() => ({ physicalFormData })),
+      physicalFormData: undefined as Product | ProductInput | undefined,
+      setPhysicalFormData: (
+        physicalFormData: Product | ProductInput | undefined
+      ) => set(() => ({ physicalFormData })),
       physicalModalState: undefined,
       setPhysicalModalState: (physicalModalState: ModalState | undefined) =>
         set(() => ({ physicalModalState })),

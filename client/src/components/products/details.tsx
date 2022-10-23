@@ -21,6 +21,8 @@ import {
   chatbubbleOutline,
   chevronBack,
   chevronDown,
+  ellipsisHorizontal,
+  ellipsisVertical,
   heart,
   heartOutline,
   removeCircle,
@@ -36,13 +38,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper/types";
 import useCounter from "../../hooks/useCounter";
 import useToggle from "../../hooks/useToggle";
-import { ProductInput } from "../../utils/types";
+import { Product, ProductInput } from "../../utils/types";
 
 type Props = {
-  product: ProductInput;
+  product: ProductInput | Product;
   goBack: () => void;
   isPreview?: boolean;
-  handleSubmit: (
+  buttonHandler?: (
     e?: React.BaseSyntheticEvent<object, any, any> | undefined
   ) => Promise<void>;
 };
@@ -60,7 +62,7 @@ export default function ProductDetails({
   product,
   goBack,
   isPreview,
-  handleSubmit,
+  buttonHandler,
 }: Props) {
   const [productOptions, setProductOptions] = useState<
     typeof defaultProductOptions
@@ -112,14 +114,14 @@ export default function ProductDetails({
       });
       setSelectedVariant(variant!);
       // check count and update if necessary
-      const inventoryLevel = product.variants?.[variant!].inventoryLevel;
+      const inventoryLevel = product.variants?.[variant!]?.inventoryLevel;
       if (inventoryLevel && count > inventoryLevel) {
         setCount(inventoryLevel);
       }
       // Update slider index if images are available
       if (product.images) {
         const imagePos = product.images.findIndex(
-          (img) => img.id === product.variants?.[variant!].imageId
+          (img) => img.id === product.variants?.[variant!]?.imageId
         );
         if (swiper && imagePos !== -1) {
           swiper.slideTo(imagePos);
@@ -202,7 +204,7 @@ export default function ProductDetails({
 
   return (
     <IonContent fullscreen>
-      <div className="fixed z-20 top-0 left-0 w-full ion-padding">
+      <div className="fixed flex items-center justify-between z-20 top-0 left-0 w-full ion-padding">
         <button
           onClick={() => {
             goBack();
@@ -211,6 +213,14 @@ export default function ProductDetails({
         >
           <IonIcon size="small" icon={isPreview ? chevronDown : chevronBack} />
         </button>
+        {!isPreview ? (
+          <button
+            onClick={buttonHandler}
+            className="w-10 h-10 flex justify-center items-center rounded-full backdrop-filter backdrop-blur-sm bg-opacity-50"
+          >
+            <IonIcon size="small" icon={ellipsisHorizontal} />
+          </button>
+        ) : null}
       </div>
       <div className="flex flex-col pb-16">
         <div className="flex-shrink-0">
@@ -240,7 +250,7 @@ export default function ProductDetails({
                   <IonImg src={product?.store?.logo!} />
                 </IonAvatar>
                 <span className="text-white ml-1 text-base">
-                  {product.store.name}
+                  {product?.store?.name}
                 </span>
               </div>
               <div className="flex items-center text-[1.6rem] text-white space-x-5 [&>*]:cursor-pointer">
@@ -380,15 +390,20 @@ export default function ProductDetails({
           </IonCardContent>
         </IonCard>
       </div>
-      <div slot="fixed" className="bottom-0 ion-padding-horizontal pb-4 w-full">
-        <IonButton
-          expand="block"
-          className="bottom-0 w-full"
-          onClick={handleSubmit}
+      {isPreview ? (
+        <div
+          slot="fixed"
+          className="bottom-0 ion-padding-horizontal pb-4 w-full"
         >
-          Publish
-        </IonButton>
-      </div>
+          <IonButton
+            expand="block"
+            className="bottom-0 w-full"
+            onClick={buttonHandler}
+          >
+            Publish
+          </IonButton>
+        </div>
+      ) : null}
     </IonContent>
   );
 }

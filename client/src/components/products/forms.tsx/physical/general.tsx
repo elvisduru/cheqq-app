@@ -14,6 +14,7 @@ import {
   IonSelectOption,
   IonTextarea,
   IonToggle,
+  useIonAlert,
 } from "@ionic/react";
 import { trash } from "ionicons/icons";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
@@ -23,7 +24,8 @@ import MediaUploader from "../../../MediaUploader";
 import TagInput from "../../../TagInput";
 import Step from "../Step";
 import slugify from "slugify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import useBoolean from "../../../../hooks/useBoolean";
 
 // const SelectCategory = withSuspense<any>(
 //   React.lazy(() => import("../../../SelectCategory"))
@@ -49,9 +51,18 @@ export default function General() {
 
   const title = watch("title");
   const slug = watch("slug");
+  const id = watch("id");
+
+  const { value: disableSlugUpdate, setTrue, setFalse } = useBoolean(!!id);
+
+  const [presentAlert] = useIonAlert();
 
   useEffect(() => {
-    if (title && getFieldState("slug").isTouched === false) {
+    if (
+      title &&
+      getFieldState("slug").isTouched === false &&
+      !disableSlugUpdate
+    ) {
       setValue("slug", slugify(title, { lower: true }));
     }
   }, [title]);
@@ -187,6 +198,7 @@ export default function General() {
                 type="text"
                 onIonChange={onChange}
                 onIonBlur={onBlur}
+                disabled={disableSlugUpdate}
               />
             )}
           />
@@ -196,17 +208,43 @@ export default function General() {
           <IonNote slot="error">{errors.slug?.message}</IonNote>
         </IonItem>
         <div className="absolute z-10 right-0 top-0 mt-3 mr-4">
-          <IonButton
-            fill="clear"
-            size="small"
-            onClick={() =>
-              setValue("slug", slugify(title, { lower: true }), {
-                shouldValidate: true,
-              })
-            }
-          >
-            Reset
-          </IonButton>
+          {disableSlugUpdate ? (
+            <IonButton
+              fill="clear"
+              size="small"
+              onClick={() =>
+                presentAlert({
+                  header: "Are you sure?",
+                  message:
+                    "Changing the URL slug will break existing links to this product.",
+                  buttons: [
+                    {
+                      text: "Cancel",
+                      role: "cancel",
+                    },
+                    {
+                      text: "Change",
+                      handler: setFalse,
+                    },
+                  ],
+                })
+              }
+            >
+              Edit slug
+            </IonButton>
+          ) : (
+            <IonButton
+              fill="clear"
+              size="small"
+              onClick={() =>
+                setValue("slug", slugify(title, { lower: true }), {
+                  shouldValidate: true,
+                })
+              }
+            >
+              Reset
+            </IonButton>
+          )}
         </div>
       </div>
       <TagInput

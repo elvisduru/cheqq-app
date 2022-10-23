@@ -7,7 +7,7 @@ import Products from "./product";
 const ProductsRouterOutlet = () => {
   const user = useStore((store) => store.user);
   return (
-    <IonPage>
+    <IonPage id="products-router">
       <IonRouterOutlet>
         <Route path="/products" exact={true}>
           <Products user={user!} />

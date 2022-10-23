@@ -56,7 +56,7 @@ export default function Checkout() {
             onClick={() => {
               present({
                 presentingElement: document.querySelector(
-                  "#new-physical-product"
+                  "#physical-product-form"
                 ) as HTMLElement,
                 canDismiss: true,
                 id: "shipping-settings",
@@ -286,7 +286,7 @@ export default function Checkout() {
                 onClick={() => {
                   present({
                     presentingElement: document.querySelector(
-                      "#new-physical-product"
+                      "#physical-product-form"
                     ) as HTMLElement,
                     canDismiss: true,
                     id: "shipping-settings",
@@ -325,7 +325,7 @@ export default function Checkout() {
             onClick={() => {
               presentDiscount({
                 presentingElement: document.querySelector(
-                  "#new-physical-product"
+                  "#physical-product-form"
                 ) as HTMLElement,
                 canDismiss: true,
                 id: "discount-settings",

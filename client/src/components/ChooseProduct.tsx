@@ -69,7 +69,7 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
         present({
           // presentingElement: routerOutletEl,
           canDismiss: canDismissPhyical,
-          id: "new-physical-product",
+          id: "physical-product-form",
           onWillPresent() {
             (
               document.querySelector("#choose-product") as HTMLIonModalElement

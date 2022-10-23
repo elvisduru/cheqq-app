@@ -209,7 +209,9 @@ export type FulfillmentService = {
 export type Product = {
   id?: number;
   storeId?: number;
-  store: Store;
+  store?: Store;
+  brand?: Brand;
+  tax?: Tax;
   type: ProductType;
   title: string;
   description?: string;
@@ -255,6 +257,23 @@ export type Product = {
   reviewCount?: number;
   reviewAverage?: number;
   customFields?: CustomField[];
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type Brand = {
+  id?: number;
+  name: string;
+  products?: any[];
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type Tax = {
+  id?: number;
+  name: string;
+  products?: any[];
+  rate: number;
   createdAt?: Date;
   updatedAt?: Date;
 };

@@ -55,7 +55,7 @@ const StoreRouterOutlet = () => {
 
   return (
     <FormProvider {...methods}>
-      <IonPage>
+      <IonPage id="store-router">
         <IonRouterOutlet>
           <Route path="/store/new/details" exact={true}>
             <Details user={user!} progress={progress} />
