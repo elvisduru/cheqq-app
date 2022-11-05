@@ -192,7 +192,7 @@ export default function ProductDetails({
     if (variant?.price) {
       return variant.price;
     }
-    return +product.price!;
+    return +product.price;
   }, [variant?.price, product.price]);
 
   const compareAtPrice = useMemo(() => {

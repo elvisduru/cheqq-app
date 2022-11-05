@@ -1,11 +1,8 @@
+import { Browser } from "@capacitor/browser";
+import { Clipboard } from "@capacitor/clipboard";
+import { Share } from "@capacitor/share";
 import {
-  IonBackButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
   IonPage,
-  IonTitle,
-  IonToolbar,
   useIonActionSheet,
   useIonAlert,
   useIonModal,
@@ -14,17 +11,14 @@ import {
   useIonViewWillLeave,
 } from "@ionic/react";
 import React from "react";
+import { useParams } from "react-router";
+import ProductDetailsComponent from "../../components/products/details";
+import NewProduct from "../../components/products/new";
+import useDeleteProduct from "../../hooks/mutations/products/deleteProduct";
+import useProduct from "../../hooks/queries/products/useProduct";
+import useCanDismiss from "../../hooks/useCanDismiss";
 import { useStore } from "../../hooks/useStore";
 import { User } from "../../utils/types";
-import ProductDetailsComponent from "../../components/products/details";
-import { RouteComponentProps, useParams } from "react-router";
-import useProduct from "../../hooks/queries/products/useProduct";
-import NewProduct from "../../components/products/new";
-import useCanDismiss from "../../hooks/useCanDismiss";
-import { Browser } from "@capacitor/browser";
-import { Clipboard } from "@capacitor/clipboard";
-import { Share } from "@capacitor/share";
-import useDeleteProduct from "../../hooks/mutations/products/deleteProduct";
 
 type Props = {
   user: User;

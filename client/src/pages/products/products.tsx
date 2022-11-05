@@ -3,6 +3,8 @@ import {
   IonButton,
   IonButtons,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonGrid,
   IonHeader,
   IonIcon,
@@ -57,12 +59,14 @@ const Products: React.FC<Props> = ({ user }) => {
               </IonAvatar>
             </IonMenuButton>
           </IonButtons>
-          <IonTitle>Products</IonTitle>
+          <IonSegment value="all">
+            <IonSegmentButton value="all">All Products</IonSegmentButton>
+            <IonSegmentButton value="subscriptions">
+              Subscriptions
+            </IonSegmentButton>
+          </IonSegment>
           {/* HACK: Margin vertical to make the toolbar like other pages */}
           <IonButtons slot="end" className="my-2">
-            <IonButton fill="solid" color="white">
-              <IonIcon slot="icon-only" icon={search} />
-            </IonButton>
             <IonButton fill="solid" color="white">
               <IonIcon slot="icon-only" icon={notifications} />
             </IonButton>
@@ -70,16 +74,7 @@ const Products: React.FC<Props> = ({ user }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Products</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <div className="ion-padding">
-          <IonSegment>
-            <IonSegmentButton>All Products</IonSegmentButton>
-            <IonSegmentButton>Subscriptions</IonSegmentButton>
-          </IonSegment>
           <div>
             {isLoading ? (
               <OrdersSkeleton length={9} />
@@ -112,6 +107,11 @@ const Products: React.FC<Props> = ({ user }) => {
             )}
           </div>
         </div>
+        <IonFab slot="fixed" vertical="bottom" horizontal="end">
+          <IonFabButton className="mr-2 mb-2">
+            <IonIcon icon={searchOutline} />
+          </IonFabButton>
+        </IonFab>
       </IonContent>
     </IonPage>
   );

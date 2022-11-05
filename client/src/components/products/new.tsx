@@ -10,7 +10,7 @@ import {
 import { close } from "ionicons/icons";
 import React, { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import useReRender from "../../hooks/useReRender";
+import { useHistory, useLocation } from "react-router";
 import { useStore } from "../../hooks/useStore";
 import { Nullable, ProductInput, ProductType } from "../../utils/types";
 import withSuspense from "../hoc/withSuspense";
@@ -31,6 +31,15 @@ export default function NewProduct({ productType, dismiss }: Props) {
     mode: "onBlur",
     defaultValues: { type: productType, ...physicalFormData },
   });
+
+  useEffect(() => {
+    window.addEventListener("popstate", (e) => {
+      dismiss();
+    });
+    return () => {
+      window.removeEventListener("popstate", (e) => {});
+    };
+  }, []);
 
   return (
     <>
