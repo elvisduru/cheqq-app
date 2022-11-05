@@ -18,7 +18,7 @@ import {
   downloadOutline,
   reloadOutline,
 } from "ionicons/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import shallow from "zustand/shallow";
 import useCanDismiss from "../hooks/useCanDismiss";
 import { AppState, useStore } from "../hooks/useStore";
@@ -31,22 +31,20 @@ type Props = {
 const selector = ({
   setPhysicalModalState,
   physicalFormData,
-  physicalModalState,
+  setPhysicalFormData,
 }: AppState) => ({
   setPhysicalModalState,
   physicalFormData,
-  physicalModalState,
+  setPhysicalFormData,
 });
 
 export default function ChooseProduct({ dismiss: dismissModal }: Props) {
+  const { physicalFormData, setPhysicalModalState, setPhysicalFormData } =
+    useStore(selector, shallow);
   const [productType, setProductType] = useState<string>();
   const canDismissPhyical = useCanDismiss("physical");
   const canDismissDigital = useCanDismiss("digital");
   const canDismissMembership = useCanDismiss("membership");
-  const { physicalFormData, setPhysicalModalState } = useStore(
-    selector,
-    shallow
-  );
   const [present, dismiss] = useIonModal(NewProduct, {
     productType,
     dismiss: () => {
@@ -56,9 +54,9 @@ export default function ChooseProduct({ dismiss: dismissModal }: Props) {
 
   const [presentToast] = useIonToast();
 
-  const routerOutletEl = document.querySelector(
-    "ion-router-outlet"
-  ) as HTMLElement;
+  useEffect(() => {
+    if (physicalFormData?.id) setPhysicalFormData(undefined);
+  }, [physicalFormData?.id]);
 
   const productTypes = [
     {

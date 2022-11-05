@@ -62,7 +62,7 @@ const Orders = () => {
               <LottieWrapper
                 title="No Order"
                 description="Create a new product to start receiving orders from customers"
-                buttonText="Create Product"
+                buttonText="Create a product"
                 animationData={notFoundAnimation}
                 buttonHandler={() =>
                   present({

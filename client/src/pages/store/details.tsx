@@ -11,6 +11,7 @@ import {
   IonInput,
   IonItem,
   IonLabel,
+  IonLoading,
   IonNote,
   IonPage,
   IonSelect,
@@ -31,10 +32,9 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import { useHistory } from "react-router";
 import { StoreFormValues } from ".";
-import currencies from "../../assets/json/countries-currencies.json";
-import countries from "../../assets/json/country-codes.json";
 import PlacesAutocomplete from "../../components/PlacesAutocomplete";
 import useAddStore from "../../hooks/mutations/stores/addStore";
+import useCountries from "../../hooks/queries/locations/useCountries";
 import useBoolean from "../../hooks/useBoolean";
 import usePhotoGallery from "../../hooks/usePhotoGallery";
 import api from "../../lib/api";
@@ -47,6 +47,8 @@ type Props = {
 
 export default function Details({ progress, user }: Props) {
   const addStore = useAddStore();
+
+  const { data: countries } = useCountries();
 
   const history = useHistory();
 
@@ -75,15 +77,7 @@ export default function Details({ progress, user }: Props) {
 
   const router = useIonRouter();
 
-  const country = watch("country");
-
-  const getCurrency = (country: string) => {
-    const countryName = countries.find((c) => c.id === country)?.value;
-    const currency = currencies.find(
-      (c) => c.country.toLowerCase() === countryName?.toLowerCase()
-    );
-    return `${currency?.country}-${currency?.currency_code}`;
-  };
+  const countryId = watch("countryId");
 
   useEffect(() => {
     if (avatarFile) {
@@ -110,6 +104,8 @@ export default function Details({ progress, user }: Props) {
   useIonViewWillEnter(() => {
     if (!watch("categories")) history.replace("/store/new");
   });
+
+  if (!countries) return <IonLoading isOpen={true} translucent />;
 
   return (
     <IonPage id="store-details">
@@ -275,13 +271,13 @@ export default function Details({ progress, user }: Props) {
             </IonNote>
           </IonItem>
           <IonItem
-            className={`input mt-4 ${errors.country ? "ion-invalid" : ""}`}
+            className={`input mt-4 ${errors.countryId ? "ion-invalid" : ""}`}
             fill="outline"
             mode="md"
           >
             <IonLabel position="floating">Country</IonLabel>
             <Controller
-              name="country"
+              name="countryId"
               control={control}
               rules={{ required: "Please select your country" }}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -297,14 +293,17 @@ export default function Details({ progress, user }: Props) {
                   onIonChange={(e) => {
                     onChange(e.detail.value);
                     // Set currency based on country
-                    setValue("currency", getCurrency(e.detail.value));
+                    const country = countries?.find(
+                      (c) => c.id === e.detail.value
+                    )!;
+                    setValue("currency", `${country.name}-${country.currency}`);
                   }}
                   onIonBlur={onBlur}
                   value={value}
                 >
-                  {countries.map((country) => (
+                  {countries?.map((country) => (
                     <IonSelectOption key={country.id} value={country.id}>
-                      {country.value}
+                      {country.name}
                     </IonSelectOption>
                   ))}
                 </IonSelect>
@@ -313,9 +312,9 @@ export default function Details({ progress, user }: Props) {
             <IonNote slot="helper">
               Select the country your store is located.
             </IonNote>
-            <IonNote slot="error">{errors.country?.message}</IonNote>
+            <IonNote slot="error">{errors.countryId?.message}</IonNote>
           </IonItem>
-          {country && (
+          {countryId && (
             <Controller
               name="address"
               control={control}
@@ -332,7 +331,7 @@ export default function Details({ progress, user }: Props) {
                   onBlur={onBlur}
                   value={value}
                   error={errors.address?.message}
-                  country={country}
+                  country={countries.find((c) => c.id === countryId)?.iso2}
                   setCoordinates={setCoordinates}
                 />
               )}
@@ -362,12 +361,12 @@ export default function Details({ progress, user }: Props) {
                   onIonBlur={onBlur}
                   value={value}
                 >
-                  {currencies.map((currency) => (
+                  {countries.map((country) => (
                     <IonSelectOption
-                      key={currency.country}
-                      value={`${currency.country}-${currency.currency_code}`}
+                      key={country.id}
+                      value={`${country.name}-${country.currency}`}
                     >
-                      {`${currency.country} - ${currency.currency_code}`}
+                      {`${country.name} - ${country.currency} (${country.currency_symbol})`}
                     </IonSelectOption>
                   ))}
                 </IonSelect>
@@ -390,7 +389,11 @@ export default function Details({ progress, user }: Props) {
               render={({ field: { onChange, onBlur, value } }) => (
                 <PhoneInput
                   containerClass="mt-4"
-                  country={country?.toLowerCase() || "us"}
+                  country={
+                    countries
+                      .find((c) => c.id === countryId)
+                      ?.iso2.toLowerCase() || "us"
+                  }
                   value={value}
                   onChange={(value) => {
                     onChange(value);

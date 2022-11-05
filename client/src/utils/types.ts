@@ -32,7 +32,8 @@ export type User = {
     currency: string;
     address: string;
     addressCoordinates: { lat: number; lng: number };
-    country: string;
+    countryId: number;
+    country: Country;
     processingTime: string;
     localPickup: boolean;
   }[];
@@ -49,7 +50,8 @@ export type Store = {
   status?: boolean;
   domain?: string | null;
   address: string;
-  country: string;
+  countryId: number;
+  country: Country;
   phone?: string;
   order_email?: string | null;
   processingTime?: string;
@@ -168,6 +170,37 @@ export type CountryStates = {
   }[];
 };
 
+export type Country = {
+  id: number;
+  name: string;
+  iso3: string | null;
+  numeric_code: string | null;
+  iso2: string | null;
+  phone_code: string | null;
+  capital: string | null;
+  currency: string | null;
+  currency_name: string | null;
+  currency_symbol: string | null;
+  tld: string | null;
+  native: string | null;
+  region: string | null;
+  subregion: string | null;
+  timezones: [
+    {
+      zoneName: string;
+      gmtOffset: number;
+      gmtOffsetName: string;
+      abbreviation: string;
+      tzName: string;
+    }
+  ];
+  translations: { [x: string]: string } | null;
+  latitude: number | null;
+  longitude: number | null;
+  emoji: string | null;
+  emojiU: string | null;
+};
+
 export type Rate = {
   id?: number;
   shippingZoneId?: number;
@@ -257,6 +290,8 @@ export type Product = {
   reviewCount?: number;
   reviewAverage?: number;
   customFields?: CustomField[];
+  subscriptionInterval?: SubscriptionInterval;
+  openGraphType?: OpenGraphType;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -325,16 +360,17 @@ const Condition = {
   new: "new",
   used: "used",
   refurbished: "refurbished",
-};
+} as const;
 
-export type Condition = keyof typeof Condition;
+export type Condition = typeof Condition[keyof typeof Condition];
 
 const ProductAvailability = {
   available: "available",
   disabled: "disabled",
   preorder: "preorder",
-};
-export type ProductAvailability = keyof typeof ProductAvailability;
+} as const;
+export type ProductAvailability =
+  typeof ProductAvailability[keyof typeof ProductAvailability];
 
 const ProductType = {
   physical: "physical",
@@ -359,3 +395,30 @@ const DimensionUnit = {
 } as const;
 
 export type DimensionUnit = typeof DimensionUnit[keyof typeof DimensionUnit];
+
+const OpenGraphType = {
+  product: "product",
+  album: "album",
+  book: "book",
+  drink: "drink",
+  food: "food",
+  game: "game",
+  movie: "movie",
+  song: "song",
+  tv_show: "tv_show",
+} as const;
+
+export type OpenGraphType = typeof OpenGraphType[keyof typeof OpenGraphType];
+
+const SubscriptionInterval = {
+  day: "day",
+  week: "week",
+  month: "month",
+  year: "year",
+} as const;
+
+export type SubscriptionInterval =
+  typeof SubscriptionInterval[keyof typeof SubscriptionInterval];
+
+// Utility to make fields nullable
+export type Nullable<T> = { [P in keyof T]: T[P] | null };

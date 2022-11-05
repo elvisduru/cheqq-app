@@ -133,7 +133,12 @@ export class AuthService {
     const hashedRefreshToken = await this.hashData(tokens.refresh_token);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { hashedRefreshToken, magicSecret: null, magicSecretExpiry: null },
+      data: {
+        hashedRefreshToken,
+        magicSecret: null,
+        magicSecretExpiry: null,
+        active: true,
+      },
     });
     return tokens;
   }

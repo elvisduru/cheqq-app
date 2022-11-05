@@ -7,23 +7,23 @@ import { CreateStoreDto } from './dto';
 export class StoresService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateStoreDto): Promise<Store> {
-    const categories = [...data.categories];
-    delete data.categories;
+  async create(createStoreDto: CreateStoreDto): Promise<Store> {
+    const { categories, ownerId, countryId, ...data } = createStoreDto;
 
     // Fetch country and states
-    const country = await this.prisma.country.findFirst({
+    const states = await this.prisma.state.findMany({
       where: {
-        iso2: data.country,
-      },
-      include: {
-        states: true,
+        country_id: countryId,
       },
     });
 
     return this.prisma.store.create({
       data: {
         ...data,
+        owner: {
+          connect: { id: ownerId },
+        },
+        country: { connect: { id: countryId } },
         categories: {
           connect: categories.map((category) => ({ id: category })),
         },
@@ -33,10 +33,10 @@ export class StoresService {
             locations: {
               create: {
                 country: {
-                  connect: { id: country.id },
+                  connect: { id: countryId },
                 },
                 states: {
-                  connect: country.states.map((state) => ({ id: state.id })),
+                  connect: states.map((state) => ({ id: state.id })),
                 },
               },
             },

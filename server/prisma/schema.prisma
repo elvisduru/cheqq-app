@@ -19,7 +19,7 @@ model User {
   name               String?
   email              String    @unique
   emailVerified      Boolean   @default(false)
-  active             Boolean   @default(true)
+  active             Boolean   @default(false)
   avatarUrl          String?
   password           String?
   passwordUpdatedAt  DateTime?
@@ -47,7 +47,8 @@ model Store {
   domain               String?
   address              String
   addressCoordinates   Json?
-  country              String
+  country              Country              @relation(fields: [countryId], references: [id])
+  countryId            Int
   phone                String
   order_email          String?
   language             String
@@ -131,6 +132,8 @@ model Country {
   emojiU          String?
   states          State[]
   location        Location[]
+  store           Store[]
+  address         Address[]
 }
 
 model State {
@@ -260,7 +263,7 @@ model Product {
 
 model ProductOption {
   id        Int      @id @default(autoincrement())
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId Int
   name      String
   values    String[]
@@ -268,7 +271,7 @@ model ProductOption {
 
 model ProductVariant {
   id                    Int          @id @default(autoincrement())
-  product               Product      @relation(fields: [productId], references: [id])
+  product               Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId             Int
   title                 String
   price                 Float?
@@ -488,7 +491,8 @@ model Address {
   city                 String
   state                String?
   zip                  String
-  country              String
+  country              Country @relation(fields: [countryId], references: [id])
+  countryId            Int
   phone                String
   User                 User?   @relation(fields: [userId], references: [id])
   userId               Int?

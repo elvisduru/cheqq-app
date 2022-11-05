@@ -90,7 +90,7 @@ export default function AddShippingZone({
   const rates = watch("rates");
 
   const domestic =
-    locations.length === 1 && locations?.[0]?.iso2 === store?.country;
+    locations.length === 1 && locations?.[0]?.id === store?.countryId;
   const onSubmit = (data: ShippingZone) => {
     const storeId = store?.id;
     if (shippingZone) {
@@ -380,10 +380,7 @@ export default function AddShippingZone({
                           <span className="ml-2">
                             {rate.price == 0
                               ? "Free"
-                              : new Intl.NumberFormat("en-US", {
-                                  style: "currency",
-                                  currency: store?.currency,
-                                }).format(rate.price)}
+                              : `${store?.country.currency_symbol} ${rate.price}`}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-sm font-light text-gray-300">
@@ -396,10 +393,9 @@ export default function AddShippingZone({
                                   rate.rateConditionMax || "∞"
                                 } kg`
                               : rate.rateCondition === "price"
-                              ? `${new Intl.NumberFormat("en-US", {
-                                  style: "currency",
-                                  currency: store?.currency,
-                                }).format(rate.rateConditionMin!)} — ${
+                              ? `${
+                                  store?.country.currency_symbol
+                                } ${rate.rateConditionMin!} — ${
                                   (rate.rateConditionMax &&
                                     Number(rate.rateConditionMax).toFixed(2)) ||
                                   "∞"

@@ -7,6 +7,7 @@ import {
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Redirect, Route } from "react-router-dom";
+import withAuth from "../../components/hoc/withAuth";
 import withSuspense from "../../components/hoc/withSuspense";
 import useUser from "../../hooks/queries/users/useUser";
 import { useStore } from "../../hooks/useStore";
@@ -32,7 +33,7 @@ export type StoreFormValues = {
   addressCoordinates?: { lat: number; lng: number };
   categories: number[];
   currency: string;
-  country: string;
+  countryId: number;
   phone: string;
 };
 
@@ -72,4 +73,4 @@ const StoreRouterOutlet = () => {
   );
 };
 
-export default StoreRouterOutlet;
+export default withAuth(StoreRouterOutlet);

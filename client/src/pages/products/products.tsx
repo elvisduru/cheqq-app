@@ -2,40 +2,29 @@ import {
   IonAvatar,
   IonButton,
   IonButtons,
-  IonCard,
-  IonCardContent,
-  IonCol,
   IonContent,
   IonGrid,
   IonHeader,
   IonIcon,
-  IonImg,
   IonMenuButton,
   IonPage,
   IonRow,
   IonSegment,
   IonSegmentButton,
-  IonThumbnail,
   IonTitle,
   IonToolbar,
   useIonModal,
 } from "@ionic/react";
-import {
-  filter,
-  imagesOutline,
-  notifications,
-  trash,
-  trashBinOutline,
-} from "ionicons/icons";
+import { notifications, search, searchOutline } from "ionicons/icons";
+import React from "react";
+import notFoundAnimation from "../../assets/json/no-data-found.json";
+import ChooseProduct from "../../components/ChooseProduct";
 import LottieWrapper from "../../components/lottieWrapper";
+import ProductCard from "../../components/products/card";
 import OrdersSkeleton from "../../components/skeletons/orders";
 import useProducts from "../../hooks/queries/products/useProducts";
 import { useStore } from "../../hooks/useStore";
-import notFoundAnimation from "../../assets/json/no-data-found.json";
 import { User } from "../../utils/types";
-import ChooseProduct from "../../components/ChooseProduct";
-import React from "react";
-import ProductCard from "../../components/products/card";
 
 type Props = {
   user: User;
@@ -69,9 +58,15 @@ const Products: React.FC<Props> = ({ user }) => {
             </IonMenuButton>
           </IonButtons>
           <IonTitle>Products</IonTitle>
-          <IonButton fill="solid" color="white" slot="end">
-            <IonIcon slot="icon-only" icon={notifications} />
-          </IonButton>
+          {/* HACK: Margin vertical to make the toolbar like other pages */}
+          <IonButtons slot="end" className="my-2">
+            <IonButton fill="solid" color="white">
+              <IonIcon slot="icon-only" icon={search} />
+            </IonButton>
+            <IonButton fill="solid" color="white">
+              <IonIcon slot="icon-only" icon={notifications} />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -93,7 +88,7 @@ const Products: React.FC<Props> = ({ user }) => {
                 <LottieWrapper
                   title="No Products"
                   description="Create a new product to start receiving orders from customers"
-                  buttonText="Create Product"
+                  buttonText="Create a product"
                   animationData={notFoundAnimation}
                   buttonHandler={() =>
                     present({

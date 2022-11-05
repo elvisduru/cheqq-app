@@ -22,9 +22,9 @@ import {
   chevronBack,
   chevronDown,
   ellipsisHorizontal,
-  ellipsisVertical,
   heart,
   heartOutline,
+  imagesOutline,
   removeCircle,
   shareOutline,
   star,
@@ -192,16 +192,15 @@ export default function ProductDetails({
     if (variant?.price) {
       return variant.price;
     }
-    return product.price;
+    return +product.price!;
   }, [variant?.price, product.price]);
 
   const compareAtPrice = useMemo(() => {
     if (variant?.compareAtPrice) {
-      return variant.compareAtPrice;
+      return +variant.compareAtPrice;
     }
-    return product.compareAtPrice;
+    return product.compareAtPrice ? +product.compareAtPrice : undefined;
   }, [variant?.compareAtPrice, product.compareAtPrice]);
-
   return (
     <IonContent fullscreen>
       <div className="fixed flex items-center justify-between z-20 top-0 left-0 w-full ion-padding">
@@ -224,23 +223,32 @@ export default function ProductDetails({
       </div>
       <div className="flex flex-col pb-16">
         <div className="flex-shrink-0">
-          <Swiper
-            zoom={true}
-            pagination={{ clickable: true }}
-            modules={[Pagination, Zoom]}
-            className="h-[500px]"
-            onSwiper={setSwiper}
-          >
-            {product?.images
-              ?.sort((a, b) => a.sortOrder - b.sortOrder)
-              ?.map((image) => (
-                <SwiperSlide key={image.id}>
-                  <div className="swiper-zoom-container">
-                    <IonImg className="swiper-zoom-target" src={image.url} />
-                  </div>
-                </SwiperSlide>
-              ))}
-          </Swiper>
+          {product.images?.length ? (
+            <Swiper
+              zoom={true}
+              pagination={{ clickable: true }}
+              modules={[Pagination, Zoom]}
+              className="h-[500px]"
+              onSwiper={setSwiper}
+            >
+              {product?.images
+                ?.sort((a, b) => a.sortOrder - b.sortOrder)
+                ?.map((image) => (
+                  <SwiperSlide key={image.id}>
+                    <div className="swiper-zoom-container">
+                      <IonImg className="swiper-zoom-target" src={image.url} />
+                    </div>
+                  </SwiperSlide>
+                ))}
+            </Swiper>
+          ) : (
+            <div className="flex w-full items-center justify-center px-2 text-white h-[500px] bg-gradient-to-r from-primary to-purple-600">
+              <IonIcon icon={imagesOutline} className="text-4xl mr-2" />
+              <p>
+                No image <br /> uploaded
+              </p>
+            </div>
+          )}
         </div>
         <IonCard className="m-0 -mt-4 z-10 flex-1">
           <IonCardHeader>

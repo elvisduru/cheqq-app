@@ -19,8 +19,8 @@ export default function withAuth(Component: React.ComponentType & any) {
       return <Redirect to="/new" />;
     }
 
-    if (!user.stores.length) {
-      return <Redirect to="/store" />;
+    if (!user.stores.length && !window.location.pathname.startsWith("/store")) {
+      return <Redirect to="/store/new" />;
     }
     return <Component {...props} user={user} />;
   };

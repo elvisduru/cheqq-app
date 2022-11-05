@@ -1,3 +1,4 @@
+import { Toast } from "@capacitor/toast";
 import {
   IonButton,
   IonCol,
@@ -8,29 +9,26 @@ import {
   IonSegmentButton,
   useIonModal,
 } from "@ionic/react";
+import { AxiosResponse } from "axios";
 import { chevronBack } from "ionicons/icons";
-import React, { useEffect, useRef, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper/types";
 import shallow from "zustand/shallow";
 import { useDeleteImages } from "../../../../hooks/mutations/images/deleteImages";
+import useUpdateImages from "../../../../hooks/mutations/images/updateImages";
 import useAddProduct from "../../../../hooks/mutations/products/addProduct";
+import useUpdateProduct from "../../../../hooks/mutations/products/updateProduct";
 import { AppState, ModalState, useStore } from "../../../../hooks/useStore";
 import useUpdateEffect from "../../../../hooks/useUpdateEffect";
 import { Product, ProductInput } from "../../../../utils/types";
-import withSuspense from "../../../hoc/withSuspense";
 import ProductSuccess from "../../../ProductSuccess";
 import ProductDetails from "../../details";
+import Checkout from "./checkout";
 import General from "./general";
-import { Toast } from "@capacitor/toast";
-import useUpdateProduct from "../../../../hooks/mutations/products/updateProduct";
-import { AxiosResponse } from "axios";
-import useUpdateImages from "../../../../hooks/mutations/images/updateImages";
-
-const Checkout = withSuspense(React.lazy(() => import("./checkout")));
-const Variants = withSuspense(React.lazy(() => import("./variants")));
+import Variants from "./variants";
 
 const selector = ({
   setPhysicalFormData,
@@ -71,13 +69,8 @@ const convertNumberInputs = <T extends {}>(data: T, ignoredKeys: string[]) => {
 // TODO: When submitting form, update sortOrder of photos and videos
 
 export default function PhysicalProductForm() {
-  const {
-    setPhysicalFormData,
-    physicalFormData,
-    physicalModalState,
-    user,
-    selectedStore,
-  } = useStore(selector, shallow);
+  const { setPhysicalFormData, physicalModalState, user, selectedStore } =
+    useStore(selector, shallow);
 
   const store = user?.stores?.find((store) => store.id === selectedStore);
 
@@ -86,10 +79,11 @@ export default function PhysicalProductForm() {
   const updateProduct = useUpdateProduct();
   const updateImages = useUpdateImages();
 
-  const methods = useForm<ProductInput>({
-    mode: "onBlur",
-    defaultValues: { ...physicalFormData, type: "physical" },
-  });
+  const methods = useFormContext<ProductInput>();
+
+  const clearFormData = () => {
+    setPhysicalFormData(undefined);
+  };
 
   const onSubmit = async (productInput: ProductInput) => {
     try {
@@ -177,6 +171,7 @@ export default function PhysicalProductForm() {
       dismiss: () => {
         dismissSuccessModal();
       },
+      clearFormData,
     }
   );
 
@@ -209,7 +204,7 @@ export default function PhysicalProductForm() {
   // successModalRef.current?.dismiss();
 
   return (
-    <FormProvider {...methods}>
+    <>
       <div
         slot="fixed"
         className="w-full backdrop-filter backdrop-blur-lg bg-opacity-30 ion-padding-horizontal py-4"
@@ -312,6 +307,6 @@ export default function PhysicalProductForm() {
           </IonRow>
         </IonGrid>
       </div>
-    </FormProvider>
+    </>
   );
 }

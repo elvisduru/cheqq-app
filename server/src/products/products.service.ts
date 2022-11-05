@@ -61,7 +61,11 @@ export class ProductsService {
         variants: true,
         collections: true,
         categories: true,
-        store: true,
+        store: {
+          include: {
+            country: true,
+          },
+        },
         brand: true,
         tax: true,
         relatedProducts: true,
@@ -81,7 +85,11 @@ export class ProductsService {
         variants: true,
         collections: true,
         categories: true,
-        store: true,
+        store: {
+          include: {
+            country: true,
+          },
+        },
         brand: true,
         tax: true,
         relatedProducts: true,
@@ -101,7 +109,11 @@ export class ProductsService {
         variants: true,
         collections: true,
         categories: true,
-        store: true,
+        store: {
+          include: {
+            country: true,
+          },
+        },
         brand: true,
         tax: true,
         relatedProducts: true,
@@ -115,8 +127,8 @@ export class ProductsService {
     const {
       images,
       videos,
-      options,
-      variants,
+      options: rawOptions,
+      variants: rawVariants,
       collections,
       categories,
       relatedProducts,
@@ -124,6 +136,17 @@ export class ProductsService {
       giftWrapOptions,
       ...data
     } = updateProductDto;
+
+    const options = rawOptions?.map((option) => {
+      const { productId, ...rest } = option;
+      return rest;
+    });
+
+    const variants = rawVariants?.map((variant) => {
+      const { productId, ...rest } = variant;
+      return rest;
+    });
+
     return this.prisma.product.update({
       where: { id },
       data: {
@@ -169,6 +192,8 @@ export class ProductsService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} product`;
+    return this.prisma.product.delete({
+      where: { id },
+    });
   }
 }

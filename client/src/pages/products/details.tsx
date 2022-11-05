@@ -24,6 +24,7 @@ import useCanDismiss from "../../hooks/useCanDismiss";
 import { Browser } from "@capacitor/browser";
 import { Clipboard } from "@capacitor/clipboard";
 import { Share } from "@capacitor/share";
+import useDeleteProduct from "../../hooks/mutations/products/deleteProduct";
 
 type Props = {
   user: User;
@@ -40,6 +41,8 @@ const ProductDetails: React.FC<Props> = ({ user }) => {
 
   const { data: product } = useProduct(parseInt(id));
 
+  const deleteProduct = useDeleteProduct();
+
   const [presentSheet] = useIonActionSheet();
   const [presentAlert] = useIonAlert();
 
@@ -50,7 +53,7 @@ const ProductDetails: React.FC<Props> = ({ user }) => {
     },
   });
 
-  const canDismiss = useCanDismiss(product?.type);
+  const canDismiss = useCanDismiss(product?.type, true);
 
   useIonViewWillEnter(() => {
     toggleHideTabBar(true);
@@ -88,7 +91,11 @@ const ProductDetails: React.FC<Props> = ({ user }) => {
                           text: "Delete",
                           role: "confirm",
                           handler: () => {
-                            // deleteShippingZone.mutate(zone.id!);
+                            deleteProduct.mutate(product.id!, {
+                              onSuccess: () => {
+                                router.goBack();
+                              },
+                            });
                           },
                         },
                       ],
@@ -100,7 +107,7 @@ const ProductDetails: React.FC<Props> = ({ user }) => {
                   handler() {
                     setPhysicalFormData(product);
                     present({
-                      canDismiss: canDismiss,
+                      canDismiss,
                       id: "physical-product-form",
                       onDidDismiss() {
                         setPhysicalModalState(undefined);

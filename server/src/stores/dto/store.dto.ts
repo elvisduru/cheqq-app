@@ -20,6 +20,10 @@ export class CreateStoreDto {
   ownerId: number;
 
   @IsNotEmpty()
+  @IsInt()
+  countryId: number;
+
+  @IsNotEmpty()
   @IsString()
   name: string;
 
@@ -38,10 +42,6 @@ export class CreateStoreDto {
   @IsNotEmpty()
   @IsString()
   address: string;
-
-  @IsNotEmpty()
-  @IsString()
-  country: string;
 
   @IsNotEmpty()
   @IsPhoneNumber()

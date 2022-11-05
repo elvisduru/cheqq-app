@@ -143,7 +143,7 @@ export default function MediaUploader({
             >
               <IonIcon icon={imagesOutline} />
             </div>
-            <p className="mb-2">Add Photos</p>
+            <p className="mb-3">Add Photos</p>
           </div>
         ) : (
           <div className="flex ion-wrap swiper-no-swiping">

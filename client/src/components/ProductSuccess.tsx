@@ -11,9 +11,14 @@ import { Product } from "../utils/types";
 type Props = {
   product: Product;
   dismiss: () => void;
+  clearFormData: () => void;
 };
 
-export default function ProductSuccess({ product, dismiss }: Props) {
+export default function ProductSuccess({
+  product,
+  dismiss,
+  clearFormData,
+}: Props) {
   const [copied, setCopied] = useState(false);
 
   const resetCopyText = () => setCopied(false);
@@ -89,7 +94,7 @@ export default function ProductSuccess({ product, dismiss }: Props) {
           <p className="text-xs">Share</p>
         </div>
       </div>
-      <IonButton expand="block" routerLink="/home">
+      <IonButton expand="block" routerLink="/home" onClick={clearFormData}>
         Back to Home
       </IonButton>
       <IonButton expand="block" color="medium" fill="clear" onClick={dismiss}>

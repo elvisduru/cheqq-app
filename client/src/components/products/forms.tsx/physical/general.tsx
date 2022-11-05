@@ -17,15 +17,15 @@ import {
   useIonAlert,
 } from "@ionic/react";
 import { trash } from "ionicons/icons";
+import { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import slugify from "slugify";
+import useBoolean from "../../../../hooks/useBoolean";
 import { useStore } from "../../../../hooks/useStore";
 import { ProductInput } from "../../../../utils/types";
 import MediaUploader from "../../../MediaUploader";
 import TagInput from "../../../TagInput";
 import Step from "../Step";
-import slugify from "slugify";
-import { useEffect, useState } from "react";
-import useBoolean from "../../../../hooks/useBoolean";
 
 // const SelectCategory = withSuspense<any>(
 //   React.lazy(() => import("../../../SelectCategory"))
@@ -53,7 +53,7 @@ export default function General() {
   const slug = watch("slug");
   const id = watch("id");
 
-  const { value: disableSlugUpdate, setTrue, setFalse } = useBoolean(!!id);
+  const { value: disableSlugUpdate, setFalse } = useBoolean(!!id);
 
   const [presentAlert] = useIonAlert();
 
@@ -237,7 +237,7 @@ export default function General() {
               fill="clear"
               size="small"
               onClick={() =>
-                setValue("slug", slugify(title, { lower: true }), {
+                setValue("slug", slugify(title!, { lower: true }), {
                   shouldValidate: true,
                 })
               }
@@ -247,15 +247,20 @@ export default function General() {
           )}
         </div>
       </div>
-      <TagInput
-        label="Product Tags"
+      <Controller
         name="tags"
         control={control}
-        setValue={(tags: string[]) => {
-          setValue("tags", tags);
-        }}
-        note="Optional. Enter tags separated by commas ( , ). Limit 20."
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TagInput
+            label="Product Tags"
+            onChange={onChange}
+            value={value}
+            onBlur={onBlur}
+            note="Optional. Enter tags separated by commas ( , ). Limit 20."
+          />
+        )}
       />
+
       <IonItemGroup className="mt-8">
         <IonItemDivider className="pl-0">
           <IonLabel color="medium">Media</IonLabel>
@@ -284,6 +289,7 @@ export default function General() {
           mode="md"
         >
           <IonLabel position="floating">Price</IonLabel>
+          {/* TODO: (Not sure if this is a good idea though!) When changing base price, if there are existing variants, update all their starting prices to match the base price */}
           <Controller
             control={control}
             name="price"
@@ -464,7 +470,7 @@ export default function General() {
                   onChange(e.detail.checked);
                 }}
                 onIonBlur={onBlur}
-                checked={value}
+                checked={value!}
                 slot="start"
               />
             )}
@@ -555,7 +561,7 @@ export default function General() {
                   <IonToggle
                     slot="end"
                     color="primary"
-                    checked={value}
+                    checked={value!}
                     onIonChange={(e) => {
                       onChange(e.detail.checked);
                     }}

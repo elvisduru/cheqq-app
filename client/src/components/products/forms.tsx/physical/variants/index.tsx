@@ -45,13 +45,12 @@ export default function Variants() {
     control,
     formState: { errors },
   } = useFormContext<ProductInput>();
-  const hasVariants = watch("hasVariants");
   const options = watch("options") || [];
   const variants = watch("variants") || [];
+  const hasVariants = watch("hasVariants");
   const images = watch("images") || [];
   const price = watch("price");
   const compareAtPrice = watch("compareAtPrice");
-
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "options",
@@ -145,7 +144,7 @@ export default function Variants() {
     } else {
       setValue("variants", undefined);
     }
-  }, [generateVariants, options, setValue, variantsLength]);
+  }, [generateVariants, setValue, options.length, variantsLength]);
 
   const handleEditVariant = useCallback(
     (index: number) => {
@@ -163,7 +162,7 @@ export default function Variants() {
 
   return (
     <Step>
-      {!hasVariants ? (
+      {!hasVariants && !variants.length ? (
         <LottieWrapper
           title="Create Variants"
           animationData={variantAnimation}
@@ -248,14 +247,18 @@ export default function Variants() {
                     {errors.options?.[index]?.name?.message}
                   </IonNote>
                 </IonItem>
-                <TagInput
-                  setValue={(val: string[]) => {
-                    setValue(`options.${index}.values`, val);
-                  }}
-                  label="Option values"
+                <Controller
                   name={`options.${index}.values`}
                   control={control}
-                  note="Enter values separated by commas ( , ) or press enter."
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TagInput
+                      label="Option values"
+                      onChange={onChange}
+                      value={value}
+                      onBlur={onBlur}
+                      note="Enter values separated by commas ( , ) or press enter."
+                    />
+                  )}
                 />
               </div>
             ))}

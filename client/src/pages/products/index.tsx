@@ -2,7 +2,7 @@ import { IonPage, IonRouterOutlet } from "@ionic/react";
 import { Route } from "react-router-dom";
 import { useStore } from "../../hooks/useStore";
 import ProductDetails from "./details";
-import Products from "./product";
+import Products from "./products";
 
 const ProductsRouterOutlet = () => {
   const user = useStore((store) => store.user);

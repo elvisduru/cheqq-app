@@ -32,7 +32,11 @@ export default function LottieWrapper({
       <div className="aspect-[4/3]">{View}</div>
       <div className="ion-text-center leading-normal mt-8">
         <h2 className="mb-4">{title}</h2>
-        {description && <p className="text-gray text-base">{description}</p>}
+        {description && (
+          <p className="text-gray text-base ion-padding-horizontal">
+            {description}
+          </p>
+        )}
         {buttonText && (
           <IonButton
             routerLink={buttonLink}

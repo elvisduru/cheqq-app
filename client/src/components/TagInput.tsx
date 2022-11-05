@@ -8,36 +8,37 @@ import {
 } from "@ionic/react";
 import { closeCircle } from "ionicons/icons";
 import { useEffect, useState } from "react";
-import { useWatch } from "react-hook-form";
+import { useStore } from "../hooks/useStore";
 
 type Props = {
-  setValue: (val: string[]) => void;
-  name: string;
-  control: any;
   label: string;
   note?: string;
+  onChange: (value: string[]) => void;
+  onBlur: () => void;
+  value: any;
 };
 
 export default function TagInput({
-  name,
-  control,
-  setValue,
   label,
   note,
+  value,
+  onBlur,
+  onChange,
 }: Props) {
-  const value = useWatch({
-    control,
-    name,
-  });
-
   const [tags, setTags] = useState<string[]>(value || []);
+  const physicalFormData = useStore((state) => state.physicalFormData);
+  useEffect(() => {
+    onChange(tags);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tags.length]);
 
   useEffect(() => {
-    setValue(tags);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tags]);
+    if (!physicalFormData) {
+      setTags([]);
+    }
+  }, [physicalFormData]);
 
-  const onChange = (e: any) => {
+  const handleChange = (e: any) => {
     if (tags.length === 20) return;
     const value = e.target.value.trim();
     if (value.length > 1) {
@@ -99,8 +100,9 @@ export default function TagInput({
       <IonInput
         type="text"
         enterkeyhint="enter"
-        onIonChange={onChange}
+        onIonChange={handleChange}
         onKeyDown={handleKeyDown}
+        onIonBlur={onBlur}
       />
       <IonNote slot="helper">{note}</IonNote>
     </IonItem>

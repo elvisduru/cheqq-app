@@ -7,7 +7,7 @@ Table User {
   name String
   email String [unique, not null]
   emailVerified Boolean [not null, default: false]
-  active Boolean [not null, default: true]
+  active Boolean [not null, default: false]
   avatarUrl String
   password String
   passwordUpdatedAt DateTime
@@ -35,7 +35,8 @@ Table Store {
   domain String
   address String [not null]
   addressCoordinates Json
-  country String [not null]
+  country Country [not null]
+  countryId Int [not null]
   phone String [not null]
   order_email String
   language String [not null]
@@ -118,6 +119,8 @@ Table Country {
   emojiU String
   states State [not null]
   location Location [not null]
+  store Store [not null]
+  address Address [not null]
 }
 
 Table State {
@@ -403,7 +406,8 @@ Table Address {
   city String [not null]
   state String
   zip String [not null]
-  country String [not null]
+  country Country [not null]
+  countryId Int [not null]
   phone String [not null]
   User User
   userId Int
@@ -542,6 +546,8 @@ Enum OrderStatus {
 
 Ref: Store.ownerId > User.id [delete: Cascade]
 
+Ref: Store.countryId > Country.id
+
 Ref: DeliveryZone.storeId > Store.id [delete: Cascade]
 
 Ref: ShippingZone.storeId > Store.id [delete: Cascade]
@@ -564,9 +570,9 @@ Ref: Product.taxId > Tax.id
 
 Ref: Product.brandId > Brand.id
 
-Ref: ProductOption.productId > Product.id
+Ref: ProductOption.productId > Product.id [delete: Cascade]
 
-Ref: ProductVariant.productId > Product.id
+Ref: ProductVariant.productId > Product.id [delete: Cascade]
 
 Ref: ProductVariant.imageId > Image.id
 
@@ -597,5 +603,7 @@ Ref: Order.customerId > User.id
 Ref: Order.billingAddressId > Address.id
 
 Ref: Order.shippingAddressId > Address.id
+
+Ref: Address.countryId > Country.id
 
 Ref: Address.userId > User.id

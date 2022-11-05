@@ -6,7 +6,7 @@ const selector = ({ setPhysicalModalState }: AppState) => ({
   setPhysicalModalState,
 });
 
-export default function useCanDismiss(formType?: string) {
+export default function useCanDismiss(formType?: string, noSave?: boolean) {
   const [present] = useIonActionSheet();
   const { setPhysicalModalState } = useStore(selector, shallow);
 
@@ -15,23 +15,34 @@ export default function useCanDismiss(formType?: string) {
       present({
         translucent: true,
         header: "Are you sure you want to discard your changes?",
-        buttons: [
-          {
-            text: "Discard Changes",
-            role: "destructive",
-          },
-          {
-            text: "Keep Editing",
-            role: "cancel",
-          },
-          {
-            text: "Save Changes and Quit",
-            handler: () => {
-              setPhysicalModalState(ModalState.SAVE);
-              resolve(true);
-            },
-          },
-        ],
+        buttons: noSave
+          ? [
+              {
+                text: "Discard Changes",
+                role: "destructive",
+              },
+              {
+                text: "Keep Editing",
+                role: "cancel",
+              },
+            ]
+          : [
+              {
+                text: "Discard Changes",
+                role: "destructive",
+              },
+              {
+                text: "Keep Editing",
+                role: "cancel",
+              },
+              {
+                text: "Save Changes and Quit",
+                handler: () => {
+                  setPhysicalModalState(ModalState.SAVE);
+                  resolve(true);
+                },
+              },
+            ],
         onWillDismiss: (ev: CustomEvent) => {
           const role = ev.detail.role;
 
