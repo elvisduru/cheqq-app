@@ -276,11 +276,15 @@ export default function ProductDetails({
                 {product?.title}
               </IonCardTitle>
               <IonCardTitle className="text-xl flex-shrink-0 font-medium flex items-center mb-2">
-                <span>${price}</span>
+                <span>
+                  {product.store?.country?.currency_symbol}
+                  {price}
+                </span>
                 {compareAtPrice && compareAtPrice !== price ? (
                   <div className="text-sm font-light font-sans ml-1">
                     <span className="text-gray-400 ml-1 line-through">
-                      ${compareAtPrice}
+                      {product.store?.country?.currency_symbol}
+                      {compareAtPrice}
                     </span>{" "}
                     <span
                       className={

@@ -363,87 +363,89 @@ export default function General() {
         <IonItemDivider className="pl-0">
           <IonLabel color="medium">Specifications</IonLabel>
         </IonItemDivider>
-        <IonReorderGroup
-          disabled={false}
-          onIonItemReorder={(e) => {
-            move(e.detail.from, e.detail.to);
-            e.detail.complete();
-          }}
-        >
-          {fields.map((field, index) => (
-            <div key={field.id} className="mb-2">
-              <div className="flex ion-justify-content-between">
-                <div className="flex items-center">
-                  <IonReorder />
-                  <IonNote className="text-sm">Drag to reorder</IonNote>
+        {watch("customFields") ? (
+          <IonReorderGroup
+            disabled={false}
+            onIonItemReorder={(e) => {
+              move(e.detail.from, e.detail.to);
+              e.detail.complete();
+            }}
+          >
+            {fields.map((field, index) => (
+              <div key={field.id} className="mb-2">
+                <div className="flex ion-justify-content-between">
+                  <div className="flex items-center">
+                    <IonReorder />
+                    <IonNote className="text-sm">Drag to reorder</IonNote>
+                  </div>
+                  <IonButton
+                    slot="end"
+                    fill="clear"
+                    color="danger"
+                    size="small"
+                    onClick={() => {
+                      remove(index);
+                    }}
+                  >
+                    <IonIcon slot="icon-only" icon={trash} />
+                  </IonButton>
                 </div>
-                <IonButton
-                  slot="end"
-                  fill="clear"
-                  color="danger"
-                  size="small"
-                  onClick={() => {
-                    remove(index);
-                  }}
+                <IonItem
+                  className={`input mt-1 ${
+                    errors.customFields?.[index]?.label ? "ion-invalid" : ""
+                  }`}
+                  fill="outline"
+                  mode="md"
                 >
-                  <IonIcon slot="icon-only" icon={trash} />
-                </IonButton>
+                  <IonLabel position="floating">Label</IonLabel>
+                  <Controller
+                    name={`customFields.${index}.label`}
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <IonInput
+                        value={value}
+                        type="text"
+                        onIonChange={onChange}
+                        onIonBlur={onBlur}
+                        minlength={3}
+                        autoCorrect="on"
+                      />
+                    )}
+                  />
+                  <IonNote slot="error">
+                    {errors.customFields?.[index]?.label?.message}
+                  </IonNote>
+                </IonItem>
+                <IonItem
+                  className={`input mt-4 ${
+                    errors.customFields?.[index]?.value ? "ion-invalid" : ""
+                  }`}
+                  fill="outline"
+                  mode="md"
+                >
+                  <IonLabel position="floating">Value</IonLabel>
+                  <Controller
+                    name={`customFields.${index}.value`}
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <IonInput
+                        value={value}
+                        type="text"
+                        onIonChange={onChange}
+                        onIonBlur={onBlur}
+                        minlength={3}
+                        autoCorrect="on"
+                      />
+                    )}
+                  />
+                  <IonNote slot="error">
+                    {errors.customFields?.[index]?.value?.message}
+                  </IonNote>
+                </IonItem>
               </div>
-              <IonItem
-                className={`input mt-1 ${
-                  errors.customFields?.[index]?.label ? "ion-invalid" : ""
-                }`}
-                fill="outline"
-                mode="md"
-              >
-                <IonLabel position="floating">Label</IonLabel>
-                <Controller
-                  name={`customFields.${index}.label`}
-                  control={control}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <IonInput
-                      value={value}
-                      type="text"
-                      onIonChange={onChange}
-                      onIonBlur={onBlur}
-                      minlength={3}
-                      autoCorrect="on"
-                    />
-                  )}
-                />
-                <IonNote slot="error">
-                  {errors.customFields?.[index]?.label?.message}
-                </IonNote>
-              </IonItem>
-              <IonItem
-                className={`input mt-4 ${
-                  errors.customFields?.[index]?.value ? "ion-invalid" : ""
-                }`}
-                fill="outline"
-                mode="md"
-              >
-                <IonLabel position="floating">Value</IonLabel>
-                <Controller
-                  name={`customFields.${index}.value`}
-                  control={control}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <IonInput
-                      value={value}
-                      type="text"
-                      onIonChange={onChange}
-                      onIonBlur={onBlur}
-                      minlength={3}
-                      autoCorrect="on"
-                    />
-                  )}
-                />
-                <IonNote slot="error">
-                  {errors.customFields?.[index]?.value?.message}
-                </IonNote>
-              </IonItem>
-            </div>
-          ))}
-        </IonReorderGroup>
+            ))}
+          </IonReorderGroup>
+        ) : null}
         <IonButton
           fill="solid"
           expand="block"

@@ -51,7 +51,7 @@ export type Store = {
   domain?: string | null;
   address: string;
   countryId: number;
-  country: Country;
+  country?: Country;
   phone?: string;
   order_email?: string | null;
   processingTime?: string;

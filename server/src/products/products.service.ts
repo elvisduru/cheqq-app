@@ -123,12 +123,13 @@ export class ProductsService {
     });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto) {
     const {
+      id: _,
       images,
       videos,
-      options: rawOptions,
-      variants: rawVariants,
+      options,
+      variants,
       collections,
       categories,
       relatedProducts,
@@ -137,28 +138,45 @@ export class ProductsService {
       ...data
     } = updateProductDto;
 
-    const options = rawOptions?.map((option) => {
-      const { productId, ...rest } = option;
-      return rest;
-    });
+    // handle options and variants
+    if (options.length) {
+      // delete all options
+      await this.prisma.productOption.deleteMany({
+        where: {
+          productId: id,
+        },
+      });
+      // create new options
+      const newOptions = options.map((option) => {
+        const { id: _, ...data } = option;
+        return { ...data, productId: id };
+      });
+      await this.prisma.productOption.createMany({
+        data: [...newOptions],
+      });
+    }
 
-    const variants = rawVariants?.map((variant) => {
-      const { productId, ...rest } = variant;
-      return rest;
-    });
+    if (variants.length) {
+      // delete all variants
+      await this.prisma.productVariant.deleteMany({
+        where: {
+          productId: id,
+        },
+      });
+      // create new variants
+      const newVariants = variants.map((variant) => {
+        const { id: _, ...data } = variant;
+        return { ...data, productId: id };
+      });
+      await this.prisma.productVariant.createMany({
+        data: [...newVariants],
+      });
+    }
 
     return this.prisma.product.update({
       where: { id },
       data: {
         ...data,
-        options: {
-          deleteMany: {},
-          createMany: (options && { data: options }) || undefined,
-        },
-        variants: {
-          deleteMany: {},
-          createMany: (variants && { data: variants }) || undefined,
-        },
         collections: {
           set: [],
           connect: collections?.map((collection) => ({ id: collection })),

@@ -41,7 +41,8 @@ export default function ProductCard(product: Product) {
         <IonCardContent className="p-3 text-xs font-medium">
           <p className="line-clamp-1">{product.title}</p>
           <div>
-            {product.store?.country.currency_symbol} {pricesArr[0]}{" "}
+            {product.store?.country?.currency_symbol}
+            {pricesArr[0]}{" "}
             {pricesArr.length > 1 && <>- {pricesArr[pricesArr.length - 1]}</>}
           </div>
           <div className="flex items-center">

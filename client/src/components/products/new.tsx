@@ -10,7 +10,6 @@ import {
 import { close } from "ionicons/icons";
 import React, { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useHistory, useLocation } from "react-router";
 import { useStore } from "../../hooks/useStore";
 import { Nullable, ProductInput, ProductType } from "../../utils/types";
 import withSuspense from "../hoc/withSuspense";

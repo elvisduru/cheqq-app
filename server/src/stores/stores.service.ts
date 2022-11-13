@@ -86,6 +86,9 @@ export class StoresService {
       where: {
         id,
       },
+      include: {
+        products: true,
+      },
     });
   }
 
@@ -93,6 +96,9 @@ export class StoresService {
     return this.prisma.store.findUnique({
       where: {
         tag,
+      },
+      include: {
+        products: true,
       },
     });
   }
