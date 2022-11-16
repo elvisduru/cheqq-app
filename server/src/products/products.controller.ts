@@ -36,6 +36,10 @@ export class ProductsController {
       skip: +query.skip,
       cursor: +query.cursor,
     };
+
+    if (filter.storeId) {
+      filter.storeId = +filter.storeId;
+    }
     return this.productsService.findAll({ ...filter }, pagination);
   }
 

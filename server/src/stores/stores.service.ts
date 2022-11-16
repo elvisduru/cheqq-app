@@ -87,7 +87,12 @@ export class StoresService {
         id,
       },
       include: {
-        products: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+          },
+        },
       },
     });
   }
@@ -98,7 +103,12 @@ export class StoresService {
         tag,
       },
       include: {
-        products: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+          },
+        },
       },
     });
   }

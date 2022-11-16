@@ -66,8 +66,19 @@ model Store {
   fullfillmentServices FulfillmentService[]
   processingTime       ProcessingTime       @default(value: none)
   localPickup          Boolean              @default(false)
+  followers            Follows[]            @relation("following")
+  following            Follows[]            @relation("followers")
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
+}
+
+model Follows {
+  follower    Store @relation("followers", fields: [followerId], references: [id])
+  followerId  Int
+  following   Store @relation("following", fields: [followingId], references: [id])
+  followingId Int
+
+  @@id([followerId, followingId])
 }
 
 model DeliveryZone {
@@ -230,6 +241,7 @@ model Product {
   // giftWrap               Boolean              @default(false)
   // giftWrapOptions        GiftWrapOption[]
   redirectUrl            String?
+  shortUrl               String?
   condition              Condition?
   showCondition          Boolean               @default(false) // TODO: add this to the UI
   // SEO
@@ -241,6 +253,7 @@ model Product {
   viewCount              Int                   @default(value: 0)
   customUrl              String?
   openGraphTitle         String?
+  openGraphImageUrl      String?
   openGraphDescription   String?
   openGraphType          OpenGraphType         @default(value: product)
   totalSold              Int                   @default(value: 0)

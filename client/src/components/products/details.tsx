@@ -57,6 +57,7 @@ type Props = {
  If there are no variants, display the price of the product. 
  If there is no price, display "Free".
 */
+// TODO: Resize first image to social media size for SEO i.e. product.openGraphImageUrl
 
 export default function ProductDetails({
   product,

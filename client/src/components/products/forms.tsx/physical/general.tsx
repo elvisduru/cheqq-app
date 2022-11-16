@@ -57,6 +57,7 @@ export default function General() {
 
   const [presentAlert] = useIonAlert();
 
+  // TODO: Check if slug exists, if it does exist, add a unique random number to the end of it
   useEffect(() => {
     if (
       title &&
