@@ -13,10 +13,14 @@ export class ProductsService {
       taxId,
       brandId,
       images,
+      videos,
       options,
       variants,
       collections,
       categories,
+      relatedProducts,
+      pricingRules,
+      giftWrapOptions,
       ...data
     } = createProductDto;
     const product = await this.prisma.product.create({
@@ -27,6 +31,9 @@ export class ProductsService {
         store: { connect: { id: storeId } },
         images: {
           connect: images?.map((image) => ({ id: image.id })),
+        },
+        videos: {
+          connect: videos?.map((video) => ({ id: video.id })),
         },
         collections: {
           connect: collections?.map((collection) => ({ id: collection })),
