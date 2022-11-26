@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, Store } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateStoreDto } from './dto';
@@ -98,7 +98,7 @@ export class StoresService {
   }
 
   async findByTag(tag: string) {
-    return this.prisma.store.findUnique({
+    const store = await this.prisma.store.findUnique({
       where: {
         tag,
       },
@@ -111,6 +111,8 @@ export class StoresService {
         },
       },
     });
+    if (!store) throw new NotFoundException('Store not found');
+    return store;
   }
 
   async updateById(
