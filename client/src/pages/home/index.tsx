@@ -34,7 +34,9 @@ const Home = () => {
         firstName: "John",
         lastName: "Doe",
       },
-      total: 200,
+      total: 20000,
+      currency_code: "₦",
+      currency: "NGN",
       cart: [
         {
           product: {
@@ -56,7 +58,9 @@ const Home = () => {
         firstName: "John",
         lastName: "Doe",
       },
-      total: 120.5,
+      total: 12000.5,
+      currency_code: "₦",
+      currency: "NGN",
       cart: [
         {
           product: {
@@ -90,7 +94,9 @@ const Home = () => {
         firstName: "John",
         lastName: "Doe",
       },
-      total: 200,
+      total: 20000,
+      currency_code: "₦",
+      currency: "NGN",
       cart: [
         {
           product: {
@@ -112,7 +118,9 @@ const Home = () => {
         firstName: "John",
         lastName: "Doe",
       },
-      total: 200,
+      total: 20000,
+      currency_code: "₦",
+      currency: "NGN",
       cart: [
         {
           product: {
@@ -137,6 +145,8 @@ const Home = () => {
       lastName: string;
     };
     total: number;
+    currency_code: string;
+    currency: string;
     cart: {
       product: {
         images: string[];
@@ -182,7 +192,7 @@ const Home = () => {
           <IonLabel className="font-light text-lg">Stats</IonLabel>
           <IonButton routerLink="/analytics">See all</IonButton>
         </IonListHeader>
-        <ChartCard title="Your Sales" />
+        <ChartCard store={store!} title="Your Sales" />
 
         <IonList lines="none">
           <IonListHeader>
@@ -206,12 +216,14 @@ const Home = () => {
               <IonLabel>
                 <h2>{order.orderId}</h2>
                 <p>
-                  {order.customer.firstName}
-                  {order.customer.lastName}
+                  {order.customer.firstName} {order.customer.lastName}
                 </p>
               </IonLabel>
               <IonLabel slot="end">
-                <h2>${order.total.toFixed(2)}</h2>
+                <h2>
+                  {order.currency_code}
+                  {order.total.toFixed(2)}
+                </h2>
                 <p>{format(new Date(order.createdAt), "MMM dd, yyyy")}</p>
               </IonLabel>
             </IonItem>

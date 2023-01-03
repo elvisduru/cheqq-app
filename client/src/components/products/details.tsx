@@ -340,10 +340,11 @@ export default function ProductDetails({
                 />
                 <IonIcon
                   onClick={() => {
-                    if (
-                      count < (product?.inventoryLevel || Infinity) ||
-                      product.allowBackOrder
-                    )
+                    const inventoryLevel =
+                      variant?.inventoryLevel || product.inventoryLevel;
+                    const allowBackOrder =
+                      variant?.allowBackOrder || product.allowBackOrder;
+                    if (count < (inventoryLevel || Infinity) || allowBackOrder)
                       increment();
                   }}
                   icon={addCircle}

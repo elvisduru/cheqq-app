@@ -54,7 +54,7 @@ export class AuthController {
   @Post('magic-link')
   @HttpCode(HttpStatus.OK)
   magicUrl(@Body() data: MagicUrlDto) {
-    return this.authService.magicUrl(data.email);
+    return this.authService.magicUrl({ ...data });
   }
 
   @Public()

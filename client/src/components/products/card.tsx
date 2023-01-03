@@ -21,24 +21,24 @@ export default function ProductCard(product: Product) {
     <IonCol size="6" sizeLg="3" sizeMd="4" key={product.id}>
       <IonCard
         key={product.id}
-        className="mt-2 mx-0"
+        className="m-0 card-product bg-transparent"
         button
         routerLink={`/products/${product.id}`}
       >
         {product.images?.length ? (
           <img
             src={product.images?.find((i) => i.sortOrder === 0)?.url}
-            className="aspect-square object-cover object-center w-full"
+            className="aspect-square object-cover object-center w-full rounded-b-lg"
           />
         ) : (
-          <div className="flex w-full items-center justify-center px-2 text-white aspect-square bg-gradient-to-r from-primary to-purple-600">
+          <div className="flex rounded-b-lg w-full items-center justify-center px-2 text-white aspect-square bg-gradient-to-r from-primary to-purple-600">
             <IonIcon icon={imagesOutline} className="text-4xl mr-2" />
             <p>
               No image <br /> uploaded
             </p>
           </div>
         )}
-        <IonCardContent className="p-3 text-xs font-medium">
+        <IonCardContent className="py-3 px-1 text-xs font-medium bg-black">
           <p className="line-clamp-1">{product.title}</p>
           <div>
             {product.store?.country?.currency_symbol}

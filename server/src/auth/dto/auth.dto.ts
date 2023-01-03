@@ -33,4 +33,8 @@ export class MagicUrlDto {
 
   @IsOptional()
   secret?: string;
+
+  @IsOptional()
+  @IsString()
+  redirectUrl?: string;
 }

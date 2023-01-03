@@ -35,7 +35,9 @@ ion-tab-button ion-icon {
   font-size: 22px;
 }
 ion-card {
-  border-radius: 16px;
+  &:not(.card-product) {
+    border-radius: 16px;
+  }
   ion-card-header ion-button {
     --padding-start: 0;
     --padding-end: 0;

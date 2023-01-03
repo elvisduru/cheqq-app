@@ -282,7 +282,10 @@ export default function General() {
       </IonItemGroup>
       <IonItemGroup className="mt-8">
         <IonItemDivider className="pl-0">
-          <IonLabel color="medium">Pricing</IonLabel>
+          <IonLabel color="medium">
+            Pricing{" "}
+            <span className="text-base font-normal">({store?.currency})</span>
+          </IonLabel>
         </IonItemDivider>
         <IonItem
           className={`input mt-4 ${errors.price ? "ion-invalid" : ""}`}

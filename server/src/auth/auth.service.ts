@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto } from './dto';
+import { AuthDto, MagicUrlDto } from './dto';
 import { Tokens } from './types';
 
 @Injectable()
@@ -83,7 +83,7 @@ export class AuthService {
     return tokens;
   }
 
-  async magicUrl(email: string) {
+  async magicUrl({ email, redirectUrl }: MagicUrlDto) {
     // Find user
     const foundUser = await this.prisma.user.findUnique({
       where: { email },
@@ -116,7 +116,9 @@ export class AuthService {
       context: {
         url: `${this.configService.get<string>(
           'APP_URL',
-        )}/magic-link?email=${email}&secret=${secret}`,
+        )}/magic-link?email=${email}&secret=${secret}${
+          redirectUrl ? `&redirect=${redirectUrl}` : ''
+        }`,
       },
     });
     return res.response;

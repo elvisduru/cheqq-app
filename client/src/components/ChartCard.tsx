@@ -7,16 +7,17 @@ import {
   IonItem,
   IonList,
   IonNote,
-  IonPopover,
   useIonPopover,
 } from "@ionic/react";
 import { ellipsisVerticalSharp } from "ionicons/icons";
 import { useState } from "react";
 import salesData from "../db/sales.json";
+import { Store, User } from "../utils/types";
 import LineChart from "./LineChart";
 
 type Props = {
   title: string;
+  store: User["stores"][0];
 };
 
 enum TimeFrame {
@@ -45,7 +46,7 @@ const Popover = () => (
   </IonContent>
 );
 
-export default function GraphCard({ title }: Props) {
+export default function GraphCard({ title, store }: Props) {
   const [selected] = useState<string | undefined>(TimeFrame.Week);
   const [present, dismiss] = useIonPopover(Popover);
   return (
@@ -62,7 +63,7 @@ export default function GraphCard({ title }: Props) {
               <h3 className="my-0 text-xl">{title}</h3>
             </div>
             <span className="text-2xl font-bold mr-1">
-              $
+              {store.country?.currency_symbol}
               {salesData[0].data
                 .reduce((acc, curr) => acc + curr.y, 0)
                 .toFixed(2)}

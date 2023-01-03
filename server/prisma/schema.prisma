@@ -35,6 +35,7 @@ model User {
   addresses          Address[]
   images             Image[]
   videos             Video[]
+  carts              Cart[]
 }
 
 model Store {
@@ -272,6 +273,7 @@ model Product {
   createdAt              DateTime              @default(now())
   updatedAt              DateTime              @updatedAt
   giftWrapOptions        GiftWrapOption[]
+  cartItems              CartItem[]
 }
 
 model ProductOption {
@@ -308,6 +310,7 @@ model ProductVariant {
   pricingRuleId         Int?
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
+  cartItems             CartItem[]
 }
 
 model Collection {
@@ -430,48 +433,72 @@ model Order {
   note              String?
   annotations       Json[]
   // pickupDetails     PickupDetails[]
-  // lineItems         LineItem[]
+  lineItems         LineItem[]
   status            OrderStatus @default(value: PROCESSING)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 }
 
+model Cart {
+  id         Int        @id @default(autoincrement())
+  customer   User?      @relation(fields: [customerId], references: [id])
+  customerId Int?
+  currency   String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  cartItems  CartItem[]
+}
+
+model CartItem {
+  id        Int             @id @default(autoincrement())
+  cart      Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    Int
+  product   Product         @relation(fields: [productId], references: [id])
+  productId Int
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  variantId Int?
+  quantity  Int             @default(value: 1)
+  coupon    String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
 // A line item captures the quantity, price, and other important information about a product in an order at the time of purchase.
-// model LineItem {
-//   id                Int       @id @default(autoincrement())
-//   Order             Order     @relation(fields: [orderId], references: [id])
-//   orderId           Int
-//   quantityOrdered   Int
-//   quantityShipped   Int?
-//   quantityPending   Int?
-//   quantityCancelled Int?
-//   quantityReturned  Int?
-//   quantityDelivered Int?
-//   // Shipping details
-//   shippingMethod    String
-//   shippingCarrier   String?
-//   minDaysInTransit  Int
-//   maxDaysInTransit  Int
-//   isReturnable      Boolean
-//   daysToReturn      Int?
-//   policyUrl         String?
-//   // Product Details
-//   targetCountry     String?
-//   price             Int
-//   currency          String
-//   imageLink         String?
-//   title             String
-//   gtin              String?
-//   brand             String?
-//   mpn               String?
-//   condition         Condition
-//   attributes        Json[] //Extra attributes
-//   additionalFees    Json[] // Additional Fees at order creation time
-//   returns           Json[] // Returned items
-//   cancellations     Json[] // Cancelled items
-//   annotations       Json[] //Annotations that are attached to the line item.
-//   adjustments       Json[] // Price and tax adjustments that are attached to the line item.
-// }
+model LineItem {
+  id                Int       @id @default(autoincrement())
+  Order             Order     @relation(fields: [orderId], references: [id])
+  orderId           Int
+  quantityOrdered   Int
+  quantityShipped   Int?
+  quantityPending   Int?
+  quantityCancelled Int?
+  quantityReturned  Int?
+  quantityDelivered Int?
+  // Shipping details
+  shippingMethod    String
+  shippingCarrier   String?
+  minDaysInTransit  Int
+  maxDaysInTransit  Int
+  isReturnable      Boolean
+  daysToReturn      Int?
+  policyUrl         String?
+  // Product Details
+  targetCountry     String?
+  price             Int
+  currency          String
+  imageLink         String?
+  title             String
+  gtin              String?
+  brand             String?
+  mpn               String?
+  condition         Condition
+  attributes        Json[] //Extra attributes
+  additionalFees    Json[] // Additional Fees at order creation time
+  returns           Json[] // Returned items
+  cancellations     Json[] // Cancelled items
+  annotations       Json[] //Annotations that are attached to the line item.
+  adjustments       Json[] // Price and tax adjustments that are attached to the line item.
+}
 
 // model PickupDetails {
 //   id         Int         @id @default(autoincrement())

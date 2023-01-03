@@ -146,7 +146,7 @@ export class ProductsService {
     } = updateProductDto;
 
     // handle options and variants
-    if (options.length) {
+    if (options?.length) {
       // delete all options
       await this.prisma.productOption.deleteMany({
         where: {
@@ -163,7 +163,7 @@ export class ProductsService {
       });
     }
 
-    if (variants.length) {
+    if (variants?.length) {
       // delete all variants
       await this.prisma.productVariant.deleteMany({
         where: {
