@@ -116,6 +116,7 @@ export default function PhysicalProductForm() {
         ]),
         storeId: store.id,
         currency: store.currency,
+        currency_symbol: store.currency_symbol,
       };
 
       let res: AxiosResponse<Product>;

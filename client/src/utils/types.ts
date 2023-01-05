@@ -30,6 +30,7 @@ export type User = {
     tag: string;
     logo: string;
     currency: string;
+    currency_symbol: string;
     address: string;
     addressCoordinates: { lat: number; lng: number };
     countryId: number;
@@ -58,6 +59,7 @@ export type Store = {
   localPickup?: boolean;
   language: string;
   currency: string;
+  currency_symbol: string;
   logo: string | null;
   banner: string | null;
   description: string | null;
@@ -215,6 +217,8 @@ export type Rate = {
     | "custom";
   customRateName: string;
   price: number;
+  currency: string;
+  currency_symbol: string;
   rateCondition?: "weight" | "price";
   rateConditionMin?: number;
   rateConditionMax?: number;
@@ -249,6 +253,8 @@ export type Product = {
   title: string;
   description?: string;
   price: number;
+  currency: string;
+  currency_symbol: string;
   compareAtPrice?: number;
   categories?: number[];
   collections?: number[];
@@ -339,7 +345,6 @@ export type ProductVariant = {
   title: string;
   price?: number;
   compareAtPrice?: number;
-  currency: string;
   inventoryTracking?: boolean;
   allowBackOrder: boolean;
   inventoryLevel?: number;

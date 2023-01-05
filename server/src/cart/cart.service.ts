@@ -22,6 +22,14 @@ export class CartService {
                 title: true,
                 price: true,
                 images: true,
+                currency: true,
+                currency_symbol: true,
+                store: {
+                  select: {
+                    name: true,
+                    tag: true,
+                  },
+                },
               },
             },
             variant: {
@@ -73,6 +81,14 @@ export class CartService {
                       title: true,
                       price: true,
                       images: true,
+                      currency: true,
+                      currency_symbol: true,
+                      store: {
+                        select: {
+                          name: true,
+                          tag: true,
+                        },
+                      },
                     },
                   },
                   variant: {
@@ -112,6 +128,14 @@ export class CartService {
                       title: true,
                       price: true,
                       images: true,
+                      currency: true,
+                      currency_symbol: true,
+                      store: {
+                        select: {
+                          name: true,
+                          tag: true,
+                        },
+                      },
                     },
                   },
                   variant: {
@@ -146,6 +170,14 @@ export class CartService {
                 title: true,
                 price: true,
                 images: true,
+                currency: true,
+                currency_symbol: true,
+                store: {
+                  select: {
+                    name: true,
+                    tag: true,
+                  },
+                },
               },
             },
             variant: {
@@ -178,6 +210,14 @@ export class CartService {
                 title: true,
                 price: true,
                 images: true,
+                currency: true,
+                currency_symbol: true,
+                store: {
+                  select: {
+                    name: true,
+                    tag: true,
+                  },
+                },
               },
             },
             variant: {
@@ -212,6 +252,14 @@ export class CartService {
                     title: true,
                     price: true,
                     images: true,
+                    currency: true,
+                    currency_symbol: true,
+                    store: {
+                      select: {
+                        name: true,
+                        tag: true,
+                      },
+                    },
                   },
                 },
                 variant: {

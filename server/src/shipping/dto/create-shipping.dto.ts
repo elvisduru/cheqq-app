@@ -97,6 +97,14 @@ export class ShippingRate {
   @IsNumber()
   @IsOptional()
   shippingZoneId?: number;
+
+  @IsNotEmpty()
+  @IsString()
+  currency: string;
+
+  @IsNotEmpty()
+  @IsString()
+  currency_symbol: string;
 }
 
 export class Country {

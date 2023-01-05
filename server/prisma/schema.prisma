@@ -54,6 +54,7 @@ model Store {
   order_email          String?
   language             String
   currency             String
+  currency_symbol      String
   logo                 String?
   banner               String?
   description          String?
@@ -172,6 +173,8 @@ model ShippingRate {
   transitTime        TransitTime
   customRateName     String? // required if transitTime is CUSTOM
   price              Float
+  currency           String
+  currency_symbol    String
   rateCondition      RateCondition?
   rateConditionMin   Float?
   rateConditionMax   Float?
@@ -209,6 +212,7 @@ model Product {
   compareAtPrice         Float?
   costPrice              Float?
   currency               String
+  currency_symbol        String
   taxable                Boolean               @default(false)
   tax                    Tax?                  @relation(fields: [taxId], references: [id])
   taxId                  Int?
@@ -292,7 +296,6 @@ model ProductVariant {
   price                 Float?
   compareAtPrice        Float?
   costPrice             Float?
-  currency              String
   inventoryTracking     Boolean      @default(false)
   allowBackOrder        Boolean      @default(value: false)
   inventoryLevel        Int          @default(value: 0)

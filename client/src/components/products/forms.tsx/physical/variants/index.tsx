@@ -113,7 +113,6 @@ export default function Variants() {
             inventoryTracking: undefined,
             gtin: undefined,
             enabled: true,
-            currency: store?.currency!,
             isFreeShipping: true,
             allowBackOrder: false,
           };

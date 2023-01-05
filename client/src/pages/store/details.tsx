@@ -219,8 +219,12 @@ export default function Details({ progress, user }: Props) {
                     "Tag must be between 3 and 30 characters and can only contain letters, numbers, underscores and periods. It cannot start or end with a period.",
                 },
                 validate: async (value) => {
-                  if (await checkTag(value.substring(1))) {
+                  try {
+                    await checkTag(value.substring(1));
                     return "Tag already exists";
+                  } catch (error: any) {
+                    if (error.response.status === 404) return true;
+                    return "An error occured";
                   }
                 },
               }}
@@ -297,6 +301,7 @@ export default function Details({ progress, user }: Props) {
                       (c) => c.id === e.detail.value
                     )!;
                     setValue("currency", `${country.name}-${country.currency}`);
+                    setValue("currency_symbol", country.currency_symbol);
                   }}
                   onIonBlur={onBlur}
                   value={value}

@@ -27,12 +27,13 @@ import {
   searchOutline,
 } from "ionicons/icons";
 import { useRef } from "react";
+import useUser from "../hooks/queries/users/useUser";
 import { useStore } from "../hooks/useStore";
 import "./SideMenu.scss";
 
 export default function SideMenu() {
   const menuRef = useRef<HTMLIonMenuElement>(null);
-  const user = useStore((store) => store.user);
+  const { data: user } = useUser();
   const selectedStore = useStore((store) => store.selectedStore);
   const store = user?.stores.find((s) => s.id === selectedStore);
   return (

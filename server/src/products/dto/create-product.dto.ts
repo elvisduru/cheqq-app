@@ -136,6 +136,10 @@ export class CreateProductDto {
   @IsString()
   currency: string;
 
+  @IsNotEmpty()
+  @IsString()
+  currency_symbol: string;
+
   @IsOptional()
   @IsBoolean()
   taxable?: boolean;

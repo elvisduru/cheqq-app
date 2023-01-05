@@ -278,13 +278,14 @@ export default function ProductDetails({
               </IonCardTitle>
               <IonCardTitle className="text-xl flex-shrink-0 font-medium flex items-center mb-2">
                 <span>
-                  {product.store?.country?.currency_symbol}
+                  {product.currency_symbol || product.store?.currency_symbol}
                   {price}
                 </span>
                 {compareAtPrice && compareAtPrice !== price ? (
                   <div className="text-sm font-light font-sans ml-1">
                     <span className="text-gray-400 ml-1 line-through">
-                      {product.store?.country?.currency_symbol}
+                      {product.currency_symbol ||
+                        product.store?.currency_symbol}
                       {compareAtPrice}
                     </span>{" "}
                     <span

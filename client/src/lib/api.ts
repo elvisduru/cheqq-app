@@ -31,35 +31,40 @@ api.interceptors.request.use(async (request) => {
 });
 
 const refreshAccessToken = async (failedRequest: any) => {
-  const refreshToken = await getToken(TokenEnum.refresh_token);
-  if (!refreshToken) {
-    console.log("No refresh token found");
+  try {
+    const refreshToken = await getToken(TokenEnum.refresh_token);
+    if (!refreshToken) {
+      console.log("No refresh token found");
+      return Promise.reject(failedRequest);
+    }
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/auth/refresh`,
+      {
+        skipAuthRefresh: true,
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      } as AxiosAuthRefreshRequestConfig
+    );
+    console.log(response);
+    if (response.status !== 200) {
+      console.log("Refresh token failed");
+    }
+    await Promise.all([
+      Preferences.set({
+        key: TokenEnum.access_token,
+        value: response.data.access_token,
+      }),
+      Preferences.set({
+        key: TokenEnum.refresh_token,
+        value: response.data.refresh_token,
+      }),
+    ]);
+    failedRequest.response.config.headers.Authorization = `Bearer ${response.data.access_token}`;
+    return Promise.resolve();
+  } catch (error) {
     return Promise.reject(failedRequest);
   }
-  const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/auth/refresh`,
-    {
-      skipAuthRefresh: true,
-      headers: {
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    } as AxiosAuthRefreshRequestConfig
-  );
-  if (response.status !== 200) {
-    console.log("Refresh token failed");
-  }
-  await Promise.all([
-    Preferences.set({
-      key: TokenEnum.access_token,
-      value: response.data.access_token,
-    }),
-    Preferences.set({
-      key: TokenEnum.refresh_token,
-      value: response.data.refresh_token,
-    }),
-  ]);
-  failedRequest.response.config.headers.Authorization = `Bearer ${response.data.access_token}`;
-  return Promise.resolve();
 };
 
 createAuthRefreshInterceptor(api, refreshAccessToken, {

@@ -137,6 +137,7 @@ export default function AddShippingZone({
     index: rateIndex,
     handleRateForm,
     domestic,
+    store,
   });
 
   const [presentSheet] = useIonActionSheet();
@@ -380,7 +381,7 @@ export default function AddShippingZone({
                           <span className="ml-2">
                             {rate.price == 0
                               ? "Free"
-                              : `${store?.country.currency_symbol} ${rate.price}`}
+                              : `${rate.currency_symbol} ${rate.price}`}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-sm font-light text-gray-300">
@@ -394,7 +395,7 @@ export default function AddShippingZone({
                                 } kg`
                               : rate.rateCondition === "price"
                               ? `${
-                                  store?.country.currency_symbol
+                                  rate.currency_symbol
                                 } ${rate.rateConditionMin!} — ${
                                   (rate.rateConditionMax &&
                                     Number(rate.rateConditionMax).toFixed(2)) ||

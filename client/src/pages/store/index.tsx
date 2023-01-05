@@ -33,6 +33,7 @@ export type StoreFormValues = {
   addressCoordinates?: { lat: number; lng: number };
   categories: number[];
   currency: string;
+  currency_symbol: string;
   countryId: number;
   phone: string;
 };

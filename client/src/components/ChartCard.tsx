@@ -48,7 +48,7 @@ const Popover = () => (
 
 export default function GraphCard({ title, store }: Props) {
   const [selected] = useState<string | undefined>(TimeFrame.Week);
-  const [present, dismiss] = useIonPopover(Popover);
+  const [present] = useIonPopover(Popover);
   return (
     <IonCard>
       <IonCardHeader>
@@ -63,7 +63,7 @@ export default function GraphCard({ title, store }: Props) {
               <h3 className="my-0 text-xl">{title}</h3>
             </div>
             <span className="text-2xl font-bold mr-1">
-              {store.country?.currency_symbol}
+              {store.currency_symbol}
               {salesData[0].data
                 .reduce((acc, curr) => acc + curr.y, 0)
                 .toFixed(2)}
@@ -89,7 +89,7 @@ export default function GraphCard({ title, store }: Props) {
           ></IonPopover> */}
         </div>
       </IonCardHeader>
-      <LineChart data={salesData} />
+      <LineChart data={salesData} currency={store.currency_symbol} />
     </IonCard>
   );
 }

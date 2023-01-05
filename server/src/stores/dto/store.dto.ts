@@ -59,6 +59,10 @@ export class CreateStoreDto {
   @IsString()
   currency: string;
 
+  @IsNotEmpty()
+  @IsString()
+  currency_symbol: string;
+
   @IsUrl()
   @IsOptional()
   logo?: string;

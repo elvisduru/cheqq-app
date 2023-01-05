@@ -42,6 +42,7 @@ Table Store {
   order_email String
   language String [not null]
   currency String [not null]
+  currency_symbol String [not null]
   logo String
   banner String
   description String
@@ -160,6 +161,8 @@ Table ShippingRate {
   transitTime TransitTime [not null]
   customRateName String
   price Float [not null]
+  currency String [not null]
+  currency_symbol String [not null]
   rateCondition RateCondition
   rateConditionMin Float
   rateConditionMax Float
@@ -196,6 +199,7 @@ Table Product {
   compareAtPrice Float
   costPrice Float
   currency String [not null]
+  currency_symbol String [not null]
   taxable Boolean [not null, default: false]
   tax Tax
   taxId Int
@@ -271,7 +275,6 @@ Table ProductVariant {
   price Float
   compareAtPrice Float
   costPrice Float
-  currency String [not null]
   inventoryTracking Boolean [not null, default: false]
   allowBackOrder Boolean [not null, default: false]
   inventoryLevel Int [not null, default: 0]

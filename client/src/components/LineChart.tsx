@@ -4,9 +4,10 @@ import "./LineChart.scss";
 
 type Props = {
   data: any;
+  currency: string;
 };
 
-export default function LineChart({ data }: Props) {
+export default function LineChart({ data, currency }: Props) {
   return (
     <div style={{ height: 220 }}>
       <ResponsiveLine
@@ -57,7 +58,8 @@ export default function LineChart({ data }: Props) {
             <div className="tooltip">
               <div className="title text-xs">{point.data.xFormatted}</div>
               <div className="body text-xl font-medium">
-                ${parseFloat(point.data.yFormatted as string).toFixed(2)}
+                {currency}
+                {parseFloat(point.data.yFormatted as string).toFixed(2)}
               </div>
             </div>
           );

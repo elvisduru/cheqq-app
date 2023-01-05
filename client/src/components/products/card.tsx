@@ -41,7 +41,7 @@ export default function ProductCard(product: Product) {
         <IonCardContent className="py-3 px-1 text-xs font-medium bg-black">
           <p className="line-clamp-1">{product.title}</p>
           <div>
-            {product.store?.country?.currency_symbol}
+            {product.currency_symbol}
             {pricesArr[0]}{" "}
             {pricesArr.length > 1 && <>- {pricesArr[pricesArr.length - 1]}</>}
           </div>

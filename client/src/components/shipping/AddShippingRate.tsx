@@ -20,7 +20,8 @@ import { close } from "ionicons/icons";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import useToggle from "../../hooks/useToggle";
-import { Rate } from "../../utils/types";
+import store from "../../pages/store";
+import { Rate, Store } from "../../utils/types";
 
 type Props = {
   dismiss: () => void;
@@ -28,6 +29,7 @@ type Props = {
   index?: number;
   handleRateForm: (rate: Rate, index?: number) => void;
   domestic: boolean;
+  store: Store;
 };
 
 export default function AddShippingRate({
@@ -36,6 +38,7 @@ export default function AddShippingRate({
   index,
   handleRateForm,
   domestic,
+  store,
 }: Props) {
   const {
     watch,
@@ -46,7 +49,11 @@ export default function AddShippingRate({
     formState: { errors, isValid },
   } = useForm<Rate>({
     mode: "onChange",
-    defaultValues: { ...rate },
+    defaultValues: {
+      ...rate,
+      currency: rate?.currency || store.currency,
+      currency_symbol: rate?.currency_symbol || store.currency_symbol,
+    },
   });
 
   const rateCondition = watch("rateCondition");
