@@ -71,6 +71,12 @@ export class ProductsService {
         store: {
           include: {
             country: true,
+            shippingZones: {
+              include: {
+                rates: true,
+                locations: true,
+              },
+            },
           },
         },
         brand: true,
@@ -83,7 +89,7 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    return this.prisma.product.findUnique({
+    return this.prisma.product.findUniqueOrThrow({
       where: { id },
       include: {
         images: true,
@@ -95,6 +101,12 @@ export class ProductsService {
         store: {
           include: {
             country: true,
+            shippingZones: {
+              include: {
+                rates: true,
+                locations: true,
+              },
+            },
           },
         },
         brand: true,
@@ -119,6 +131,12 @@ export class ProductsService {
         store: {
           include: {
             country: true,
+            shippingZones: {
+              include: {
+                rates: true,
+                locations: true,
+              },
+            },
           },
         },
         brand: true,

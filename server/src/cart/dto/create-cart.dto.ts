@@ -15,7 +15,12 @@ export class CreateCartDto {
   customerId?: number;
 
   @IsISO4217CurrencyCode()
+  @IsNotEmpty()
   currency: string;
+
+  @IsString()
+  @IsNotEmpty()
+  currency_symbol: string;
 
   @IsArray()
   @IsNotEmpty()

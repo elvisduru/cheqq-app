@@ -67,7 +67,7 @@ export class UsersService {
   }
 
   async findById(id: number): Promise<User> {
-    return this.prisma.user.findUnique({
+    return this.prisma.user.findUniqueOrThrow({
       where: {
         id,
       },
@@ -92,7 +92,7 @@ export class UsersService {
   }
 
   async findOne(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.findUnique({
+    return this.prisma.user.findUniqueOrThrow({
       where,
       include: {
         stores: {

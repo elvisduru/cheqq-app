@@ -443,13 +443,14 @@ model Order {
 }
 
 model Cart {
-  id         Int        @id @default(autoincrement())
-  customer   User?      @relation(fields: [customerId], references: [id])
-  customerId Int?
-  currency   String
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  cartItems  CartItem[]
+  id              Int        @id @default(autoincrement())
+  customer        User?      @relation(fields: [customerId], references: [id])
+  customerId      Int?
+  currency        String
+  currency_symbol String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  cartItems       CartItem[]
 }
 
 model CartItem {

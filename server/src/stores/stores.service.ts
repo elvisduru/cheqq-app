@@ -88,7 +88,7 @@ export class StoresService {
   }
 
   async findById(id: number): Promise<Store> {
-    return this.prisma.store.findUnique({
+    return this.prisma.store.findUniqueOrThrow({
       where: {
         id,
       },

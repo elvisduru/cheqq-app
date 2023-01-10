@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CartItemDto, CreateCartDto } from './dto/create-cart.dto';
+import { UpdateCartDto, UpdateCartItemDto } from './dto/update-cart-dto';
 
 @Injectable()
 export class CartService {
@@ -20,7 +21,10 @@ export class CartService {
             product: {
               select: {
                 title: true,
+                slug: true,
                 price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
                 images: true,
                 currency: true,
                 currency_symbol: true,
@@ -28,6 +32,12 @@ export class CartService {
                   select: {
                     name: true,
                     tag: true,
+                    shippingZones: {
+                      include: {
+                        rates: true,
+                        locations: true,
+                      },
+                    },
                   },
                 },
               },
@@ -36,6 +46,65 @@ export class CartService {
               select: {
                 title: true,
                 price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
+                image: true,
+              },
+            },
+          },
+        },
+        customer: true,
+        _count: {
+          select: {
+            cartItems: true,
+          },
+        },
+      },
+    });
+  }
+
+  async updateCart(id: number, updateCartDto: UpdateCartDto) {
+    const { customerId, cartItems, ...rest } = updateCartDto;
+    return this.prisma.cart.update({
+      where: {
+        id,
+      },
+      data: {
+        ...rest,
+      },
+      include: {
+        cartItems: {
+          include: {
+            product: {
+              select: {
+                title: true,
+                slug: true,
+                price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
+                images: true,
+                currency: true,
+                currency_symbol: true,
+                store: {
+                  select: {
+                    name: true,
+                    tag: true,
+                    shippingZones: {
+                      include: {
+                        rates: true,
+                        locations: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            variant: {
+              select: {
+                title: true,
+                price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
                 image: true,
               },
             },
@@ -79,7 +148,10 @@ export class CartService {
                   product: {
                     select: {
                       title: true,
+                      slug: true,
                       price: true,
+                      inventoryLevel: true,
+                      allowBackOrder: true,
                       images: true,
                       currency: true,
                       currency_symbol: true,
@@ -87,6 +159,12 @@ export class CartService {
                         select: {
                           name: true,
                           tag: true,
+                          shippingZones: {
+                            include: {
+                              rates: true,
+                              locations: true,
+                            },
+                          },
                         },
                       },
                     },
@@ -95,6 +173,8 @@ export class CartService {
                     select: {
                       title: true,
                       price: true,
+                      inventoryLevel: true,
+                      allowBackOrder: true,
                       image: true,
                     },
                   },
@@ -126,7 +206,10 @@ export class CartService {
                   product: {
                     select: {
                       title: true,
+                      slug: true,
                       price: true,
+                      inventoryLevel: true,
+                      allowBackOrder: true,
                       images: true,
                       currency: true,
                       currency_symbol: true,
@@ -134,6 +217,12 @@ export class CartService {
                         select: {
                           name: true,
                           tag: true,
+                          shippingZones: {
+                            include: {
+                              rates: true,
+                              locations: true,
+                            },
+                          },
                         },
                       },
                     },
@@ -142,6 +231,8 @@ export class CartService {
                     select: {
                       title: true,
                       price: true,
+                      inventoryLevel: true,
+                      allowBackOrder: true,
                       image: true,
                     },
                   },
@@ -168,7 +259,10 @@ export class CartService {
             product: {
               select: {
                 title: true,
+                slug: true,
                 price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
                 images: true,
                 currency: true,
                 currency_symbol: true,
@@ -176,6 +270,12 @@ export class CartService {
                   select: {
                     name: true,
                     tag: true,
+                    shippingZones: {
+                      include: {
+                        rates: true,
+                        locations: true,
+                      },
+                    },
                   },
                 },
               },
@@ -184,6 +284,8 @@ export class CartService {
               select: {
                 title: true,
                 price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
                 image: true,
               },
             },
@@ -200,7 +302,7 @@ export class CartService {
   }
 
   findOne(id: number) {
-    return this.prisma.cart.findUnique({
+    return this.prisma.cart.findUniqueOrThrow({
       where: { id },
       include: {
         cartItems: {
@@ -208,7 +310,10 @@ export class CartService {
             product: {
               select: {
                 title: true,
+                slug: true,
                 price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
                 images: true,
                 currency: true,
                 currency_symbol: true,
@@ -216,6 +321,12 @@ export class CartService {
                   select: {
                     name: true,
                     tag: true,
+                    shippingZones: {
+                      include: {
+                        rates: true,
+                        locations: true,
+                      },
+                    },
                   },
                 },
               },
@@ -224,6 +335,8 @@ export class CartService {
               select: {
                 title: true,
                 price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
                 image: true,
               },
             },
@@ -239,9 +352,10 @@ export class CartService {
     });
   }
 
-  async removeCartItem(cartItemId: number) {
-    const { cart } = await this.prisma.cartItem.delete({
+  async updateCartItem(cartItemId: number, cartItem: UpdateCartItemDto) {
+    return this.prisma.cartItem.update({
       where: { id: cartItemId },
+      data: cartItem,
       include: {
         cart: {
           include: {
@@ -251,6 +365,8 @@ export class CartService {
                   select: {
                     title: true,
                     price: true,
+                    inventoryLevel: true,
+                    allowBackOrder: true,
                     images: true,
                     currency: true,
                     currency_symbol: true,
@@ -258,6 +374,12 @@ export class CartService {
                       select: {
                         name: true,
                         tag: true,
+                        shippingZones: {
+                          include: {
+                            rates: true,
+                            locations: true,
+                          },
+                        },
                       },
                     },
                   },
@@ -266,6 +388,8 @@ export class CartService {
                   select: {
                     title: true,
                     price: true,
+                    inventoryLevel: true,
+                    allowBackOrder: true,
                     image: true,
                   },
                 },
@@ -281,14 +405,60 @@ export class CartService {
         },
       },
     });
+  }
 
-    if (cart._count.cartItems === 0) {
-      await this.prisma.cart.delete({
-        where: { id: cart.id },
-      });
-    } else {
-      return cart;
-    }
+  async removeCartItem(cartItemId: number) {
+    const { cartId } = await this.prisma.cartItem.delete({
+      where: { id: cartItemId },
+    });
+
+    return this.prisma.cart.findUnique({
+      where: { id: cartId },
+      include: {
+        cartItems: {
+          include: {
+            product: {
+              select: {
+                title: true,
+                price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
+                images: true,
+                currency: true,
+                currency_symbol: true,
+                store: {
+                  select: {
+                    name: true,
+                    tag: true,
+                    shippingZones: {
+                      include: {
+                        rates: true,
+                        locations: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            variant: {
+              select: {
+                title: true,
+                price: true,
+                inventoryLevel: true,
+                allowBackOrder: true,
+                image: true,
+              },
+            },
+          },
+        },
+        customer: true,
+        _count: {
+          select: {
+            cartItems: true,
+          },
+        },
+      },
+    });
   }
 
   deleteCart(cartId: number) {

@@ -225,6 +225,8 @@ async function main() {
     categoriesSeed,
     await prisma.country.createMany({
       data: countries.map((country: any) => {
+        // Skip Antarctica
+        if (country.name === 'Antarctica') return;
         country.latitude = parseFloat(country.latitude);
         country.longitude = parseFloat(country.longitude);
         return country;

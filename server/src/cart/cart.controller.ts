@@ -5,11 +5,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { Public } from 'src/common/decorators';
 import { CartService } from './cart.service';
 import { CartItemDto, CreateCartDto } from './dto/create-cart.dto';
+import { UpdateCartDto, UpdateCartItemDto } from './dto/update-cart-dto';
 
 @Public()
 @Controller('cart')
@@ -39,8 +41,24 @@ export class CartController {
     return this.cartService.findOne(+id);
   }
 
-  @Delete(':id/item/:itemId')
-  removeCartItem(@Param('id', ParseIntPipe) id: number) {
+  @Patch(':id')
+  updateCart(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCartDto: UpdateCartDto,
+  ) {
+    return this.cartService.updateCart(id, updateCartDto);
+  }
+
+  @Patch(':id/items/:itemId')
+  updateCartItem(
+    @Param('itemId', ParseIntPipe) id: number,
+    @Body() updateCartItemDto: UpdateCartItemDto,
+  ) {
+    return this.cartService.updateCartItem(id, updateCartItemDto);
+  }
+
+  @Delete(':id/items/:itemId')
+  removeCartItem(@Param('itemId', ParseIntPipe) id: number) {
     return this.cartService.removeCartItem(id);
   }
 

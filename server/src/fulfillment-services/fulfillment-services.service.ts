@@ -31,7 +31,7 @@ export class FulfillmentServicesService {
   }
 
   findOne(id: number) {
-    return this.prisma.fulfillmentService.findUnique({ where: { id } });
+    return this.prisma.fulfillmentService.findUniqueOrThrow({ where: { id } });
   }
 
   delete(id: number) {

@@ -3,7 +3,9 @@ import api from "../../../lib/api";
 import { CountryStates } from "../../../utils/types";
 
 const getCountries = async () => {
-  const { data } = await api.get<CountryStates[]>("/locations/countries");
+  const { data } = await api.get<CountryStates[]>(
+    "/locations/countries?states=true"
+  );
   return data;
 };
 
