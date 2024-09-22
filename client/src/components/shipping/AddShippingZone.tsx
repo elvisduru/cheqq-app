@@ -90,7 +90,8 @@ export default function AddShippingZone({
   const rates = watch("rates");
 
   const domestic =
-    locations.length === 1 && locations?.[0]?.id === store?.countryId;
+    locations.length === 1 && locations?.[0]?.id === store?.country.id;
+
   const onSubmit = (data: ShippingZone) => {
     const storeId = store?.id;
     if (shippingZone) {

@@ -364,6 +364,7 @@ export class CartService {
                 product: {
                   select: {
                     title: true,
+                    slug: true,
                     price: true,
                     inventoryLevel: true,
                     allowBackOrder: true,
@@ -420,6 +421,7 @@ export class CartService {
             product: {
               select: {
                 title: true,
+                slug: true,
                 price: true,
                 inventoryLevel: true,
                 allowBackOrder: true,

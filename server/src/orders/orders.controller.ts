@@ -14,9 +14,6 @@ export class OrdersController {
   @Get()
   findAll() {}
 
-  @Get('current')
-  getCurrentUser() {}
-
   @Get(':id')
   findById() {}
 
@@ -25,9 +22,6 @@ export class OrdersController {
 
   @Patch(':id')
   updateById() {}
-
-  @Delete('current')
-  removeCurrent() {}
 
   @Delete(':id')
   remove() {}
